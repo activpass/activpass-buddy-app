@@ -32,8 +32,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
       '@paalan/react-ui':
-        specifier: ^1.3.5
-        version: 1.3.5(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.3.8
+        version: 1.3.8(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-dropdown-menu':
         specifier: ^2.1.1
         version: 2.1.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3353,10 +3353,10 @@ packages:
       react-dom: '>=16.18.x'
       tailwindcss: '>=3.0.0'
 
-  '@paalan/react-ui@1.3.5':
+  '@paalan/react-ui@1.3.8':
     resolution:
       {
-        integrity: sha512-HsAQ9iMPYYNl+75Zq3fy2YJrC7XRsHMT8i/A/aHkccp20PsNcBxQoGwDwYCzK20BAHVt3CMD/Yd1uOIHIynEOQ==,
+        integrity: sha512-q7ojZt72H8oauW4dRPHImojqutGU8mhcLO9WhpwEa+RQxvclS9WBH9gWW8+uccigxezumg7WICCXAAnyAxUDfA==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -18428,6 +18428,15 @@ packages:
       }
     engines: { node: '>= 0.8' }
 
+  vaul@0.9.1:
+    resolution:
+      {
+        integrity: sha512-fAhd7i4RNMinx+WEm6pF3nOl78DFkAazcN04ElLPFF9BMCNGbY/kou8UMhIcicm0rJCNePJP0Yyza60gGOD0Jw==,
+      }
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+
   vfile-message@4.0.2:
     resolution:
       {
@@ -21191,7 +21200,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@paalan/react-ui@1.3.5(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@paalan/react-ui@1.3.8(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@hookform/resolvers': 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@radix-ui/react-accordion': 1.2.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -21233,6 +21242,7 @@ snapshots:
       react-hook-form: 7.52.0(react@18.3.1)
       react-router-dom: 6.25.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       recharts: 2.12.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      vaul: 0.9.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       zod: 3.23.8
     transitivePeerDependencies:
       - '@types/react'
@@ -32131,6 +32141,15 @@ snapshots:
   validate-npm-package-name@5.0.1: {}
 
   vary@1.1.2: {}
+
+  vaul@0.9.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@radix-ui/react-dialog': 1.1.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
 
   vfile-message@4.0.2:
     dependencies:
