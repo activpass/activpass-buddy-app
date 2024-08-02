@@ -76,7 +76,7 @@ const nextConfig = {
   // On static export builds we want the output directory to be "build"
   distDir: ENABLE_STATIC_EXPORT ? 'build' : '.next',
   // On static export builds we want to enable the export feature
-  output: ENABLE_STATIC_EXPORT ? 'export' : 'standalone',
+  output: ENABLE_STATIC_EXPORT ? 'export' : undefined,
   // This configures all the Next.js rewrites, which are used for rewriting internal URLs into other internal Endpoints
   // This feature is not supported within static export builds, hence we pass an empty array if static exports are enabled
   rewrites: !ENABLE_STATIC_EXPORT ? rewrites : undefined,
@@ -101,7 +101,7 @@ const nextConfig = {
     });
 
     // Tree-shakes modules from Sentry Bundle
-    config.plugins.push(new webpack.DefinePlugin(SENTRY_EXTENSIONS));
+    // config.plugins.push(new webpack.DefinePlugin(SENTRY_EXTENSIONS));
 
     // Ignore Sentry's Critical Dependency from Open Telemetry
     // (which is genuinely a cause of concern, but there is no work around at the moment)
@@ -114,18 +114,18 @@ const nextConfig = {
 
     return config;
   },
-  experimental: {
-    // A list of packages that Next.js should automatically evaluate and optimise the imports for.
-    // @see https://vercel.com/blog/how-we-optimized-package-imports-in-next-js
-    // optimizePackageImports: [
-    //   '@radix-ui/react-avatar',
-    //   '@radix-ui/react-select',
-    //   '@radix-ui/react-toast',
-    //   'tailwindcss',
-    // ],
-    // Removes the warning regarding the WebPack Build Worker
-    webpackBuildWorker: false,
-  },
+  //   experimental: {
+  //     // A list of packages that Next.js should automatically evaluate and optimise the imports for.
+  //     // @see https://vercel.com/blog/how-we-optimized-package-imports-in-next-js
+  //     // optimizePackageImports: [
+  //     //   '@radix-ui/react-avatar',
+  //     //   '@radix-ui/react-select',
+  //     //   '@radix-ui/react-toast',
+  //     //   'tailwindcss',
+  //     // ],
+  //     // Removes the warning regarding the WebPack Build Worker
+  //     webpackBuildWorker: false,
+  //   },
 };
 
 /** @type {import('@sentry/cli').SentryCliOptions} */
@@ -179,5 +179,5 @@ const nextWithSentry = withSentryConfig(
 
 // Decides whether enabling Sentry or not
 // By default we only want to enable Sentry within a Vercel Environment
-export default SENTRY_ENABLE ? nextWithSentry : nextIntlWithBundleAnalyzer;
-// export default IS_ANALYZE ? nextIntlWithBundleAnalyzer : nextWithIntl;
+// export default SENTRY_ENABLE ? nextWithSentry : nextIntlWithBundleAnalyzer;
+export default IS_ANALYZE ? nextIntlWithBundleAnalyzer : nextWithIntl;
