@@ -76,7 +76,7 @@ const nextConfig = {
   // On static export builds we want the output directory to be "build"
   distDir: ENABLE_STATIC_EXPORT ? 'build' : '.next',
   // On static export builds we want to enable the export feature
-  output: ENABLE_STATIC_EXPORT ? 'export' : undefined,
+  output: ENABLE_STATIC_EXPORT ? 'export' : 'standalone',
   // This configures all the Next.js rewrites, which are used for rewriting internal URLs into other internal Endpoints
   // This feature is not supported within static export builds, hence we pass an empty array if static exports are enabled
   rewrites: !ENABLE_STATIC_EXPORT ? rewrites : undefined,
@@ -179,5 +179,5 @@ const nextWithSentry = withSentryConfig(
 
 // Decides whether enabling Sentry or not
 // By default we only want to enable Sentry within a Vercel Environment
-// export default SENTRY_ENABLE ? nextWithSentry : nextIntlWithBundleAnalyzer;
-export default IS_ANALYZE ? nextIntlWithBundleAnalyzer : nextWithIntl;
+export default SENTRY_ENABLE ? nextWithSentry : nextIntlWithBundleAnalyzer;
+// export default IS_ANALYZE ? nextIntlWithBundleAnalyzer : nextWithIntl;

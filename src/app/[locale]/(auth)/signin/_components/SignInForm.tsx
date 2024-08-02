@@ -83,7 +83,7 @@ export const SignInForm: FC<SignInFormProps> = _props => {
                 </Link>
               </div>
               <FormControl>
-                <Input id="password" placeholder="Enter your password" {...field} />
+                <Input id="password" placeholder="Enter your password" type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
