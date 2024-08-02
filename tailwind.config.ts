@@ -8,12 +8,13 @@ const config = {
   presets: [tailwindConfig],
   content: [
     './src/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@paalan/react-ui/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@paalan/react-icons/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@paalan/react-shared/**/*.{js,ts,jsx,tsx}',
+    './node_modules/@paalan/react-ui/**/*.{js,cjs,jsx,tsx}',
+    './node_modules/@paalan/react-icons/**/*.{js,cjs,jsx,tsx}',
+    './node_modules/@paalan/react-shared/**/*.{js,cjs,jsx,tsx}',
   ],
 
   // Project-specific customizations
+  darkMode: ['class'],
   theme: {
     extend: {
       aria: { current: 'current="page"' },

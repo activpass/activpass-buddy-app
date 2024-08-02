@@ -1,5 +1,6 @@
 'use client';
 
+import { useNextTheme } from '@paalan/react-providers/NextThemeProvider';
 import {
   Button,
   DropdownMenuContent,
@@ -19,9 +20,15 @@ import type { FC } from 'react';
 
 import { SignOutButton } from '@/components/Auth/SignOutButton';
 import ActiveLink from '@/components/Common/ActiveLink';
+import ThemeToggle from '@/components/Common/ThemeToggle';
 import Link from '@/components/Link';
 
 export const Header: FC = () => {
+  const { resolvedTheme, setTheme } = useNextTheme();
+
+  const toggleCurrentTheme = () => {
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+  };
   return (
     <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
@@ -104,10 +111,11 @@ export const Header: FC = () => {
           </nav>
         </SheetContent>
       </SheetRoot>
-      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+      <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <ThemeToggle onClick={toggleCurrentTheme} />
         <DropdownMenuRoot>
           <DropdownMenuTrigger asChild>
-            <IconButton className="ml-auto rounded-full border text-xl text-foreground">
+            <IconButton className="rounded-full text-xl text-foreground">
               <CircleUser className="size-5" />
               <span className="sr-only">Toggle user menu</span>
             </IconButton>
