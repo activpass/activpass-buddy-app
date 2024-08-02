@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import mongoose, {
   type FilterQuery,
   type HydratedDocument,
@@ -10,6 +9,7 @@ import mongoose, {
 import { userProviderSchema } from '@/validations/auth.validation';
 
 import { AUTH_ROLES } from '../../auth/constants';
+import { hashPassword, verifyPassword } from '../helper/use.helper';
 
 export interface IUserSchema extends InferSchemaType<typeof UserSchema> {
   _id: Types.ObjectId;
@@ -24,6 +24,11 @@ export type IUserData = Omit<IUserSensitiveData, 'hash' | 'salt'>;
 
 // Here, You have to explicity mention the type of methods.
 export interface IUserSchemaMethods {
+  /**
+   *
+   * @param password - Password to verify
+   * @returns {Promise<boolean>} - True if password is correct, false otherwise
+   * */
   verifyPassword(password: string): Promise<boolean>;
   /**
    *
@@ -144,10 +149,14 @@ UserSchema.virtual('password')
   })
   .set(function set(password: string) {
     this.rawPassword = password;
-    const salt = bcrypt.genSaltSync(10);
-    this.salt = salt;
-    this.hash = bcrypt.hashSync(password, salt);
   });
+
+UserSchema.pre('save', async function save() {
+  if ((this.isNew || this.isModified('rawPassword')) && this.rawPassword) {
+    const hash = await hashPassword(this.rawPassword);
+    this.hash = hash;
+  }
+});
 
 UserSchema.method('toClientObject', function toClientObject(includeSensitiveData = false) {
   const userObj = this.toObject();
@@ -162,10 +171,10 @@ UserSchema.method('toClientObject', function toClientObject(includeSensitiveData
   return rest;
 });
 
-UserSchema.method('verifyPassword', async function verifyPassword(password: string) {
+UserSchema.method('verifyPassword', async function verifyPasswordFn(password: string) {
   const hash = this.get('hash');
   if (!hash) return false;
-  return bcrypt.compare(password, hash);
+  return verifyPassword(hash, password);
 });
 
 UserSchema.static('authenticate', async function authenticate(email: string, password: string) {
