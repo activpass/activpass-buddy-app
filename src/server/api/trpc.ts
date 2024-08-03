@@ -19,6 +19,7 @@ import {
 import { type ServerSession } from '@/server/api/routers/auth/service/auth.service.types';
 import { mongodbConnect } from '@/server/database/mongodb';
 
+import { logger } from '../logger';
 import { authService } from './routers/auth/service/auth.service';
 import { getTRPCError } from './utils/trpc-error';
 
@@ -45,6 +46,7 @@ interface CreateContextOptions {
  */
 export const createTRPCContext = async (opts: CreateContextOptions) => {
   const mongodb = await mongodbConnect();
+  logger.info('Connected to MongoDB', mongodb.connection?.readyState);
   return {
     ...opts,
     mongodb,

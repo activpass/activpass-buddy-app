@@ -1,6 +1,7 @@
 import type mongoose from 'mongoose';
 
 import { env } from '@/env';
+import { logger } from '@/server/logger';
 
 import { MongoDBConnection } from './db.connection';
 
@@ -26,6 +27,7 @@ export const mongodbConnect = async () => {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
+    logger.error('Error connecting to MongoDB', e);
     throw e;
   }
 
