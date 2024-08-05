@@ -146,10 +146,11 @@ class UserRepository {
         ...data,
         username: data.email.split('@')[0] || data.firstName.toLowerCase(),
         verified: true,
-        role: AUTH_ROLES.ADMIN,
+        role: data.role || AUTH_ROLES.USER,
       };
 
-      const user = await UserModel.create(dataBody);
+      const user = new UserModel(dataBody);
+      await user.save();
       return user;
     } catch (error) {
       this.logger.error('Failed to create user', error);

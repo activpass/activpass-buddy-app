@@ -101,7 +101,7 @@ const nextConfig = {
     });
 
     // Tree-shakes modules from Sentry Bundle
-    config.plugins.push(new webpack.DefinePlugin(SENTRY_EXTENSIONS));
+    // config.plugins.push(new webpack.DefinePlugin(SENTRY_EXTENSIONS));
 
     // Ignore Sentry's Critical Dependency from Open Telemetry
     // (which is genuinely a cause of concern, but there is no work around at the moment)
@@ -114,18 +114,18 @@ const nextConfig = {
 
     return config;
   },
-  experimental: {
-    // A list of packages that Next.js should automatically evaluate and optimise the imports for.
-    // @see https://vercel.com/blog/how-we-optimized-package-imports-in-next-js
-    // optimizePackageImports: [
-    //   '@radix-ui/react-avatar',
-    //   '@radix-ui/react-select',
-    //   '@radix-ui/react-toast',
-    //   'tailwindcss',
-    // ],
-    // Removes the warning regarding the WebPack Build Worker
-    webpackBuildWorker: false,
-  },
+  //   experimental: {
+  //     // A list of packages that Next.js should automatically evaluate and optimise the imports for.
+  //     // @see https://vercel.com/blog/how-we-optimized-package-imports-in-next-js
+  //     // optimizePackageImports: [
+  //     //   '@radix-ui/react-avatar',
+  //     //   '@radix-ui/react-select',
+  //     //   '@radix-ui/react-toast',
+  //     //   'tailwindcss',
+  //     // ],
+  //     // Removes the warning regarding the WebPack Build Worker
+  //     webpackBuildWorker: false,
+  //   },
 };
 
 /** @type {import('@sentry/cli').SentryCliOptions} */

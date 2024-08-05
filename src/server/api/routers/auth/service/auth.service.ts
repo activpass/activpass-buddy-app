@@ -9,7 +9,12 @@ import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { redis } from '@/server/database/redis';
 import { Logger } from '@/server/logger';
 
-import { SESSION_TOKEN_COOKIE_KEY, SESSION_TOKENS_PREFIX, USER_ID_COOKIE_KEY } from '../constants';
+import {
+  AUTH_ROLES,
+  SESSION_TOKEN_COOKIE_KEY,
+  SESSION_TOKENS_PREFIX,
+  USER_ID_COOKIE_KEY,
+} from '../constants';
 import {
   type AccountVerifyArgs,
   type AddUserSessionArgs,
@@ -192,7 +197,11 @@ class AuthService {
 
   signUp = async (args: SignUpArgs) => {
     const { input } = args;
-    const newUser = await userRepository.createUser({ data: input });
+    const data = {
+      ...input,
+      role: AUTH_ROLES.OWNER,
+    };
+    const newUser = await userRepository.createUser({ data });
 
     if (!newUser) {
       throw getTRPCError('Failed to create user');

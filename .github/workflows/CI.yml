@@ -7,13 +7,11 @@ on:
     branches: [main]
 
 env:
-  DATABASE_URL: file:next14-boilerplate.db
-  NEXTAUTH_URL: http://localhost:3000
+  MONGODB_URI: mongodb://localhost:27017/activpass
   NEXT_PUBLIC_APP_URL: http://localhost:3000
-  NEXTAUTH_SECRET: yc2t4Jt+9tl0IBPHbpkLymkPGZqIJ4pmPKAkRUSbpuI=
   NEXT_TELEMETRY_DISABLED: 1
   TURBO_TELEMETRY_DISABLED: 1
-  NEXT_REDIS_URL: redis://localhost:6379
+  REDIS_URL: redis://localhost:6379
 
 jobs:
   cache-and-install:
@@ -109,7 +107,7 @@ jobs:
       - name: Build Next.js
         run: pnpm build
         env: 
-          NEXT_REDIS_URL: ${{ env.NEXT_REDIS_URL }}
+          REDIS_URL: ${{ env.REDIS_URL }}
 
   test:
     needs: cache-and-install
@@ -176,7 +174,7 @@ jobs:
       - name: Build Next.js for E2E tests
         run: pnpm build
         env: 
-          NEXT_REDIS_URL: ${{ env.NEXT_REDIS_URL }}
+          REDIS_URL: ${{ env.REDIS_URL }}
 
       - if: github.event_name == 'pull_request'
         name: Validate all commits from PR

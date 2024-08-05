@@ -5,13 +5,21 @@ import { logger } from '@/server/logger';
 
 let cached = global.redis;
 
-// if (!cached) {
-//   global.redis = cached;
-// }
+if (!cached) {
+  global.redis = cached;
+}
 
 export const redis = (() => {
   if (cached) return cached;
-  const instance = global.redis || new Redis(env.REDIS_URL);
+  let options = {};
+  if (process.env.NODE_ENV === 'production') {
+    options = {
+      tls: {
+        rejectUnauthorized: false,
+      },
+    };
+  }
+  const instance = new Redis(env.REDIS_URL, options);
 
   // instance.on('connect', () => {
   //   logger.info('Redis database connected');

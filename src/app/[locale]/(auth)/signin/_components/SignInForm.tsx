@@ -1,14 +1,37 @@
 'use client';
 
-import { Button, Input, Label, useToast } from '@paalan/react-ui';
-import { type FC, type FormEventHandler } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Button,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormRoot,
+  Input,
+  useToast,
+} from '@paalan/react-ui';
+import { type FC } from 'react';
+import { useForm } from 'react-hook-form';
 
 import Link from '@/components/Link';
 import { useSession } from '@/stores/session-store';
 import { api } from '@/trpc/client';
+import {
+  signInValidationSchema,
+  type SignInValidationSchemaType,
+} from '@/validations/auth.validation';
 
 type SignInFormProps = {};
 export const SignInForm: FC<SignInFormProps> = _props => {
+  const form = useForm({
+    resolver: zodResolver(signInValidationSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
   const session = useSession();
   const toast = useToast();
 
@@ -27,34 +50,49 @@ export const SignInForm: FC<SignInFormProps> = _props => {
     },
   });
 
-  const onSubmit: FormEventHandler<HTMLFormElement> = async event => {
-    event.preventDefault();
-    const body = new FormData(event.currentTarget);
-    const email = (body.get('email') || '').toString();
-    const password = (body.get('password') || '').toString();
-
-    signInMutation.mutate({ credentials: { email, password } });
+  const onSubmit = async (credentials: SignInValidationSchemaType) => {
+    signInMutation.mutate({ credentials });
   };
 
   const isLoading = signInMutation.isPending || session.status === 'loading';
   return (
-    <form className="grid gap-4" onSubmit={onSubmit}>
-      <div className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" name="email" type="email" placeholder="m@activpass.in" />
-      </div>
-      <div className="grid gap-2">
-        <div className="flex items-center">
-          <Label htmlFor="password">Password</Label>
-          <Link href="/forgot-password" className="ml-auto inline-block text-sm underline">
-            Forgot your password?
-          </Link>
-        </div>
-        <Input id="password" name="password" type="password" />
-      </div>
-      <Button type="submit" className="w-full" isLoading={isLoading}>
-        {isLoading ? 'Signing in...' : 'Sign in'}
-      </Button>
-    </form>
+    <FormRoot {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormControl>
+                <Input id="email" placeholder="Enter your email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center">
+                <FormLabel htmlFor="password">Password</FormLabel>
+                <Link href="/forgot-password" className="ml-auto inline-block text-sm underline">
+                  Forgot your password?
+                </Link>
+              </div>
+              <FormControl>
+                <Input id="password" placeholder="Enter your password" type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="w-full" isLoading={isLoading}>
+          {isLoading ? 'Signing in...' : 'Sign in'}
+        </Button>
+      </form>
+    </FormRoot>
   );
 };

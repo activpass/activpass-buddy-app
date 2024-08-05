@@ -97,7 +97,8 @@ class MongoDBConnection {
   };
 
   /** Handler called for mongo connection errors */
-  private onError = () => {
+  private onError = (e: Error) => {
+    this.logger.error(`MongoDB connection error: ${e.message}`, e);
     this.logger.error(`Could not connect to ${this.mongoUrl}`);
   };
 
