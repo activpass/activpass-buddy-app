@@ -1,6 +1,13 @@
+import { Heading } from '@paalan/react-ui';
 import { getTranslations } from 'next-intl/server';
 
-import { Hello } from './_components/Hello';
+import Cards from './_components/Cards';
+import { ClientsStatistics } from './_components/ClientsStatistics';
+import { EmployeeSalary } from './_components/EmployeeSalary';
+import { Greeting } from './_components/Greeting';
+import { MostVisitedHour } from './_components/MostVisitedHour';
+import RecentEntries from './_components/RecentEntries';
+import RevenueUpdatesChart from './_components/RevenueUpdatesChart';
 
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({
@@ -13,10 +20,21 @@ export async function generateMetadata(props: { params: { locale: string } }) {
   };
 }
 
-const Dashboard = async () => {
+const Dashboard = () => {
   return (
-    <div className="[&_p]:my-6">
-      <Hello />
+    <div className="flex flex-1 flex-col gap-4 md:gap-8">
+      <Heading>Dashboard</Heading>
+      <Greeting />
+      <Cards />
+      <RevenueUpdatesChart />
+      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+        <EmployeeSalary />
+        <MostVisitedHour />
+        <ClientsStatistics />
+      </div>
+      <div className="grid gap-4 md:grid-cols-1 md:gap-8 lg:grid-cols-2">
+        <RecentEntries />
+      </div>
     </div>
   );
 };
