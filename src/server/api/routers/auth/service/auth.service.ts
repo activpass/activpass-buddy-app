@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server';
 
 import { TimeInSeconds } from '@/server/api/enums/time-in-seconds.enum';
+import { getHashToken } from '@/server/api/helpers/common';
 import { type IUserData, UserModel } from '@/server/api/routers/users/model/user.model';
 import { userRepository } from '@/server/api/routers/users/repository/user.repository';
 import { createSecureCookie, deleteCookie } from '@/server/api/utils/cookie-management';
@@ -14,7 +15,6 @@ import {
   SESSION_TOKENS_PREFIX,
   USER_ID_COOKIE_KEY,
 } from '../constants';
-import { getHashToken } from '../helper/auth.helper';
 import {
   type AccountVerifyArgs,
   type AddUserSessionArgs,
@@ -156,12 +156,9 @@ class AuthService {
   };
 
   signIn = async (args: SignInArgs): Promise<ServerSession> => {
-    const {
-      input: { credentials },
-      headers,
-    } = args;
+    const { input, headers } = args;
     try {
-      const verifiedUser = await userRepository.verifyCredentials(credentials);
+      const verifiedUser = await userRepository.authenticate(input.email, input.password);
       const user = verifiedUser.toClientObject();
 
       const expiresIn = TimeInSeconds.TwoWeeks;

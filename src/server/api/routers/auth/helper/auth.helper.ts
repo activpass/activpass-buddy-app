@@ -1,5 +1,3 @@
-import crypto from 'crypto';
-
 import { userProviderSchema } from '@/validations/auth.validation';
 
 import type { IUserData } from '../../users/model/user.model';
@@ -23,7 +21,3 @@ export const isRootAdminUser = (email: string) => {
 };
 
 export const getRootAdminUser = () => rootAdminUser;
-
-export const getHashToken = (rawToken: string): string => {
-  return crypto.createHash('sha256').update(rawToken).digest('hex');
-};

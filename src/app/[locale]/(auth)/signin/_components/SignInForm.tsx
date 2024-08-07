@@ -51,7 +51,7 @@ export const SignInForm: FC<SignInFormProps> = _props => {
   });
 
   const onSubmit = async (credentials: SignInValidationSchemaType) => {
-    signInMutation.mutate({ credentials });
+    signInMutation.mutate(credentials);
   };
 
   const isLoading = signInMutation.isPending || session.status === 'loading';
