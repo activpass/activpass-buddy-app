@@ -15,7 +15,7 @@ import {
 import { TrendingUp } from 'lucide-react';
 import { CartesianGrid, LabelList, Line, LineChart, XAxis } from 'recharts';
 
-const chartData = [
+const chartItems = [
   { month: 'January', salary: 5000 },
   { month: 'February', salary: 2200 },
   { month: 'March', salary: 6400 },
@@ -41,7 +41,7 @@ export const EmployeeSalary = () => {
       <CardContent>
         <ChartContainer config={chartConfig}>
           <LineChart
-            data={chartData}
+            data={chartItems}
             margin={{
               top: 20,
               left: 12,

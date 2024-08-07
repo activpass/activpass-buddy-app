@@ -62,11 +62,13 @@ const ActiveShape = ({ outerRadius = 0, ...props }: PieSectorDataItem) => (
 );
 
 const CustomLabel = ({ viewBox }: { viewBox: ViewBoxType }) => {
+  const totalClients = data.reduce((sum, item) => sum + item.value, 0);
+
   if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
     return (
       <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
         <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-3xl font-bold">
-          {data[viewBox.activeIndex ?? 0]?.value.toLocaleString() || 0}
+          {totalClients.toLocaleString()}
         </tspan>
         <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className="fill-muted-foreground">
           Clients

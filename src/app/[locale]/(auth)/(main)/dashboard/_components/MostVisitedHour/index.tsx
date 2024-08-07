@@ -15,7 +15,7 @@ import {
 import { TrendingUp } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from 'recharts';
 
-const chartData = [
+const chartItems = [
   { month: 'January', desktop: 186 },
   { month: 'February', desktop: 305 },
   { month: 'March', desktop: 237 },
@@ -44,7 +44,7 @@ export const MostVisitedHour = () => {
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
-            data={chartData}
+            data={chartItems}
             layout="vertical"
             margin={{
               right: 16,

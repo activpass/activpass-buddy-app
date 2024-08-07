@@ -13,13 +13,13 @@ import {
 import { useMemo, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 
-type ChartData = {
+type ChartItems = {
   date: string;
   revenue: number;
   expense: number;
 };
 
-const chartData: ChartData[] = [
+const chartItems: ChartItems[] = [
   { date: '2024-04-01', revenue: 222, expense: 150 },
   { date: '2024-04-02', revenue: 97, expense: 180 },
   { date: '2024-04-03', revenue: 167, expense: 120 },
@@ -139,8 +139,8 @@ const RevenueUpdatesChart: React.FC = () => {
 
   const total = useMemo(
     () => ({
-      revenue: chartData.reduce((acc, curr) => acc + curr.revenue, 0),
-      expense: chartData.reduce((acc, curr) => acc + curr.expense, 0),
+      revenue: chartItems.reduce((acc, curr) => acc + curr.revenue, 0),
+      expense: chartItems.reduce((acc, curr) => acc + curr.expense, 0),
     }),
     []
   );
@@ -175,7 +175,7 @@ const RevenueUpdatesChart: React.FC = () => {
         <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={chartItems}
             margin={{
               left: 12,
               right: 12,
