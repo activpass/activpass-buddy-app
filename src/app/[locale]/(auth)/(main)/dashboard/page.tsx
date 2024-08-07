@@ -1,9 +1,10 @@
+import { Heading } from '@paalan/react-ui';
 import { getTranslations } from 'next-intl/server';
 
 import Cards from './_components/Cards';
 import { ClientsStatistics } from './_components/ClientsStatistics';
 import { EmployeeSalary } from './_components/EmployeeSalary';
-import { Hello } from './_components/Greating';
+import { Greeting } from './_components/Greeting';
 import { MostVisitedHour } from './_components/MostVisitedHour';
 import RecentEntries from './_components/RecentEntries';
 import RevenueUpdatesChart from './_components/RevenueUpdatesChart';
@@ -22,10 +23,8 @@ export async function generateMetadata(props: { params: { locale: string } }) {
 const Dashboard = () => {
   return (
     <div className="flex flex-1 flex-col gap-4 md:gap-8">
-      <div className="w-32 rounded-md border p-2 dark:bg-gray-800">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
-      </div>
-      <Hello />
+      <Heading>Dashboard</Heading>
+      <Greeting />
       <Cards />
       <RevenueUpdatesChart />
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
