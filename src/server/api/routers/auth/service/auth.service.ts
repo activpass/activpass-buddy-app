@@ -1,5 +1,4 @@
 import { TRPCError } from '@trpc/server';
-import argon2 from 'argon2';
 
 import { TimeInSeconds } from '@/server/api/enums/time-in-seconds.enum';
 import { type IUserData, UserModel } from '@/server/api/routers/users/model/user.model';
@@ -15,6 +14,7 @@ import {
   SESSION_TOKENS_PREFIX,
   USER_ID_COOKIE_KEY,
 } from '../constants';
+import { getHashToken } from '../helper/auth.helper';
 import {
   type AccountVerifyArgs,
   type AddUserSessionArgs,
@@ -86,7 +86,7 @@ class AuthService {
 
   private async generateSessionToken(userId: IUserData['id']): Promise<string> {
     const rawToken = `${userId}-${Date.now()}-${Math.random()}`;
-    const hashedToken = await argon2.hash(rawToken);
+    const hashedToken = getHashToken(rawToken);
     return hashedToken;
   }
 
