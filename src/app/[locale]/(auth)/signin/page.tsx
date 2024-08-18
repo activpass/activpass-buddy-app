@@ -1,7 +1,8 @@
-import Image from 'next/image';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Text } from '@paalan/react-ui';
 import { getTranslations } from 'next-intl/server';
 
 import Link from '@/components/Link';
+import { FeedbackLayout } from '@/layouts/FeedbackLayout';
 
 import { SignInForm } from './_components/SignInForm';
 
@@ -19,34 +20,25 @@ export async function generateMetadata(props: { params: { locale: string } }) {
 
 const SignInPage = () => {
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-      <div className="hidden bg-muted lg:block">
-        <Image
-          src="/placeholder.svg"
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="size-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
-      </div>
-      <div className="flex items-center justify-center py-12">
-        <div className="mx-auto grid w-[450px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Signin</h1>
-            <p className="text-balance text-muted-foreground">
-              Enter your email below to login to your account
-            </p>
-          </div>
+    <FeedbackLayout>
+      <Card className="lg:min-w-128">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Sign In</CardTitle>
+          <CardDescription className="text-balance">
+            Enter your email below to signin to your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           <SignInForm />
-          <div className="mt-4 text-center text-sm">
+          <Text className="mt-3 text-center text-sm">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="underline">
+            <Link href="/signup" className="text-link underline">
               Sign up
             </Link>
-          </div>
-        </div>
-      </div>
-    </div>
+          </Text>
+        </CardContent>
+      </Card>
+    </FeedbackLayout>
   );
 };
 

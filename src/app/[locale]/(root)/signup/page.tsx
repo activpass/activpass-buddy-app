@@ -4,18 +4,25 @@ import Link from '@/components/Link';
 
 import { SignUpForm } from './_components/SignUpForm';
 
+export const metadata = {
+  title: 'Sign Up',
+  description: 'Sign up to create an account',
+};
+
 const SignUpPage = () => {
   return (
-    <Card className="mx-auto max-w-2xl">
-      <CardHeader>
-        <CardTitle className="text-xl">Sign Up</CardTitle>
-        <CardDescription>Enter your information to create an account</CardDescription>
+    <Card className="lg:min-w-128">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl">Signup</CardTitle>
+        <CardDescription className="text-balance">
+          Enter your information to create an account
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <SignUpForm />
-        <Text fontSize="base" className="text-center">
+        <Text className="mt-3 text-center text-sm">
           Already have an account?{' '}
-          <Link href="/signin" className="text-primary underline">
+          <Link href="/signin" className="text-link underline">
             Sign in
           </Link>
         </Text>

@@ -1,6 +1,5 @@
 'use client';
 
-import { useNextTheme } from '@paalan/react-providers/NextThemeProvider';
 import {
   Button,
   DropdownMenuContent,
@@ -9,38 +8,30 @@ import {
   DropdownMenuRoot,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Flex,
   IconButton,
   SheetContent,
   SheetRoot,
   SheetTrigger,
+  Text,
 } from '@paalan/react-ui';
-import { CircleUser, Menu, Package2 } from 'lucide-react';
-import Image from 'next/image';
+import { CircleUser, Menu } from 'lucide-react';
 import type { FC } from 'react';
 
 import { SignOutButton } from '@/components/Auth/SignOutButton';
 import ActiveLink from '@/components/Common/ActiveLink';
 import ThemeToggle from '@/components/Common/ThemeToggle';
 import Link from '@/components/Link';
+import { Logo } from '@/components/Logo';
+import { useSession } from '@/stores/session-store';
 
-export const Header: FC = () => {
-  const { resolvedTheme, setTheme } = useNextTheme();
-
-  const toggleCurrentTheme = () => {
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
-  };
+export const WithHeader: FC = () => {
+  const session = useSession();
+  const user = session.data?.user;
   return (
-    <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className="sticky top-0 z-50 flex h-[4.5rem] items-center gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-        <Link href="/" className="contents items-center gap-2 text-lg font-semibold md:text-base">
-          <Image
-            src="/static/logos/png/activpass-icon-blue.png"
-            alt="Activpass"
-            width="25"
-            height="25"
-          />
-          <span className="sr-only">Activpass</span>
-        </Link>
+        <Logo />
         <ActiveLink
           href="/dashboard"
           activeClassName="text-primary"
@@ -69,13 +60,6 @@ export const Header: FC = () => {
         >
           Finance
         </ActiveLink>
-        <ActiveLink
-          href="/subscription"
-          activeClassName="text-primary"
-          className="text-foreground transition-colors hover:text-primary"
-        >
-          Subscription
-        </ActiveLink>
       </nav>
       <SheetRoot>
         <SheetTrigger asChild>
@@ -86,33 +70,40 @@ export const Header: FC = () => {
         </SheetTrigger>
         <SheetContent side="left">
           <nav className="grid gap-6 text-lg font-medium">
-            <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
-              <Package2 className="size-6" />
-              <span className="sr-only">Activpass</span>
-            </Link>
-            <ActiveLink href="/dashboard" className="hover:text-foreground">
+            <Logo />
+            <ActiveLink
+              href="/dashboard"
+              activeClassName="text-primary"
+              className="text-foreground hover:text-primary"
+            >
               Dashboard
             </ActiveLink>
-            <ActiveLink href="/client" className="text-muted-foreground hover:text-foreground">
+            <ActiveLink
+              href="/client"
+              activeClassName="text-primary"
+              className="text-foreground hover:text-primary"
+            >
               Client
             </ActiveLink>
-            <ActiveLink href="/employee" className="text-muted-foreground hover:text-foreground">
+            <ActiveLink
+              href="/employee"
+              activeClassName="text-primary"
+              className="text-foreground hover:text-primary"
+            >
               Employee
             </ActiveLink>
-            <ActiveLink href="/finance" className="text-muted-foreground hover:text-foreground">
-              Finance
-            </ActiveLink>
             <ActiveLink
-              href="/subscription"
-              className="text-muted-foreground hover:text-foreground"
+              href="/finance"
+              activeClassName="text-primary"
+              className="text-foreground hover:text-primary"
             >
-              Subscription
+              Finance
             </ActiveLink>
           </nav>
         </SheetContent>
       </SheetRoot>
-      <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <ThemeToggle onClick={toggleCurrentTheme} />
+      <div className="ml-auto flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <ThemeToggle />
         <DropdownMenuRoot>
           <DropdownMenuTrigger asChild>
             <IconButton className="rounded-full text-xl text-foreground">
@@ -121,12 +112,24 @@ export const Header: FC = () => {
             </IconButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              <Flex className="flex-col">
+                {user?.fullName}
+                <Text className="text-sm text-muted-foreground">{user?.email}</Text>
+              </Flex>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <Link href="/dashboard/profile">Profile</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <Link href="/dashboard/billing">Billing</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <Link href="/dashboard/settings">Settings</Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
               <SignOutButton />
             </DropdownMenuItem>
           </DropdownMenuContent>

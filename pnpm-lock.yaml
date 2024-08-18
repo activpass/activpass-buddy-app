@@ -17,8 +17,8 @@ importers:
         specifier: ^3.6.0
         version: 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@paalan/react-config':
-        specifier: ^1.3.0
-        version: 1.3.0(prettier@3.3.2)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
+        specifier: ^1.3.3
+        version: 1.3.3(prettier@3.3.2)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
       '@paalan/react-hooks':
         specifier: ^1.3.0
         version: 1.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -32,8 +32,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
       '@paalan/react-ui':
-        specifier: ^1.3.8
-        version: 1.3.8(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.3.14
+        version: 1.3.14(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-dropdown-menu':
         specifier: ^2.1.1
         version: 2.1.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -136,6 +136,9 @@ importers:
       react-hook-form:
         specifier: ^7.52.0
         version: 7.52.0(react@18.3.1)
+      react-icons:
+        specifier: ^5.3.0
+        version: 5.3.0(react@18.3.1)
       recharts:
         specifier: ^2.12.7
         version: 2.12.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3286,10 +3289,10 @@ packages:
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
 
-  '@paalan/react-config@1.3.0':
+  '@paalan/react-config@1.3.3':
     resolution:
       {
-        integrity: sha512-KovnT3Wr2r9OCdJVZuQRThfjNIvHRO/F/2EGvFlR60ZwXg7m1joytfCbXTNuFD6ujfW5pfz3Wf7YVUAgS3dJyQ==,
+        integrity: sha512-hO5EseuCXfQh5+cfZL34yHfL2M+wK6u3W/l8hoSM7JQmCT6q4ahEfi6+QBiN/QgM2uNcOe1cZfNhv+0y8EGz4A==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -3337,10 +3340,10 @@ packages:
       react-dom: '>=16.18.x'
       tailwindcss: '>=3.0.0'
 
-  '@paalan/react-ui@1.3.8':
+  '@paalan/react-ui@1.3.14':
     resolution:
       {
-        integrity: sha512-q7ojZt72H8oauW4dRPHImojqutGU8mhcLO9WhpwEa+RQxvclS9WBH9gWW8+uccigxezumg7WICCXAAnyAxUDfA==,
+        integrity: sha512-QWQJfH7U2LewmgLim7uXGoHfiVfaxNRd5wGBxb9E1I3Dslp8tiSVWKsRhykS3sngJIvcQeP54slwWP5p3QNrWA==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -15741,6 +15744,14 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
+  react-icons@5.3.0:
+    resolution:
+      {
+        integrity: sha512-DnUk8aFbTyQPSkCfF8dbX6kQjXA9DktMeJqfjrg6cK9vwQVMxmcA3BfP4QoiztVmEHtwlTgLFsPuH2NskKT6eg==,
+      }
+    peerDependencies:
+      react: '*'
+
   react-is@16.13.1:
     resolution:
       {
@@ -20953,7 +20964,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.25.1(@opentelemetry/api@1.9.0)
 
-  '@paalan/react-config@1.3.0(prettier@3.3.2)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
+  '@paalan/react-config@1.3.3(prettier@3.3.2)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
     dependencies:
       '@ianvs/prettier-plugin-sort-imports': 4.3.1(prettier@3.3.2)
       prettier-plugin-tailwindcss: 0.5.14(@ianvs/prettier-plugin-sort-imports@4.3.1(prettier@3.3.2))(prettier@3.3.2)
@@ -21013,7 +21024,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@paalan/react-ui@1.3.8(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@paalan/react-ui@1.3.14(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@hookform/resolvers': 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@radix-ui/react-accordion': 1.2.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -30155,6 +30166,10 @@ snapshots:
       react: 18.3.1
 
   react-hook-form@7.52.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+
+  react-icons@5.3.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 

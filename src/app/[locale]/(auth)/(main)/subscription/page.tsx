@@ -1,11 +1,7 @@
 import { Heading } from '@paalan/react-ui';
 
 const SubscriptionPage = () => {
-  return (
-    <div>
-      <Heading>Subscription Page</Heading>
-    </div>
-  );
+  return <Heading>Subscription Page</Heading>;
 };
 
 export default SubscriptionPage;

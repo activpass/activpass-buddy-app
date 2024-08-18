@@ -2,7 +2,7 @@ import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
 import type { FC, HTMLAttributeAnchorTarget, PropsWithChildren, ReactNode } from 'react';
 
 import ActiveLink from '@/components/Common/ActiveLink';
-import { cn } from '@/lib/cn';
+import { cn } from '@paalan/react-shared/lib';
 
 import styles from './index.module.css';
 

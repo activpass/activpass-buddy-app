@@ -33,7 +33,7 @@ const ErrorPage: FC<ErrorPageProps> = ({ error, reset }) => {
           <div className="flex gap-2">
             <Button as={Link} href="/">
               {t('layouts.error.backToHome')}
-              <ArrowRightIcon />
+              <ArrowRightIcon className="size-5" />
             </Button>
             <Button
               as={Link}

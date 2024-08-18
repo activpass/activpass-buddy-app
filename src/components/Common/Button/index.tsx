@@ -1,7 +1,7 @@
 import type { AnchorHTMLAttributes, FC } from 'react';
 
 import Link from '@/components/Link';
-import { cn } from '@/lib/cn';
+import { cn } from '@paalan/react-shared/lib';
 
 import styles from './index.module.css';
 

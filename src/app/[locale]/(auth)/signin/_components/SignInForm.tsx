@@ -78,7 +78,10 @@ export const SignInForm: FC<SignInFormProps> = _props => {
             <FormItem>
               <div className="flex items-center">
                 <FormLabel htmlFor="password">Password</FormLabel>
-                <Link href="/forgot-password" className="ml-auto inline-block text-sm underline">
+                <Link
+                  href="/forgot-password"
+                  className="ml-auto inline-block text-sm text-link underline"
+                >
                   Forgot your password?
                 </Link>
               </div>
@@ -90,7 +93,7 @@ export const SignInForm: FC<SignInFormProps> = _props => {
           )}
         />
         <Button type="submit" className="w-full" isLoading={isLoading}>
-          {isLoading ? 'Signing in...' : 'Sign in'}
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </Button>
       </form>
     </FormRoot>

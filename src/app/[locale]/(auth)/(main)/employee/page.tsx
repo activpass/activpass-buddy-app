@@ -1,10 +1,18 @@
 import { Heading } from '@paalan/react-ui';
 
+import { WithBreadcrumbLayout } from '@/components/Hoc/WithBreadcrumbLayout';
+
 const EmployeePage = () => {
   return (
-    <div>
+    <WithBreadcrumbLayout
+      items={[
+        {
+          label: 'Employee',
+        },
+      ]}
+    >
       <Heading>Employee Page</Heading>
-    </div>
+    </WithBreadcrumbLayout>
   );
 };
 

@@ -1,10 +1,18 @@
 import { Heading } from '@paalan/react-ui';
 
+import { WithBreadcrumbLayout } from '@/components/Hoc/WithBreadcrumbLayout';
+
 const FinancePage = () => {
   return (
-    <div>
+    <WithBreadcrumbLayout
+      items={[
+        {
+          label: 'Finance',
+        },
+      ]}
+    >
       <Heading>Finance Page</Heading>
-    </div>
+    </WithBreadcrumbLayout>
   );
 };
 

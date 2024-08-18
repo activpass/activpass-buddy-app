@@ -1,1 +1,1 @@
-export type Layouts = 'auth' | 'root';
+export type Layouts = 'auth' | 'root' | 'feedback';
