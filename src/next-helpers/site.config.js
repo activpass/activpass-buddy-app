@@ -2,8 +2,8 @@ import { availableLocaleCodes, defaultLocale, localePrefix } from './next.locale
 
 /** @type {import('../types/index.js').SiteConfig} */
 const site = {
-  title: 'Activpass Dashboard',
-  description: 'Activpass Dashboard',
+  title: 'Activpass Buddy Dashboard',
+  description: 'Activpass Buddy Dashboard',
   favicon: '/static/favicons/favicon.ico',
   locale: {
     locales: availableLocaleCodes,

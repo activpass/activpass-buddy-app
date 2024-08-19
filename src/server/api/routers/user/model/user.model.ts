@@ -10,12 +10,14 @@ import { userProviderSchema } from '@/validations/auth.validation';
 
 import { AUTH_ROLES } from '../../auth/constants';
 
-export interface IUserSchema extends InferSchemaType<typeof UserSchema> {
-  _id: mongoose.Schema.Types.ObjectId;
-
-  // Virtuals are not included in the schema type
+// Virtuals are not included in the schema type
+export interface IUserVirtuals {
   id: string;
   fullName: string;
+  orgId: string;
+}
+export interface IUserSchema extends InferSchemaType<typeof UserSchema>, IUserVirtuals {
+  _id: mongoose.Schema.Types.ObjectId;
 }
 
 export type IUserSensitiveData = Omit<IUserSchema, '_id'>;
@@ -63,7 +65,7 @@ const schemaOptions = {
 
 const UserSchema = new mongoose.Schema(
   {
-    organization: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization' },
+    organization: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', required: true },
     ownedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 
     firstName: {
@@ -140,6 +142,10 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.virtual('fullName').get(function fullName() {
   return `${this.firstName || ''} ${this.lastName || ''}`.trim();
+});
+
+UserSchema.virtual('orgId').get(function getOrgId() {
+  return this.organization.toHexString();
 });
 
 UserSchema.virtual('password')

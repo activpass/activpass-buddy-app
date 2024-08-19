@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
 
-import { userRepository } from '@/server/api/routers/users/repository/user.repository';
+import { userRepository } from '@/server/api/routers/user/repository/user.repository';
 import { Logger } from '@/server/logger';
 
 import type { CreateUserArgs, GetUserByIdArgs, UpdateUserArgs } from './user.service.types';
@@ -8,7 +8,7 @@ import type { CreateUserArgs, GetUserByIdArgs, UpdateUserArgs } from './user.ser
 class UserService {
   private readonly logger = new Logger(UserService.name);
 
-  getUserById = async ({ id }: GetUserByIdArgs) => {
+  getById = async ({ id }: GetUserByIdArgs) => {
     try {
       if (!id) {
         throw new TRPCError({
@@ -16,7 +16,7 @@ class UserService {
           message: 'User ID is required',
         });
       }
-      const user = await userRepository.getUserById(id);
+      const user = await userRepository.getById(id);
       return user;
     } catch (error: unknown) {
       this.logger.error('Failed to get user by id', error);
@@ -27,9 +27,9 @@ class UserService {
     }
   };
 
-  createUser = async ({ input }: CreateUserArgs) => {
+  create = async ({ input }: CreateUserArgs) => {
     try {
-      const user = await userRepository.createUser({ data: input });
+      const user = await userRepository.create({ data: input });
       return user;
     } catch (error: unknown) {
       this.logger.error('Failed to create user', error);
@@ -40,10 +40,10 @@ class UserService {
     }
   };
 
-  updateUser = async ({ input }: UpdateUserArgs) => {
+  update = async ({ input }: UpdateUserArgs) => {
     const { id, data } = input;
     try {
-      const user = await userRepository.updateUser({ userId: id, data });
+      const user = await userRepository.update({ userId: id, data });
       return user;
     } catch (error: unknown) {
       this.logger.error('Failed to update user', error);
