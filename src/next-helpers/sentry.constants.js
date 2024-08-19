@@ -4,7 +4,7 @@ import { BASE_URL, IS_DEVELOPMENT, VERCEL_ENV } from './next.constants.js';
  * This is the Sentry DSN for the Your Website Project
  */
 export const SENTRY_DSN =
-  'https://c545811309ec0c8185f2e2db48102693@o4507686272303104.ingest.de.sentry.io/4507686275317840';
+  'https://c5e2db48102693@o4507686272303104.ingest.de.sentry.io/4507686275317840';
 
 /**
  * This states if Sentry should be enabled and bundled within our App

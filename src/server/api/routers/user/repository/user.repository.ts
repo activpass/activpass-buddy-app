@@ -11,13 +11,19 @@ import {
   type GetUserByIdOptions,
   type ResetPasswordParams,
   type UpdateUserParams,
-} from '@/server/api/routers/users/repository/user.repository.types';
+} from '@/server/api/routers/user/repository/user.repository.types';
 import { redis } from '@/server/database/redis';
 import { Logger } from '@/server/logger/logger';
 
 import { AUTH_ROLES } from '../../auth/constants';
 import { getRootAdminUser, isRootAdminUser } from '../../auth/helper/auth.helper';
-import { type IUserData, type IUserSchema, UserModel } from '../model/user.model';
+import { OrganizationModel } from '../../organization/model/organization.model';
+import {
+  type IUserData,
+  type IUserSchema,
+  type IUserVirtuals,
+  UserModel,
+} from '../model/user.model';
 
 class UserRepository {
   private readonly logger = new Logger(UserRepository.name);
@@ -44,7 +50,7 @@ class UserRepository {
     return cachedUserInfo !== null ? (JSON.parse(cachedUserInfo) as ServerSession['user']) : null;
   };
 
-  getUserById = async <T extends boolean = false>(
+  getById = async <T extends boolean = false>(
     id: IUserData['id'],
     options?: GetUserByIdOptions<T>
   ): Promise<(T extends true ? ServerSession['user'] : IUserData) | null> => {
@@ -83,11 +89,11 @@ class UserRepository {
     return userData ?? null;
   };
 
-  getUserByIdOrThrow = async <T extends boolean = false>(
+  getByIdOrThrow = async <T extends boolean = false>(
     id: IUserSchema['id'],
     options?: GetUserByIdOptions<T>
   ): Promise<T extends true ? ServerSession['user'] : IUserData> => {
-    const user = await this.getUserById(id, options);
+    const user = await this.getById(id, options);
     if (user === null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -141,19 +147,27 @@ class UserRepository {
     }
   };
 
-  createUser = async ({ data }: CreateUserParams) => {
+  create = async ({ data }: CreateUserParams) => {
     try {
       await this.isUserExists(data.email);
-
-      const dataBody: Omit<IUserData, 'id' | 'fullName'> = {
-        ...data,
-        username: data.email.split('@')[0] || data.firstName.toLowerCase(),
+      const { organization, ...rest } = data;
+      const organizationDoc = new OrganizationModel(organization);
+      const dataBody: Omit<IUserData, keyof IUserVirtuals> = {
+        ...rest,
+        username: data.email.split('@')[0] || '',
         verified: true,
         role: data.role || AUTH_ROLES.USER,
+        organization: organizationDoc.id,
       };
 
       const user = new UserModel(dataBody);
+
+      organizationDoc.createdBy = user.id;
+      organizationDoc.users.push(user.id);
+      // Save organization and user
+      await organizationDoc.save();
       await user.save();
+
       return user;
     } catch (error) {
       this.logger.error('Failed to create user', error);
@@ -161,7 +175,7 @@ class UserRepository {
     }
   };
 
-  updateUser = async ({ userId, data }: UpdateUserParams) => {
+  update = async ({ userId, data }: UpdateUserParams) => {
     try {
       const updatedUser = await UserModel.findByIdAndUpdate(userId, data, { new: true }).exec();
       if (!updatedUser) {

@@ -72,6 +72,10 @@ export const SignUpForm: FC = () => {
       password: '',
       confirmPassword: '',
       provider: UserProviderEnum.email,
+      organization: {
+        name: 'dummy-organization',
+        type: 'gym',
+      },
     },
   });
 

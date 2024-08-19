@@ -2,7 +2,7 @@ import { Heading } from '@paalan/react-ui';
 
 import { WithBreadcrumbLayout } from '@/components/Hoc/WithBreadcrumbLayout';
 
-const ClientPage = () => {
+const ClientPage = async () => {
   return (
     <WithBreadcrumbLayout
       items={[
