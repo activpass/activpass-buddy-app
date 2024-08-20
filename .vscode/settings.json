@@ -63,5 +63,8 @@
     "zremrangebyrank",
     "zscore",
     "zustand"
-  ]
+  ],
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
