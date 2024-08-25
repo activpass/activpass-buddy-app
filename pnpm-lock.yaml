@@ -35,8 +35,8 @@ importers:
         specifier: ^1.4.1
         version: 1.4.1
       '@paalan/react-ui':
-        specifier: ^1.4.0
-        version: 1.4.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.4.1
+        version: 1.4.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-dropdown-menu':
         specifier: ^2.1.1
         version: 2.1.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3350,10 +3350,10 @@ packages:
       }
     engines: { node: '>=16.x.x' }
 
-  '@paalan/react-ui@1.4.0':
+  '@paalan/react-ui@1.4.1':
     resolution:
       {
-        integrity: sha512-JajLS80fCLu8oM1IUEfIP88lDGzRqvXTkQotBvLlDqRz49rVVzfLvUM3Cj0EC9Jt8gQWLx9I5vN+oarW5kIPiw==,
+        integrity: sha512-TGDdFUxEZfRN/6ZNlxPMAf/3FXGGsbmWgaDLK18F/T3e7TqbTz1haY7tDyhK42XGSqEv1PBTmPFoyc2vG0SJBw==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -21035,7 +21035,7 @@ snapshots:
 
   '@paalan/react-test-utils@1.4.1': {}
 
-  '@paalan/react-ui@1.4.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@paalan/react-ui@1.4.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@hookform/resolvers': 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@radix-ui/react-accordion': 1.2.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
