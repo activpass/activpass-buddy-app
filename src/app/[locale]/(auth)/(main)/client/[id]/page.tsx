@@ -1,7 +1,7 @@
 import { Heading, Separator, Text } from '@paalan/react-ui';
 import type { FC } from 'react';
 
-import { SetBreadcrumbItem } from '@/providers/BreadcrumbProvider';
+import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 
 import { ProfileForm } from './_components/profile-form';
 
@@ -13,7 +13,7 @@ type ClientProfilePageProps = {
 const ClientProfilePage: FC<ClientProfilePageProps> = ({ params }) => {
   return (
     <>
-      <SetBreadcrumbItem items={[{ label: 'Client', href: '/client' }, { label: params.id }]} />
+      <SetBreadcrumbItems items={[{ label: 'Client', href: '/client' }, { label: params.id }]} />
       <div className="space-y-6">
         <div>
           <Heading as="h3">Profile</Heading>

@@ -16,7 +16,7 @@ import {
   Text,
 } from '@paalan/react-ui';
 import { CircleUser, Menu } from 'lucide-react';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 
 import { SignOutButton } from '@/components/Auth/SignOutButton';
 import ActiveLink from '@/components/Common/ActiveLink';
@@ -25,41 +25,50 @@ import Link from '@/components/Link';
 import { Logo } from '@/components/Logo';
 import { useSession } from '@/stores/session-store';
 
+type NavItemProps = {
+  href: string;
+  label: ReactNode;
+};
+const NavItem: FC<NavItemProps> = ({ href, label }) => {
+  return (
+    <ActiveLink
+      href={href}
+      activeClassName="text-primary"
+      allowSubPath={href.startsWith('/')}
+      className="text-foreground transition-colors hover:text-primary"
+    >
+      {label}
+    </ActiveLink>
+  );
+};
 export const WithHeader: FC = () => {
   const session = useSession();
   const user = session.data?.user;
+  const navItems = [
+    {
+      href: '/dashboard',
+      label: 'Dashboard',
+    },
+    {
+      href: '/client',
+      label: 'Client',
+    },
+    {
+      href: '/employee',
+      label: 'Employee',
+    },
+    {
+      href: '/finance',
+      label: 'Finance',
+    },
+  ];
   return (
     <header className="sticky top-0 z-50 flex h-[4.5rem] items-center gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Logo />
-        <ActiveLink
-          href="/dashboard"
-          activeClassName="text-primary"
-          className="text-foreground transition-colors hover:text-primary"
-        >
-          Dashboard
-        </ActiveLink>
-        <ActiveLink
-          href="/client"
-          activeClassName="text-primary"
-          className="text-foreground transition-colors hover:text-primary"
-        >
-          Client
-        </ActiveLink>
-        <ActiveLink
-          href="/employee"
-          activeClassName="text-primary"
-          className="text-foreground transition-colors hover:text-primary"
-        >
-          Employee
-        </ActiveLink>
-        <ActiveLink
-          href="/finance"
-          activeClassName="text-primary"
-          className="text-foreground transition-colors hover:text-primary"
-        >
-          Finance
-        </ActiveLink>
+        {navItems.map(item => (
+          <NavItem key={item.href} href={item.href} label={item.label} />
+        ))}
       </nav>
       <SheetRoot>
         <SheetTrigger asChild>
@@ -71,34 +80,9 @@ export const WithHeader: FC = () => {
         <SheetContent side="left">
           <nav className="grid gap-6 text-lg font-medium">
             <Logo />
-            <ActiveLink
-              href="/dashboard"
-              activeClassName="text-primary"
-              className="text-foreground hover:text-primary"
-            >
-              Dashboard
-            </ActiveLink>
-            <ActiveLink
-              href="/client"
-              activeClassName="text-primary"
-              className="text-foreground hover:text-primary"
-            >
-              Client
-            </ActiveLink>
-            <ActiveLink
-              href="/employee"
-              activeClassName="text-primary"
-              className="text-foreground hover:text-primary"
-            >
-              Employee
-            </ActiveLink>
-            <ActiveLink
-              href="/finance"
-              activeClassName="text-primary"
-              className="text-foreground hover:text-primary"
-            >
-              Finance
-            </ActiveLink>
+            {navItems.map(item => (
+              <NavItem key={item.href} href={item.href} label={item.label} />
+            ))}
           </nav>
         </SheetContent>
       </SheetRoot>

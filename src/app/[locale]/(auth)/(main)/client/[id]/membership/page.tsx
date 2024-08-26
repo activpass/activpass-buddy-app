@@ -1,7 +1,7 @@
 import { Heading, Separator, Text } from '@paalan/react-ui';
 import type { FC } from 'react';
 
-import { SetBreadcrumbItem } from '@/providers/BreadcrumbProvider';
+import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 
 type MembershipPageProps = {
   params: {
@@ -11,7 +11,7 @@ type MembershipPageProps = {
 const MembershipPage: FC<MembershipPageProps> = ({ params }) => {
   return (
     <>
-      <SetBreadcrumbItem
+      <SetBreadcrumbItems
         items={[
           { label: 'Client', href: '/client' },
           { label: params.id, href: `/client/${params.id}` },

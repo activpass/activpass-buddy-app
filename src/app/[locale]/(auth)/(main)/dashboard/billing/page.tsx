@@ -1,6 +1,6 @@
 import { Heading } from '@paalan/react-ui';
 
-import { WithBreadcrumbLayout } from '@/components/Hoc/WithBreadcrumbLayout';
+import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 
 export const metadata = {
   title: 'Billing',
@@ -9,19 +9,20 @@ export const metadata = {
 
 const BillingPage = () => {
   return (
-    <WithBreadcrumbLayout
-      items={[
-        {
-          label: 'Dashboard',
-          href: '/dashboard',
-        },
-        {
-          label: 'Billing',
-        },
-      ]}
-    >
+    <>
+      <SetBreadcrumbItems
+        items={[
+          {
+            label: 'Dashboard',
+            href: '/dashboard',
+          },
+          {
+            label: 'Billing',
+          },
+        ]}
+      />
       <Heading>Billing Page</Heading>
-    </WithBreadcrumbLayout>
+    </>
   );
 };
 

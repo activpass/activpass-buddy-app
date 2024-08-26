@@ -2,8 +2,6 @@ import { Avatar, Heading, Separator, Text } from '@paalan/react-ui';
 import type { Metadata } from 'next';
 import type { FC, PropsWithChildren } from 'react';
 
-import { WithBreadcrumbLayout } from '@/components/Hoc/WithBreadcrumbLayout';
-
 import { SidebarNav } from './_components/sidebar-nav';
 
 export const metadata: Metadata = {
@@ -32,24 +30,22 @@ const ProfileLayout: FC<ProfileLayoutProps> = async ({ children, params }) => {
     },
   ];
   return (
-    <WithBreadcrumbLayout>
-      <div className="space-y-6 pb-16">
-        <div className="space-y-0.5">
-          <Heading as="h2">Client Profile</Heading>
-          <Text className="text-muted-foreground">
-            Manage your profile, membership, and attendance.
-          </Text>
-        </div>
-        <Separator className="my-6" />
-        <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
-          <aside className="-mx-4 flex flex-col gap-6 lg:w-72">
-            <Avatar src="/avatars/avatar-1.jpg" className="size-48 self-center" />
-            <SidebarNav items={sidebarNavItems} />
-          </aside>
-          <div className="flex-1">{children}</div>
-        </div>
+    <div className="space-y-6 pb-16">
+      <div className="space-y-0.5">
+        <Heading as="h2">Client Profile</Heading>
+        <Text className="text-muted-foreground">
+          Manage your profile, membership, and attendance.
+        </Text>
       </div>
-    </WithBreadcrumbLayout>
+      <Separator className="my-6" />
+      <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+        <aside className="-mx-4 flex flex-col gap-6 lg:w-72">
+          <Avatar src="/avatars/avatar-1.jpg" className="size-48 self-center" />
+          <SidebarNav items={sidebarNavItems} />
+        </aside>
+        <div className="flex-1">{children}</div>
+      </div>
+    </div>
   );
 };
 
