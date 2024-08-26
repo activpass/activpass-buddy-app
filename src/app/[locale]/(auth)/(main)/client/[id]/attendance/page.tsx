@@ -1,7 +1,13 @@
 import { Heading, Separator, Text } from '@paalan/react-ui';
+import type { Metadata } from 'next';
 import type { FC } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+
+export const metadata: Metadata = {
+  title: 'Client Profile - Attendance',
+  description: 'Manage your attendance details and status.',
+};
 
 type AttendancePageProps = {
   params: {

@@ -1,9 +1,15 @@
 import { Heading, Separator, Text } from '@paalan/react-ui';
+import type { Metadata } from 'next';
 import type { FC } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 
 import { ProfileForm } from './_components/profile-form';
+
+export const metadata: Metadata = {
+  title: 'Client Profile',
+  description: 'Manage your profile details',
+};
 
 type ClientProfilePageProps = {
   params: {
