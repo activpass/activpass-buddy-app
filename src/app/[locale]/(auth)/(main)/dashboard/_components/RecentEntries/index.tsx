@@ -10,7 +10,7 @@ import {
 } from '@paalan/react-ui';
 import type { StaticImageData } from 'next/image';
 
-import BizPassIMG from '@/public/static/logos/png/activpass-icon-blue.png';
+import ActivpassIMG from '@/public/logos/png/activpass-icon-blue.png';
 
 type EntryData = {
   id: number;
@@ -26,35 +26,35 @@ const entriesData: EntryData[] = [
     name: 'Olivia Martin',
     email: 'olivia.martin@email.com',
     dateTime: '2024-08-05T10:30:00',
-    avatar: BizPassIMG,
+    avatar: ActivpassIMG,
   },
   {
     id: 2,
     name: 'Jackson Lee',
     email: 'jackson.lee@email.com',
     dateTime: '2024-08-05T11:00:00',
-    avatar: BizPassIMG,
+    avatar: ActivpassIMG,
   },
   {
     id: 3,
     name: 'Isabella Nguyen',
     email: 'isabella.nguyen@email.com',
     dateTime: '2024-08-05T12:15:00',
-    avatar: BizPassIMG,
+    avatar: ActivpassIMG,
   },
   {
     id: 4,
     name: 'William Kim',
     email: 'will@email.com',
     dateTime: '2024-08-05T01:45:00',
-    avatar: BizPassIMG,
+    avatar: ActivpassIMG,
   },
   {
     id: 5,
     name: 'Sofia Davis',
     email: 'sofia.davis@email.com',
     dateTime: '2024-08-05T03:20:00',
-    avatar: BizPassIMG,
+    avatar: ActivpassIMG,
   },
 ];
 

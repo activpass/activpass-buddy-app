@@ -11,7 +11,7 @@ export const FeedbackLayout: FC<PropsWithChildren> = ({ children }) => {
     {
       name: 'Sundhar Pichai',
       position: 'CEO at Google',
-      avatar: '/static/avatars/avatar-1.jpg',
+      avatar: '/avatars/avatar-1.jpg',
       description:
         'Activpass is the best platform for fitness enthusiasts. It has helped me to stay fit and healthy. I highly recommend it to everyone. It is a must-have app. I love it.',
     },
@@ -19,7 +19,7 @@ export const FeedbackLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
       <div />
-      <div className="relative grid place-items-center overflow-hidden lg:grid-cols-2 lg:place-items-stretch">
+      <div className="relative grid place-items-center lg:grid-cols-2 lg:place-items-stretch lg:overflow-hidden">
         <div className="hidden bg-muted lg:block">
           <Logo className="ml-5 mt-8" />
           <div className="mx-auto flex h-full max-w-xl items-center justify-center text-center">
@@ -31,7 +31,7 @@ export const FeedbackLayout: FC<PropsWithChildren> = ({ children }) => {
                   ))}
                 </div>
                 <blockquote>
-                  <p className="text-2xl font-medium italic">
+                  <p className="px-4 text-2xl font-medium italic">
                     <q>{quote.description}</q>
                   </p>
                 </blockquote>
@@ -54,7 +54,7 @@ export const FeedbackLayout: FC<PropsWithChildren> = ({ children }) => {
             ))}
           </div>
         </div>
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-16 lg:py-0">
           <Logo className="absolute left-6 top-6 block lg:hidden" />
           <ThemeToggle className="absolute right-6 top-6" />
           {children}

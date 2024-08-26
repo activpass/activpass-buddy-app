@@ -1,7 +1,7 @@
 import { Heading, VStack } from '@paalan/react-ui';
 import { getTranslations } from 'next-intl/server';
 
-import { WithBreadcrumbLayout } from '@/components/Hoc/WithBreadcrumbLayout';
+import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 
 import Cards from './_components/Cards';
 import { ClientsStatistics } from './_components/ClientsStatistics';
@@ -25,13 +25,14 @@ export async function generateMetadata(props: { params: { locale: string } }) {
 
 const Dashboard = () => {
   return (
-    <WithBreadcrumbLayout
-      items={[
-        {
-          label: 'Dashboard',
-        },
-      ]}
-    >
+    <>
+      <SetBreadcrumbItems
+        items={[
+          {
+            label: 'Dashboard',
+          },
+        ]}
+      />
       <div className="flex flex-1 flex-col gap-4 md:gap-8">
         <VStack gap="3">
           <Heading>Dashboard</Heading>
@@ -48,7 +49,7 @@ const Dashboard = () => {
           <RecentEntries />
         </div>
       </div>
-    </WithBreadcrumbLayout>
+    </>
   );
 };
 

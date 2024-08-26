@@ -18,8 +18,8 @@ export const Logo: FC<LogoProps> = ({ className }) => {
       <Image
         src={
           isDark
-            ? '/static/logos/png/activpass-buddy-logo-white-blue.png'
-            : '/static/logos/png/activpass-buddy-logo-black-blue.png'
+            ? '/logos/png/activpass-buddy-logo-white-blue.png'
+            : '/logos/png/activpass-buddy-logo-black-blue.png'
         }
         alt="Activpass"
         width="140"

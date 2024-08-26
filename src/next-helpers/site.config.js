@@ -4,7 +4,7 @@ import { availableLocaleCodes, defaultLocale, localePrefix } from './next.locale
 const site = {
   title: 'Activpass Buddy Dashboard',
   description: 'Activpass Buddy Dashboard',
-  favicon: '/static/favicons/favicon.ico',
+  favicon: '/favicons/favicon.ico',
   locale: {
     locales: availableLocaleCodes,
     defaultLocale: defaultLocale.code,

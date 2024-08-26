@@ -1,18 +1,23 @@
-import { Heading } from '@paalan/react-ui';
+import { Button, Heading } from '@paalan/react-ui';
 
-import { WithBreadcrumbLayout } from '@/components/Hoc/WithBreadcrumbLayout';
+import Link from '@/components/Link';
+import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 
 const ClientPage = async () => {
   return (
-    <WithBreadcrumbLayout
-      items={[
-        {
-          label: 'Client',
-        },
-      ]}
-    >
+    <>
+      <SetBreadcrumbItems
+        items={[
+          {
+            label: 'Client',
+          },
+        ]}
+      />
       <Heading>Client Page</Heading>
-    </WithBreadcrumbLayout>
+      <Link href="/client/profile">
+        <Button className="mt-4 w-full">Go to client profile</Button>
+      </Link>
+    </>
   );
 };
 
