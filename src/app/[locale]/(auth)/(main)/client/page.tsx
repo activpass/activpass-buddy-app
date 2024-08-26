@@ -1,6 +1,7 @@
-import { Heading } from '@paalan/react-ui';
+import { Button, Heading } from '@paalan/react-ui';
 
 import { WithBreadcrumbLayout } from '@/components/Hoc/WithBreadcrumbLayout';
+import Link from '@/components/Link';
 
 const ClientPage = async () => {
   return (
@@ -12,6 +13,9 @@ const ClientPage = async () => {
       ]}
     >
       <Heading>Client Page</Heading>
+      <Button>
+        <Link href="/client/profile">Go to client profile</Link>
+      </Button>
     </WithBreadcrumbLayout>
   );
 };
