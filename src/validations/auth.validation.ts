@@ -23,6 +23,14 @@ export const baseSignUpValidationSchema = signInValidationSchema.extend({
     .min(1, { message: 'Last name is required' }),
   confirmPassword: z.string({ required_error: 'Password confirmation is required' }),
   provider: userProviderSchema,
+  organization: z.object({
+    name: z
+      .string({ required_error: 'Organization name is required' })
+      .min(1, { message: 'Organization name is required' }),
+    type: z
+      .string({ required_error: 'Organization type is required' })
+      .min(1, { message: 'Organization type is required' }),
+  }),
 });
 
 export const signUpValidationSchema = baseSignUpValidationSchema.refine(
