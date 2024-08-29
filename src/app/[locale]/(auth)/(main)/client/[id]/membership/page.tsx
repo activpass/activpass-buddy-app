@@ -1,7 +1,13 @@
 import { Heading, Separator, Text } from '@paalan/react-ui';
+import type { Metadata } from 'next';
 import type { FC } from 'react';
 
-import { SetBreadcrumbItem } from '@/providers/BreadcrumbProvider';
+import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+
+export const metadata: Metadata = {
+  title: 'Client Profile - Membership',
+  description: 'Manage your membership details and status.',
+};
 
 type MembershipPageProps = {
   params: {
@@ -11,7 +17,7 @@ type MembershipPageProps = {
 const MembershipPage: FC<MembershipPageProps> = ({ params }) => {
   return (
     <>
-      <SetBreadcrumbItem
+      <SetBreadcrumbItems
         items={[
           { label: 'Client', href: '/client' },
           { label: params.id, href: `/client/${params.id}` },

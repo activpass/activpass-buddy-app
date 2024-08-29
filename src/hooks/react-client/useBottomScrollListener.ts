@@ -1,6 +1,5 @@
+import { debounce } from '@paalan/react-shared/lib';
 import { useEffect, useState } from 'react';
-
-import { debounce } from '@/utils/debounce';
 
 type CallbackFunction = () => void;
 

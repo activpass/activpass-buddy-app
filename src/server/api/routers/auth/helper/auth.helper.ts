@@ -1,8 +1,11 @@
+import mongoose from 'mongoose';
+
 import { userProviderSchema } from '@/validations/auth.validation';
 
-import type { IUserData } from '../../users/model/user.model';
+import type { IUserData } from '../../user/model/user.model';
 import { ADMIN_CREDENTIALS, AUTH_ROLES } from '../constants';
 
+const organization = new mongoose.Types.ObjectId();
 const rootAdminUser: IUserData = {
   id: 'root-admin-user-id',
   username: ADMIN_CREDENTIALS.username,
@@ -14,6 +17,8 @@ const rootAdminUser: IUserData = {
   verified: true,
   fullName: 'Admin Admin',
   provider: userProviderSchema.enum.email,
+  organization,
+  orgId: organization.toHexString(),
 };
 
 export const isRootAdminUser = (email: string) => {

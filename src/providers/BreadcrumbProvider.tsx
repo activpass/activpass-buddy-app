@@ -2,7 +2,7 @@
 
 import { createContext } from '@paalan/react-shared/utils';
 import type { Breadcrumb } from '@paalan/react-ui';
-import { type FC, useEffect } from 'react';
+import { type FC, type PropsWithChildren, useCallback, useEffect, useState } from 'react';
 
 export type BreadcrumbItem = React.ComponentPropsWithoutRef<typeof Breadcrumb>['items'][number];
 
@@ -12,12 +12,42 @@ export type BreadcrumbContextType = {
   addItem: (item: BreadcrumbItem) => void;
   removeItem: (item: BreadcrumbItem) => void;
 };
-const [BreadcrumbProvider, useBreadcrumb] = createContext<BreadcrumbContextType>({
+const [LocalBreadcrumbProvider, useBreadcrumb] = createContext<BreadcrumbContextType>({
   hookName: 'useBreadcrumb',
   providerName: 'BreadcrumbProvider',
 });
 
-export { BreadcrumbProvider, useBreadcrumb };
+export { useBreadcrumb };
+
+export const BreadcrumbProvider: FC<PropsWithChildren> = ({ children }) => {
+  const [items, setItems] = useState<BreadcrumbItem[]>([]);
+
+  const addItem = useCallback((item: BreadcrumbItem) => {
+    return setItems(prevItems => {
+      if (typeof item.label === 'string' && prevItems.some(i => i.label === item.label)) {
+        return prevItems;
+      }
+      return [...prevItems, item];
+    });
+  }, []);
+
+  const removeItem = useCallback((item: BreadcrumbItem) => {
+    return setItems(prevItems => prevItems.filter(i => i !== item));
+  }, []);
+
+  return (
+    <LocalBreadcrumbProvider
+      value={{
+        items,
+        setItems,
+        addItem,
+        removeItem,
+      }}
+    >
+      {children}
+    </LocalBreadcrumbProvider>
+  );
+};
 
 type AddBreadcrumbItemProps = {
   items: BreadcrumbItem[];
@@ -33,7 +63,7 @@ export const AddBreadcrumbItem: FC<AddBreadcrumbItemProps> = ({ items }) => {
   return null;
 };
 
-export const SetBreadcrumbItem: FC<AddBreadcrumbItemProps> = ({ items }) => {
+export const SetBreadcrumbItems: FC<AddBreadcrumbItemProps> = ({ items }) => {
   const { setItems } = useBreadcrumb();
 
   useEffect(() => {

@@ -2,8 +2,8 @@ import { TRPCError } from '@trpc/server';
 
 import { TimeInSeconds } from '@/server/api/enums/time-in-seconds.enum';
 import { getHashToken } from '@/server/api/helpers/common';
-import { type IUserData, UserModel } from '@/server/api/routers/users/model/user.model';
-import { userRepository } from '@/server/api/routers/users/repository/user.repository';
+import { type IUserData, UserModel } from '@/server/api/routers/user/model/user.model';
+import { userRepository } from '@/server/api/routers/user/repository/user.repository';
 import { createSecureCookie, deleteCookie } from '@/server/api/utils/cookie-management';
 import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { redis } from '@/server/database/redis';
@@ -198,7 +198,7 @@ class AuthService {
       ...input,
       role: AUTH_ROLES.OWNER,
     };
-    const newUser = await userRepository.createUser({ data });
+    const newUser = await userRepository.create({ data });
 
     if (!newUser) {
       throw getTRPCError('Failed to create user');
@@ -248,7 +248,7 @@ class AuthService {
 
     return {
       success: true,
-      userInfo: await userRepository.getUserById(args.userId, {
+      userInfo: await userRepository.getById(args.userId, {
         includeSensitiveInfo: true,
       }),
       sessionToken: finalSessionToken,

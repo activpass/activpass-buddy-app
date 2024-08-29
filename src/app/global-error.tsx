@@ -1,11 +1,13 @@
 'use client';
 
-import { ArrowRightIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { UpdateIcon } from '@paalan/react-icons';
+import { Button } from '@paalan/react-ui';
 import { captureException } from '@sentry/nextjs';
 import { useTranslations } from 'next-intl';
 import { type FC, useEffect } from 'react';
 
-import Button from '@/components/Common/Button';
+import Link from '@/components/Link';
 import BaseLayout from '@/layouts/BaseLayout';
 import { CenteredLayout } from '@/layouts/CenteredLayout';
 import { Providers } from '@/providers/providers';
@@ -29,26 +31,33 @@ const GlobalErrorPage: FC<GlobalErrorPageProps> = ({ error, params, reset }) => 
             <CenteredLayout>
               <main className="flex flex-col gap-3 text-center">
                 <h1 className="text-4xl font-semibold"> 500 </h1>
-                <h1 className="special mt-4">{t('layouts.error.internalServerError.title')}</h1>
+                <h1 className="mt-4">{t('layouts.error.internalServerError.title')}</h1>
                 <p className="mt-4 max-w-sm text-center text-lg">
                   {t('layouts.error.internalServerError.description')}
                 </p>
-                <Button href="/">
-                  {t('layouts.error.backToHome')}
-                  <ArrowRightIcon />
-                </Button>
-                <Button
-                  href="/"
-                  onClick={e => {
-                    e.preventDefault();
-                    // Attempt to recover by trying to re-render the segment
+                <div className="flex gap-2">
+                  <Button
+                    as={Link}
+                    href="/dashboard"
+                    leftIcon={<ArrowLeftIcon className="size-4" />}
+                  >
+                    {t('layouts.error.backToHome')}
+                  </Button>
+                  <Button
+                    as={Link}
+                    href="/"
+                    variant="outline"
+                    onClick={e => {
+                      e.preventDefault();
+                      // Attempt to recover by trying to re-render the segment
 
-                    reset();
-                  }}
-                >
-                  {t('layouts.error.refresh')}
-                  <ArrowRightIcon />
-                </Button>
+                      reset();
+                    }}
+                    leftIcon={<UpdateIcon className="size-4" />}
+                  >
+                    {t('layouts.error.refresh')}
+                  </Button>
+                </div>
               </main>
             </CenteredLayout>
           </BaseLayout>
