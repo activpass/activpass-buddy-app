@@ -11,8 +11,8 @@ import {
   Strong,
   Tooltip,
 } from '@paalan/react-ui';
-import { Package2 } from 'lucide-react';
 import { type FC } from 'react';
+import { LuPackage2 } from 'react-icons/lu';
 
 import { BreadcrumbLink } from '@/components/BreadcrumbLink';
 import { useBreadcrumb } from '@/providers/BreadcrumbProvider';
@@ -45,7 +45,7 @@ export const WithBreadcrumb: FC = () => {
         <Button variant="outline" size="sm">
           Feedback
         </Button>
-        <IconButton icon={<Package2 className="size-5" />} />
+        <IconButton icon={<LuPackage2 className="size-5" />} />
         <IconButton icon={<QuestionMarkCircledIcon boxSize="5" />} />
       </HStack>
     </Paper>

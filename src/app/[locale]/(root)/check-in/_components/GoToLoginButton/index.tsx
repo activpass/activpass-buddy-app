@@ -1,8 +1,8 @@
 'use client';
 
 import { Button } from '@paalan/react-ui';
-import { ArrowRightIcon } from 'lucide-react';
 import type { FC } from 'react';
+import { LuArrowRight } from 'react-icons/lu';
 
 import { useRouter } from '@/lib/navigation';
 
@@ -20,7 +20,7 @@ export const GoToLoginButton: FC<GoToLoginButtonProps> = ({ className }) => {
       variant="outline"
       onClick={onClick}
       size="sm"
-      rightIcon={<ArrowRightIcon className="size-4" />}
+      rightIcon={<LuArrowRight className="size-4" />}
     >
       Go to Login
     </Button>

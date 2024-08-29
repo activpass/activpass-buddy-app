@@ -15,8 +15,8 @@ import {
   SheetTrigger,
   Text,
 } from '@paalan/react-ui';
-import { CircleUser, Menu } from 'lucide-react';
 import type { FC, ReactNode } from 'react';
+import { LuMenu, LuUserCircle } from 'react-icons/lu';
 
 import { SignOutButton } from '@/components/Auth/SignOutButton';
 import ActiveLink from '@/components/Common/ActiveLink';
@@ -73,7 +73,7 @@ export const WithHeader: FC = () => {
       <SheetRoot>
         <SheetTrigger asChild>
           <Button variant="outline" size="md" className="shrink-0 md:hidden">
-            <Menu className="size-5" />
+            <LuMenu className="size-5" />
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
@@ -91,7 +91,7 @@ export const WithHeader: FC = () => {
         <DropdownMenuRoot>
           <DropdownMenuTrigger asChild>
             <IconButton className="rounded-full text-xl text-foreground">
-              <CircleUser className="size-5" />
+              <LuUserCircle className="size-5" />
               <span className="sr-only">Toggle user menu</span>
             </IconButton>
           </DropdownMenuTrigger>

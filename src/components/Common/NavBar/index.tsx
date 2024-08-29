@@ -1,10 +1,9 @@
 'use client';
 
-import Hamburger from '@heroicons/react/24/solid/Bars3Icon';
-import XMark from '@heroicons/react/24/solid/XMarkIcon';
-import * as Label from '@radix-ui/react-label';
+import { Label } from '@paalan/react-ui';
 import type { ComponentProps, FC, HTMLAttributeAnchorTarget, ReactNode } from 'react';
 import { useState } from 'react';
+import { HiBars3, HiXMark } from 'react-icons/hi2';
 
 import { SignOutButton } from '@/components/Auth/SignOutButton';
 import { LanguageSwitcher } from '@/components/Common/LanguageSwitcher';
@@ -16,8 +15,8 @@ import style from './index.module.css';
 import NavItem from './NavItem';
 
 const navInteractionIcons = {
-  show: <Hamburger className={style.navInteractionIcon} />,
-  close: <XMark className={style.navInteractionIcon} />,
+  show: <HiBars3 className={style.navInteractionIcon} />,
+  close: <HiXMark className={style.navInteractionIcon} />,
 };
 
 type NavbarProps = {
@@ -41,13 +40,13 @@ const NavBar: FC<NavbarProps> = ({ navItems, languages, onThemeTogglerClick }) =
           Activpass
         </Link>
 
-        <Label.Root
+        <Label
           onClick={() => setIsMenuOpen(prev => !prev)}
           className={style.sidebarItemTogglerLabel}
           htmlFor="sidebarItemToggler"
         >
           {navInteractionIcons[isMenuOpen ? 'close' : 'show']}
-        </Label.Root>
+        </Label>
       </div>
 
       <input className="peer hidden" id="sidebarItemToggler" type="checkbox" />

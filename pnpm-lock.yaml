@@ -10,9 +10,6 @@ overrides:
 importers:
   .:
     dependencies:
-      '@heroicons/react':
-        specifier: ^2.1.4
-        version: 2.1.4(react@18.3.1)
       '@hookform/resolvers':
         specifier: ^3.6.0
         version: 3.6.0(react-hook-form@7.52.0(react@18.3.1))
@@ -46,9 +43,6 @@ importers:
       '@t3-oss/env-nextjs':
         specifier: ^0.10.1
         version: 0.10.1(typescript@5.5.4)(zod@3.23.8)
-      '@tailwindcss/typography':
-        specifier: ^0.5.13
-        version: 0.5.13(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
       '@tanstack/react-query':
         specifier: ^5.49.2
         version: 5.49.2(react@18.3.1)
@@ -70,18 +64,15 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       glob:
         specifier: ^10.4.2
         version: 10.4.2
       ioredis:
         specifier: ^5.4.1
         version: 5.4.1
-      lucide-react:
-        specifier: ^0.417.0
-        version: 0.417.0(react@18.3.1)
-      luxon:
-        specifier: ^3.4.4
-        version: 3.4.4
       mongoose:
         specifier: ^8.5.1
         version: 8.5.1
@@ -242,9 +233,6 @@ importers:
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
-      '@types/luxon':
-        specifier: ^3.4.2
-        version: 3.4.2
       '@types/node':
         specifier: ^20.14.9
         version: 20.14.9
@@ -2249,14 +2237,6 @@ packages:
       {
         integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==,
       }
-
-  '@heroicons/react@2.1.4':
-    resolution:
-      {
-        integrity: sha512-ju0wj0wwrUTMQ2Yceyrma7TKuI3BpSjp+qKqV81K9KGcUHdvTMdiwfRc2cwXBp3uXtKuDZkh0v03nWOQnJFv2Q==,
-      }
-    peerDependencies:
-      react: '>= 16'
 
   '@hookform/resolvers@3.6.0':
     resolution:
@@ -5358,14 +5338,6 @@ packages:
     peerDependencies:
       tailwindcss: '>=3.2.0'
 
-  '@tailwindcss/typography@0.5.13':
-    resolution:
-      {
-        integrity: sha512-ADGcJ8dX21dVVHIwTRgzrcunY6YY9uSlAHHGVKvkA+vLc5qLwEszvKts40lx7z0qc4clpjclwLeK5rVCV2P/uw==,
-      }
-    peerDependencies:
-      tailwindcss: '>=3.0.0 || insiders'
-
   '@tanstack/query-core@5.49.1':
     resolution:
       {
@@ -5935,12 +5907,6 @@ packages:
     resolution:
       {
         integrity: sha512-OpXEVoCKSS3lQqjx9GGGOapBeuW5eUboYHRlHP9urXPX25IKZ6AnP5ZRxtVf63iieUbsHxLn8NQ5Nlftc6yzAA==,
-      }
-
-  '@types/luxon@3.4.2':
-    resolution:
-      {
-        integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==,
       }
 
   '@types/mdast@3.0.15':
@@ -8600,6 +8566,12 @@ packages:
         integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==,
       }
     engines: { node: '>=0.11' }
+
+  date-fns@3.6.0:
+    resolution:
+      {
+        integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==,
+      }
 
   debounce-fn@4.0.0:
     resolution:
@@ -12560,12 +12532,6 @@ packages:
         integrity: sha512-kZzYOKspf8XVX5AvmQF94gQW0lejFVgb80G85bU4ZWzoJ6C03PQg3coYAUpSTpQWelrZELd3XWgHzw4Ck5kaIw==,
       }
 
-  lodash.castarray@4.4.0:
-    resolution:
-      {
-        integrity: sha512-aVx8ztPv7/2ULbArGJ2Y42bG1mEQ5mGjpdvrbJcJFU3TbYybe+QlLS4pst9zV52ymy2in1KpFPiZnAOATxD4+Q==,
-      }
-
   lodash.debounce@4.0.8:
     resolution:
       {
@@ -12758,13 +12724,6 @@ packages:
     resolution:
       {
         integrity: sha512-An0UCfG/rSiqtAIiBPO0Y9/zAnHUZxAMiCpTd5h2smgsj7GGmcenvrvww2cqNA8/4A5ZrD1gJpHN2mIHZQF+Mg==,
-      }
-    engines: { node: '>=12' }
-
-  luxon@3.4.4:
-    resolution:
-      {
-        integrity: sha512-zobTr7akeGHnv7eBOXcRgMeCP6+uyYsczwmeRCauvpvaAltgNyTbLH/+VaEAPUeWBT+1GuNmz4wC/6jtQzbbVA==,
       }
     engines: { node: '>=12' }
 
@@ -15104,13 +15063,6 @@ packages:
     engines: { node: '>=18.0' }
     peerDependencies:
       postcss: ^8.4.31
-
-  postcss-selector-parser@6.0.10:
-    resolution:
-      {
-        integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==,
-      }
-    engines: { node: '>=4' }
 
   postcss-selector-parser@6.1.0:
     resolution:
@@ -20004,10 +19956,6 @@ snapshots:
     dependencies:
       '@hapi/hoek': 9.3.0
 
-  '@heroicons/react@2.1.4(react@18.3.1)':
-    dependencies:
-      react: 18.3.1
-
   '@hookform/resolvers@3.6.0(react-hook-form@7.52.0(react@18.3.1))':
     dependencies:
       react-hook-form: 7.52.0(react@18.3.1)
@@ -23099,14 +23047,6 @@ snapshots:
     dependencies:
       tailwindcss: 3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4))
 
-  '@tailwindcss/typography@0.5.13(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
-    dependencies:
-      lodash.castarray: 4.4.0
-      lodash.isplainobject: 4.0.6
-      lodash.merge: 4.6.2
-      postcss-selector-parser: 6.0.10
-      tailwindcss: 3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4))
-
   '@tanstack/query-core@5.49.1': {}
 
   '@tanstack/query-devtools@5.49.1': {}
@@ -23431,8 +23371,6 @@ snapshots:
       '@types/koa': 2.14.0
 
   '@types/lodash@4.17.6': {}
-
-  '@types/luxon@3.4.2': {}
 
   '@types/mdast@3.0.15':
     dependencies:
@@ -25216,6 +25154,8 @@ snapshots:
   date-fns@2.30.0:
     dependencies:
       '@babel/runtime': 7.24.7
+
+  date-fns@3.6.0: {}
 
   debounce-fn@4.0.0:
     dependencies:
@@ -28147,8 +28087,6 @@ snapshots:
 
   lodash.capitalize@4.2.1: {}
 
-  lodash.castarray@4.4.0: {}
-
   lodash.debounce@4.0.8: {}
 
   lodash.defaults@4.2.0: {}
@@ -28231,8 +28169,6 @@ snapshots:
       react: 18.3.1
 
   luxon@3.3.0: {}
-
-  luxon@3.4.4: {}
 
   lz-string@1.5.0: {}
 
@@ -29709,11 +29645,6 @@ snapshots:
   postcss-safe-parser@7.0.0(postcss@8.4.39):
     dependencies:
       postcss: 8.4.39
-
-  postcss-selector-parser@6.0.10:
-    dependencies:
-      cssesc: 3.0.0
-      util-deprecate: 1.0.2
 
   postcss-selector-parser@6.1.0:
     dependencies:
