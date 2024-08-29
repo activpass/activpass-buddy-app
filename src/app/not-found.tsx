@@ -1,9 +1,10 @@
 'use client';
 
-import { ArrowRightIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { Button } from '@paalan/react-ui';
 import { useTranslations } from 'next-intl';
 
-import Button from '@/components/Common/Button';
+import Link from '@/components/Link';
 import { CenteredLayout } from '@/layouts/CenteredLayout';
 
 const NotFoundPage = () => {
@@ -14,13 +15,12 @@ const NotFoundPage = () => {
       <CenteredLayout>
         <main className="flex flex-col gap-3 text-center">
           <h1 className="text-4xl font-semibold"> 404 </h1>
-          <h1 className="special mt-4">{t('layouts.error.notFound.title')}</h1>
+          <h1 className="mt-4">{t('layouts.error.notFound.title')}</h1>
           <p className="mt-4 max-w-sm text-center text-lg">
             {t('layouts.error.notFound.description')}
           </p>
-          <Button href="/">
+          <Button as={Link} href="/" leftIcon={<ArrowLeftIcon className="size-4" />}>
             {t('layouts.error.backToHome')}
-            <ArrowRightIcon />
           </Button>
         </main>
       </CenteredLayout>

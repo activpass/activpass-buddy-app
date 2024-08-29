@@ -5,15 +5,16 @@ import { Logger } from '@/server/logger';
 import { membershipPlanRepository } from '../repository/membership-plan.repository';
 import type {
   CreateMembershipPlanArgs,
-  GetMembershipPlanByIdArgs,
-  ListMembershipPlansArgs,
+  DeleteMembershipPlanArgs,
+  GetMembershipPlanArgs,
+  ListMembershipPlanArgs,
   UpdateMembershipPlanArgs,
 } from './membership-plan.service.types';
 
 class MembershipPlanService {
   private readonly logger = new Logger(MembershipPlanService.name);
 
-  getById = async ({ id }: GetMembershipPlanByIdArgs) => {
+  get = async ({ input: { id } }: GetMembershipPlanArgs) => {
     try {
       if (!id) {
         throw new TRPCError({
@@ -21,7 +22,7 @@ class MembershipPlanService {
           message: 'MembershipPlan ID is required',
         });
       }
-      const membershipPlan = await membershipPlanRepository.getById(id);
+      const membershipPlan = await membershipPlanRepository.get({ id });
       return membershipPlan;
     } catch (error: unknown) {
       this.logger.error('Failed to get membershipPlan by id', error);
@@ -37,7 +38,6 @@ class MembershipPlanService {
       const membershipPlan = await membershipPlanRepository.create({ data: input, orgId });
       return membershipPlan;
     } catch (error: unknown) {
-      this.logger.error('Failed to create membershipPlan', error);
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'Failed to create membershipPlan',
@@ -59,10 +59,14 @@ class MembershipPlanService {
     }
   };
 
-  list = async ({ orgId }: ListMembershipPlansArgs) => {
+  list = async ({ orgId }: ListMembershipPlanArgs) => {
     try {
       const membershipPlans = await membershipPlanRepository.list({ orgId });
-      return membershipPlans;
+      return membershipPlans.map(membershipPlan => {
+        return membershipPlan.toObject({
+          flattenObjectIds: true,
+        });
+      });
     } catch (error: unknown) {
       this.logger.error('Failed to list membershipPlans', error);
       throw new TRPCError({
@@ -70,6 +74,11 @@ class MembershipPlanService {
         message: 'Failed to list membershipPlans',
       });
     }
+  };
+
+  delete = async ({ input: { id } }: DeleteMembershipPlanArgs) => {
+    const membershipPlan = await membershipPlanRepository.delete({ id });
+    return membershipPlan;
   };
 }
 

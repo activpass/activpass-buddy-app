@@ -2,9 +2,10 @@ import { TRPCError } from '@trpc/server';
 
 import { Logger } from '@/server/logger/logger';
 
-import { type IMembershipPlanSchema, MembershipPlanModel } from '../model/membership-plan.model';
+import { MembershipPlanModel } from '../model/membership-plan.model';
 import {
   type CreateMembershipPlanParams,
+  type GetMembershipPlanParams,
   type ListMembershipPlansParams,
   type UpdateMembershipPlanParams,
 } from './membership-plan.repository.types';
@@ -12,8 +13,15 @@ import {
 class MembershipPlanRepository {
   private readonly logger = new Logger(MembershipPlanRepository.name);
 
-  getById = async (id: IMembershipPlanSchema['id']) => {
-    return MembershipPlanModel.get(id);
+  list = async ({ orgId }: ListMembershipPlansParams) => {
+    const filter: Record<string, string> = {
+      organization: orgId,
+    };
+    return MembershipPlanModel.list(filter);
+  };
+
+  get = async ({ id }: GetMembershipPlanParams) => {
+    return (await MembershipPlanModel.get(id)).toObject();
   };
 
   create = async ({ data, orgId }: CreateMembershipPlanParams) => {
@@ -23,7 +31,7 @@ class MembershipPlanRepository {
         organization: orgId,
       });
       await doc.save();
-      return doc;
+      return doc.toObject();
     } catch (error) {
       this.logger.error('Failed to create membershipPlan', error);
       throw error;
@@ -41,18 +49,21 @@ class MembershipPlanRepository {
           message: 'MembershipPlan not found with the given ID',
         });
       }
-      return updatedMembershipPlan;
+      return updatedMembershipPlan.toObject();
     } catch (error) {
       this.logger.error('Failed to update membershipPlan', error);
       throw error;
     }
   };
 
-  list = async ({ orgId }: ListMembershipPlansParams) => {
-    const filter: Record<string, string> = {
-      organization: orgId,
-    };
-    return MembershipPlanModel.list(filter);
+  delete = async ({ id }: GetMembershipPlanParams) => {
+    try {
+      await MembershipPlanModel.findByIdAndDelete(id);
+      return { id };
+    } catch (error) {
+      this.logger.error('Failed to delete membershipPlan', error);
+      throw error;
+    }
   };
 }
 

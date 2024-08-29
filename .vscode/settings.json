@@ -13,6 +13,7 @@
     "source.fixAll.stylelint",
     "source.fixAll.markdownlint"
   ],
+  "prettier.prettierPath": "node_modules/prettier",
   "prettier.configPath": "prettier.config.cjs",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",

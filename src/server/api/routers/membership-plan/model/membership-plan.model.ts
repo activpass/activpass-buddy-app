@@ -3,9 +3,10 @@ import mongoose, {
   type HydratedDocument,
   type InferSchemaType,
   type Model,
+  type ProjectionType,
 } from 'mongoose';
 
-import { MembershipType } from '@/server/api/constants/common.constant';
+import { createMembershipPlanInputSchema } from '../membership-plan.input';
 
 // Virtuals are not included in the schema type
 export interface IMembershipPlanVirtuals {
@@ -27,7 +28,10 @@ export interface IMembershipPlanDocument
 export interface IMembershipPlanModel
   extends Model<IMembershipPlanSchema, {}, IMembershipPlanSchemaMethods> {
   get(id: string | mongoose.Schema.Types.ObjectId): Promise<IMembershipPlanDocument>;
-  list(filter?: FilterQuery<IMembershipPlanSchema>): Promise<IMembershipPlanDocument[]>;
+  list(
+    filter?: FilterQuery<IMembershipPlanSchema>,
+    projection?: ProjectionType<IMembershipPlanSchema>
+  ): Promise<IMembershipPlanDocument[]>;
 }
 
 const schemaOptions = {
@@ -47,18 +51,23 @@ const MembershipPlanSchema = new mongoose.Schema(
     planName: { type: String, required: true },
     tenure: {
       type: String,
-      enum: Object.values(MembershipType),
+      enum: Object.values(createMembershipPlanInputSchema.shape.tenure.enum),
       required: true,
     },
     amount: { type: Number, required: true },
-    features: { type: String, required: true },
-    discountPercentage: { type: Number, default: 0 },
+    features: [
+      {
+        value: { type: String, required: true },
+      },
+    ],
+    discountPercentage: { type: Number },
   },
   schemaOptions
 );
 
 MembershipPlanSchema.virtual('discountedAmount').get(function discountedAmount() {
-  return this.amount - (this.amount * this.discountPercentage) / 100;
+  if (!this.amount) return 0;
+  return this.amount - (this.amount * (this.discountPercentage || 0)) / 100;
 });
 
 MembershipPlanSchema.static('get', async function get(id: string) {
@@ -69,13 +78,11 @@ MembershipPlanSchema.static('get', async function get(id: string) {
   return client;
 });
 
-MembershipPlanSchema.static('list', async function list(options) {
+MembershipPlanSchema.static('list', async function list(options, projection) {
   const newOptions = options || {};
-  const docs = await this.find({
-    ...newOptions,
-  })
-    .populate(['organization'])
-    .sort({ createdAt: -1 });
+  const docs: IMembershipPlanDocument[] = await this.find(newOptions, projection).sort({
+    createdAt: -1,
+  });
   return docs;
 });
 

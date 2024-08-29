@@ -1,10 +1,16 @@
 import type {
   CreateMembershipPlanInputSchema,
+  DeleteMembershipPlanInputSchema,
+  GetMembershipPlanInputSchema,
   UpdateMembershipPlanInputSchema,
 } from '../membership-plan.input';
 
-export type GetMembershipPlanByIdArgs = {
-  id: string;
+export type ListMembershipPlanArgs = {
+  orgId: string;
+};
+
+export type GetMembershipPlanArgs = {
+  input: GetMembershipPlanInputSchema;
 };
 
 export type CreateMembershipPlanArgs = {
@@ -16,6 +22,6 @@ export type UpdateMembershipPlanArgs = {
   input: UpdateMembershipPlanInputSchema;
 };
 
-export type ListMembershipPlansArgs = {
-  orgId: string;
+export type DeleteMembershipPlanArgs = {
+  input: DeleteMembershipPlanInputSchema;
 };

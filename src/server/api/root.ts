@@ -15,8 +15,8 @@ import { organizationRouter } from './routers/organization/organization.router';
  */
 export const appRouter = createTRPCRouter({
   auth: authRouter,
-  user: userRouter,
-  client: clientRouter,
+  users: userRouter,
+  clients: clientRouter,
   income: incomeRouter,
   membershipPlan: membershipPlanRouter,
   organization: organizationRouter,

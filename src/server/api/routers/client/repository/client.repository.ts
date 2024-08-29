@@ -88,10 +88,10 @@ class ClientRepository {
 
   analytics = async ({ orgId }: AnalyticsClientParams) => {
     const result = {
-      totalClients: 0,
-      currentMonthTotalClients: 0,
-      currentDatePresentCount: 0,
-      currentDateAbsentCount: 0,
+      overallCount: 0,
+      newAddedCount: 0,
+      presentCount: 0,
+      absentCount: 0,
     };
 
     try {
@@ -102,12 +102,12 @@ class ClientRepository {
           },
         },
         {
-          $count: 'totalClients',
+          $count: 'overallCount',
         },
       ]).exec();
 
       if (totalClients.length > 0) {
-        result.totalClients = totalClients[0].totalClients;
+        result.overallCount = totalClients[0].overallCount;
       }
 
       const currentMonthTotalClients = await ClientModel.aggregate([
@@ -121,12 +121,12 @@ class ClientRepository {
           },
         },
         {
-          $count: 'currentMonthTotalClients',
+          $count: 'newAddedCount',
         },
       ]).exec();
 
       if (currentMonthTotalClients.length > 0) {
-        result.currentMonthTotalClients = currentMonthTotalClients[0].totalCurrentMonthClients;
+        result.newAddedCount = currentMonthTotalClients[0].newAddedCount;
       }
 
       const currentDatePresentCount = await TimeLogModel.aggregate([
@@ -140,16 +140,16 @@ class ClientRepository {
           },
         },
         {
-          $count: 'currentDatePresentCount',
+          $count: 'presentCount',
         },
       ]).exec();
 
       if (currentDatePresentCount.length > 0) {
-        result.currentDatePresentCount = currentDatePresentCount[0].currentDatePresentCount;
+        result.presentCount = currentDatePresentCount[0].presentCount;
       }
 
-      const currentDateAbsentCount = result.totalClients - result.currentDatePresentCount;
-      result.currentDateAbsentCount = currentDateAbsentCount;
+      const absentCount = result.overallCount - result.presentCount;
+      result.absentCount = absentCount;
 
       return result;
     } catch (error) {

@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@paalan/react-ui';
+import { Card, CardContent, CardHeader, CardTitle, Strong, Text } from '@paalan/react-ui';
 
 type AnalyticsCardProps = {
   title: string;
   icon: React.ComponentType;
   value: string;
-  description: string;
+  description?: string;
 };
 
 const AnalyticsCard: React.FC<AnalyticsCardProps> = ({
@@ -19,9 +19,9 @@ const AnalyticsCard: React.FC<AnalyticsCardProps> = ({
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {IconComponent && <IconComponent />}
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">{description}</p>
+      <CardContent className="flex flex-col pb-0">
+        <Strong className="text-3xl font-bold">{value}</Strong>
+        {description && <Text className="text-sm text-muted-foreground">{description}</Text>}
       </CardContent>
     </Card>
   );
