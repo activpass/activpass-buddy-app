@@ -1,11 +1,11 @@
 'use client';
 
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { UpdateIcon } from '@paalan/react-icons';
 import { Button } from '@paalan/react-ui';
 import { captureException } from '@sentry/nextjs';
 import { useTranslations } from 'next-intl';
 import { type FC, useEffect } from 'react';
+import { HiArrowLeft } from 'react-icons/hi2';
 
 import Link from '@/components/Link';
 import BaseLayout from '@/layouts/BaseLayout';
@@ -36,11 +36,7 @@ const GlobalErrorPage: FC<GlobalErrorPageProps> = ({ error, params, reset }) => 
                   {t('layouts.error.internalServerError.description')}
                 </p>
                 <div className="flex gap-2">
-                  <Button
-                    as={Link}
-                    href="/dashboard"
-                    leftIcon={<ArrowLeftIcon className="size-4" />}
-                  >
+                  <Button as={Link} href="/dashboard" leftIcon={<HiArrowLeft className="size-4" />}>
                     {t('layouts.error.backToHome')}
                   </Button>
                   <Button

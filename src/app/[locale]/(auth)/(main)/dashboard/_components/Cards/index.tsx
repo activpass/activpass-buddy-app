@@ -1,4 +1,4 @@
-import { DollarSign, FileText, TrendingDown, Users } from 'lucide-react';
+import { LuDollarSign, LuFileText, LuTrendingDown, LuUsers } from 'react-icons/lu';
 
 import AnalyticsCard from '@/components/shared/AnalyticsCard';
 
@@ -6,28 +6,28 @@ const cardItems = [
   {
     id: 1,
     title: 'Total Clients',
-    icon: Users,
+    icon: LuUsers,
     value: '45,231',
     description: '+20.1% from Overall',
   },
   {
     id: 2,
     title: 'Client Entries',
-    icon: FileText,
+    icon: LuFileText,
     value: '350',
     description: '+180.1% from today',
   },
   {
     id: 3,
     title: 'Total Earnings',
-    icon: DollarSign,
+    icon: LuDollarSign,
     value: '+112,234',
     description: '+19% from this month',
   },
   {
     id: 4,
     title: 'Total Expenses',
-    icon: TrendingDown,
+    icon: LuTrendingDown,
     value: '-11,573',
     description: '+201 since this month',
   },

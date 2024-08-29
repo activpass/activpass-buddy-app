@@ -1,8 +1,8 @@
 'use client';
 
-import { ArrowPathIcon } from '@heroicons/react/24/solid';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+import { HiArrowPath } from 'react-icons/hi2';
 
 import { usePathname, useRouter } from '@/lib/navigation';
 import { useSession } from '@/stores/session-store';
@@ -36,7 +36,7 @@ export const AuthGuard: React.FC<Props> = ({ children }) => {
   ) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <ArrowPathIcon className="size-6 animate-spin" />
+        <HiArrowPath className="size-6 animate-spin" />
       </div>
     );
   }
