@@ -14,8 +14,8 @@ importers:
         specifier: ^3.6.0
         version: 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@paalan/react-config':
-        specifier: ^1.4.0
-        version: 1.4.0(prettier@3.3.3)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
+        specifier: ^1.4.1
+        version: 1.4.1(prettier@3.3.3)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
       '@paalan/react-hooks':
         specifier: ^1.4.0
         version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -26,14 +26,14 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.25.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@paalan/react-shared':
-        specifier: ^1.4.2
-        version: 1.4.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
+        specifier: ^1.4.3
+        version: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
       '@paalan/react-test-utils':
         specifier: ^1.4.1
         version: 1.4.1
       '@paalan/react-ui':
-        specifier: ^1.4.3
-        version: 1.4.3(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.4.5
+        version: 1.4.5(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sentry/nextjs':
         specifier: ^8.13.0
         version: 8.13.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.25.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.52.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.25.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.25.1)(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.5))(esbuild@0.20.2))
@@ -3251,10 +3251,10 @@ packages:
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
 
-  '@paalan/react-config@1.4.0':
+  '@paalan/react-config@1.4.1':
     resolution:
       {
-        integrity: sha512-jM29x+PiDBat0/2UZy9fp6VrR+tIXdCOecZsvkjNAU/VtdsVvwGERznuxPBEzAnvjAGZpTq/+ne+N73287PTrw==,
+        integrity: sha512-JLqhd4xY+V8Uj6C4pkJFj3as9bU4/UH9lwhEyRdl5yFcoyXNIeCSfoDyvy7UZJ6ZW3U4btnI3wYFFv7X1H6gyw==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -3291,10 +3291,10 @@ packages:
       react-dom: '>=16.18.x'
       react-router-dom: '>=6.x.x'
 
-  '@paalan/react-shared@1.4.2':
+  '@paalan/react-shared@1.4.3':
     resolution:
       {
-        integrity: sha512-7a99XnzKRwYpTIFVkDMnd/FsETodOTzOTenciMC0vYMSuhvbrgAwrbN28eakDoYDsV367UckiCs324nVo7vT8g==,
+        integrity: sha512-tI0v3dBJQL6gxDnjtq/zy0LTc9fd7qr2DJzKO7HGuGuKUA73ii5JU/hVeWKgi0BNXr6nmher9pMcE1xfLTGhHQ==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -3309,10 +3309,10 @@ packages:
       }
     engines: { node: '>=16.x.x' }
 
-  '@paalan/react-ui@1.4.3':
+  '@paalan/react-ui@1.4.5':
     resolution:
       {
-        integrity: sha512-JbYFu2cbysq9kV70M8UuNnhcYUoLmIdCuFlnALKRINsQ1GzI7QfBqJSYLF/Cqr9BAFY3geXCIMaeLcMrD7BGlA==,
+        integrity: sha512-UD2BwrOxWPJwrJr8AZ7hizMT351oqouOo+skrXVpS9CQnBPuFp7kzezoOHm8AYUn8ar8HNwXTdzydjuvHsFOYQ==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -20784,7 +20784,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.25.1(@opentelemetry/api@1.9.0)
 
-  '@paalan/react-config@1.4.0(prettier@3.3.3)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
+  '@paalan/react-config@1.4.1(prettier@3.3.3)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
     dependencies:
       '@ianvs/prettier-plugin-sort-imports': 4.3.1(prettier@3.3.3)
       prettier-plugin-tailwindcss: 0.5.14(@ianvs/prettier-plugin-sort-imports@4.3.1(prettier@3.3.3))(prettier@3.3.3)
@@ -20832,7 +20832,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@paalan/react-shared@1.4.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
+  '@paalan/react-shared@1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
     dependencies:
       axios: 1.7.2(debug@4.3.5)
       clsx: 2.1.1
@@ -20846,7 +20846,7 @@ snapshots:
 
   '@paalan/react-test-utils@1.4.1': {}
 
-  '@paalan/react-ui@1.4.3(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@paalan/react-ui@1.4.5(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@hookform/resolvers': 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@radix-ui/react-accordion': 1.2.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
