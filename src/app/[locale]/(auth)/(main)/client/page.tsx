@@ -10,7 +10,7 @@ import { ClientTable } from './_components/ClientTable';
 import { NoMembershipPlans } from './_components/NoMembershipPlans';
 
 const ClientPage = async () => {
-  const membershipPlans = await api.membershipPlan.list();
+  const membershipPlans = await api.membershipPlans.list();
   return (
     <>
       <SetBreadcrumbItems

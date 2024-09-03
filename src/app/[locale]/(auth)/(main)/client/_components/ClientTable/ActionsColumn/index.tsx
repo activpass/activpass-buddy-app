@@ -3,10 +3,10 @@ import { Button, DropdownMenu } from '@paalan/react-ui';
 import { useRouter } from 'next/navigation';
 import { type FC } from 'react';
 
-import type { ClientRecord } from '../types';
+import type { ClientData } from '../types';
 
 type ActionsColumnProps = {
-  row: ClientRecord;
+  row: ClientData;
 };
 export const ActionsColumn: FC<ActionsColumnProps> = ({ row }) => {
   const router = useRouter();

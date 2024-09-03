@@ -7,7 +7,7 @@ import { api } from '@/trpc/server';
 import { MembershipPlanTable } from './_components/MembershipPlanTable';
 
 const MembershipPage: React.FC = () => {
-  const membershipListPromise = api.membershipPlan.list();
+  const membershipListPromise = api.membershipPlans.list();
   return (
     <>
       <SetBreadcrumbItems

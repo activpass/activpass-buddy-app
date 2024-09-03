@@ -20,7 +20,7 @@ export const SENTRY_ENABLE = IS_DEVELOPMENT || !!VERCEL_ENV;
  * and not when it's on Production Mode (nodejs.org)
  */
 export const SENTRY_CAPTURE_RATE =
-  SENTRY_ENABLE && VERCEL_ENV && BASE_URL !== 'https://app.activpass.com' ? 1.0 : 0.01;
+  SENTRY_ENABLE && VERCEL_ENV && BASE_URL !== 'https://app.buddy.activpass.in' ? 1.0 : 0.01;
 
 /**
  * Provides the Route for Sentry's Server-Side Tunnel

@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, type FormItemField, useToast } from '@paalan/react-ui';
+import { Form, type FormFieldItem, useToast } from '@paalan/react-ui';
 import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -13,7 +13,7 @@ import {
   type SignUpValidationSchemaType,
 } from '@/validations/auth.validation';
 
-const fields: FormItemField[] = [
+const fields: FormFieldItem<SignUpValidationSchemaType>[] = [
   {
     name: 'firstName',
     label: 'First name',

@@ -12,7 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@paalan/react-ui';
-import { TrendingUp } from 'lucide-react';
+import { LuTrendingUp } from 'react-icons/lu';
 import { CartesianGrid, LabelList, Line, LineChart, XAxis } from 'recharts';
 
 const chartItems = [
@@ -83,7 +83,7 @@ export const EmployeeSalary = () => {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="size-4" />
+          Trending up by 5.2% this month <LuTrendingUp className="size-4" />
         </div>
         <div className="leading-none text-muted-foreground">
           Showing total salary distribution for the last 6 months

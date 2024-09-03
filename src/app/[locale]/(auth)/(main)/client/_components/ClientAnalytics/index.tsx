@@ -1,6 +1,6 @@
 import { numberIntl } from '@paalan/react-shared/lib';
-import { CheckCircle, FileText, Users, XCircle } from 'lucide-react';
 import { type FC } from 'react';
+import { LuCheckCircle, LuFileText, LuUsers, LuXCircle } from 'react-icons/lu';
 
 import AnalyticsCard from '@/components/shared/AnalyticsCard';
 import { api } from '@/trpc/server';
@@ -12,25 +12,25 @@ export const ClientAnalytics: FC<ClientAnalyticsProps> = async () => {
   const cardItems = [
     {
       title: 'Total Clients',
-      icon: Users,
+      icon: LuUsers,
       value: numberIntl.format(analyticsData.overallCount),
       description: 'Overall total clients',
     },
     {
       title: 'New Clients',
-      icon: FileText,
+      icon: LuFileText,
       value: numberIntl.format(analyticsData.newAddedCount),
       description: 'New clients this month',
     },
     {
       title: 'Present',
-      icon: CheckCircle,
+      icon: LuCheckCircle,
       value: numberIntl.format(analyticsData.presentCount),
       description: 'Today clients present',
     },
     {
       title: 'Absent',
-      icon: XCircle,
+      icon: LuXCircle,
       value: numberIntl.format(analyticsData.absentCount),
       description: 'Today clients absent',
     },

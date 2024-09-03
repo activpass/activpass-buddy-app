@@ -1,6 +1,6 @@
 'use client';
 
-import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
+import { MoonIcon, SunIcon } from '@paalan/react-icons';
 import { useNextTheme } from '@paalan/react-providers/NextThemeProvider';
 import { cn } from '@paalan/react-shared/lib';
 import { useTranslations } from 'next-intl';
@@ -31,8 +31,8 @@ const ThemeToggle: FC<ThemeToggleProps> = ({ onClick = () => {}, className }) =>
       className={cn(styles.themeToggle, 'hover:dark:bg-neutral-800', className)}
       aria-label={ariaLabel}
     >
-      <MoonIcon className="block dark:hidden" height="20" />
-      <SunIcon className="hidden dark:block" height="20" />
+      <MoonIcon className="block dark:hidden" />
+      <SunIcon className="hidden dark:block" />
     </button>
   );
 };

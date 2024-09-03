@@ -17,7 +17,7 @@ export const DeleteMembershipPlanDialog: FC<DeleteMembershipPlanDialogProps> = (
   id,
   onDelete,
 }) => {
-  const deleteMembershipPlanMutation = api.membershipPlan.delete.useMutation({
+  const deleteMembershipPlanMutation = api.membershipPlans.delete.useMutation({
     onSuccess: result => {
       onDelete(result.id);
       onOpenChange(false);

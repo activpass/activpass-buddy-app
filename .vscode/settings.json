@@ -7,12 +7,13 @@
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": [
-    "source.addMissingImports",
-    "source.fixAll.eslint",
-    "source.fixAll.stylelint",
-    "source.fixAll.markdownlint"
-  ],
+  "editor.codeActionsOnSave": {
+    "source.addMissingImports.ts": "explicit",
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit",
+    "source.removeUnusedImports": "explicit",
+    "source.fixAll.markdownlint": "explicit"
+  },
   "prettier.prettierPath": "node_modules/prettier",
   "prettier.configPath": "prettier.config.cjs",
   "javascript.updateImportsOnFileMove.enabled": "always",
@@ -46,11 +47,11 @@
     "favicons",
     "heroicons",
     "hookform",
+    "IMAGEKIT",
     "Jiti",
     "libsql",
     "LOGTAIL",
     "lucide",
-    "luxon",
     "paalan",
     "preinstall",
     "REDISMS",

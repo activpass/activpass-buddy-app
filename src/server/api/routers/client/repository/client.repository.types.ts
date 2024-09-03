@@ -4,6 +4,7 @@ import type { IClientSchema } from '../model/client.model';
 export type CreateClientParams = {
   orgId: string;
   data: CreateClientInputSchema;
+  docSave?: boolean;
 };
 
 export type UpdateClientParams = {
