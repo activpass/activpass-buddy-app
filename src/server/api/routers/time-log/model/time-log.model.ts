@@ -10,7 +10,9 @@ export interface ITimeLogVirtuals {
   id: string;
 }
 
-export interface ITimeLogSchema extends InferSchemaType<typeof TimeLogSchema>, ITimeLogVirtuals {}
+export interface ITimeLogSchema extends InferSchemaType<typeof TimeLogSchema>, ITimeLogVirtuals {
+  _id: mongoose.Schema.Types.ObjectId;
+}
 
 // Here, You have to explicity mention the type of methods.
 export interface ITimeLogSchemaMethods {}
