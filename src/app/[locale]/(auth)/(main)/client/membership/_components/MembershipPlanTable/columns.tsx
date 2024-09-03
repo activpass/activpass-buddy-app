@@ -50,7 +50,7 @@ export const getMembershipColumns = ({
       accessorKey: 'tenure',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Tenure" />,
       enableSorting: false,
-      cell: ({ row }) => CLIENT_MEMBERSHIP_TENURE[row.original.tenure],
+      cell: ({ row }) => CLIENT_MEMBERSHIP_TENURE[row.original.tenure].display,
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
       },
