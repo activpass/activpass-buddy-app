@@ -1,6 +1,6 @@
 import { type DataTableColumnDef, DataTableColumnHeader } from '@paalan/react-ui';
 
-import { MEMBERSHIP_TENURE_DISPLAY_ITEM } from '@/constants/client/membership';
+import { CLIENT_MEMBERSHIP_TENURE } from '@/constants/client/membership.constant';
 import { currencyIntl } from '@/utils/currency-intl';
 
 import type { MembershipPlan } from '../../types';
@@ -17,8 +17,14 @@ export const getMembershipColumns = ({
   return [
     {
       id: 'planName',
-      accessorKey: 'planName',
+      accessorKey: 'name',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Plan Name" />,
+      enableSorting: false,
+    },
+    {
+      id: 'planDescription',
+      accessorKey: 'description',
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Plan Description" />,
       enableSorting: false,
     },
     {
@@ -44,7 +50,7 @@ export const getMembershipColumns = ({
       accessorKey: 'tenure',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Tenure" />,
       enableSorting: false,
-      cell: ({ row }) => MEMBERSHIP_TENURE_DISPLAY_ITEM[row.original.tenure],
+      cell: ({ row }) => CLIENT_MEMBERSHIP_TENURE[row.original.tenure],
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
       },

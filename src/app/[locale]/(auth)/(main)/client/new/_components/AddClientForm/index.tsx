@@ -1,50 +1,9 @@
 'use client';
 
-import { ArrowBackIcon, ArrowForwardIcon, PlusCircledIcon } from '@paalan/react-icons';
-import { Button, Heading, Step, Stepper, useStepper } from '@paalan/react-ui';
+import { Heading, Step, Stepper } from '@paalan/react-ui';
 import type { FC } from 'react';
 
-import { ADD_CLIENT_STEPS } from '../constants';
-
-const StepperFooter: FC = () => {
-  const { nextStep, prevStep, resetSteps, isDisabledStep, hasCompletedAllSteps, isLastStep } =
-    useStepper();
-
-  return (
-    <>
-      {hasCompletedAllSteps && (
-        <div className="my-2 flex h-40 items-center justify-center break-normal rounded-md border bg-secondary text-foreground">
-          <h1 className="text-xl">Woohoo! All steps completed! 🎉</h1>
-        </div>
-      )}
-      <div className="flex w-full justify-between gap-2">
-        {hasCompletedAllSteps ? (
-          <Button onClick={resetSteps}>Reset</Button>
-        ) : (
-          <>
-            <Button
-              disabled={isDisabledStep}
-              onClick={prevStep}
-              variant="outline"
-              leftIcon={<ArrowBackIcon boxSize="4" />}
-            >
-              Back
-            </Button>
-            {isLastStep ? (
-              <Button onClick={nextStep} leftIcon={<PlusCircledIcon boxSize="4" />}>
-                Submit
-              </Button>
-            ) : (
-              <Button onClick={nextStep} rightIcon={<ArrowForwardIcon boxSize="4" />}>
-                Next
-              </Button>
-            )}
-          </>
-        )}
-      </div>
-    </>
-  );
-};
+import { ADD_CLIENT_STEPPER_COMPONENT, ADD_CLIENT_STEPS } from './constants';
 
 export const AddClientForm: FC = () => {
   return (
@@ -54,19 +13,22 @@ export const AddClientForm: FC = () => {
       orientation="vertical"
       timeline
       timelineContainerClassName="gap-20"
+      timelineContentClassName="bg-background py-6 px-8"
+      styles={{
+        'vertical-step-content': 'bg-background py-4',
+      }}
     >
-      {ADD_CLIENT_STEPS.map((stepProps, index) => {
+      {ADD_CLIENT_STEPS.map(stepProps => {
+        const StepComponent = ADD_CLIENT_STEPPER_COMPONENT[stepProps.id];
         return (
           <Step key={stepProps.label} {...stepProps}>
-            <div className="my-2 flex h-40 items-center justify-center rounded-md border bg-secondary text-foreground">
-              <Heading as="h2" className="text-xl">
-                Step {index + 1}
-              </Heading>
-            </div>
+            <Heading as="h2" className="mb-4">
+              {stepProps.label}
+            </Heading>
+            <StepComponent />
           </Step>
         );
       })}
-      <StepperFooter />
     </Stepper>
   );
 };

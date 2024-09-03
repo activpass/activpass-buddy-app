@@ -5,7 +5,12 @@ import mongoose, {
   type Model,
 } from 'mongoose';
 
-import { BillingCycle, PaymentMode, PaymentStatus } from '@/server/api/constants/common.constant';
+import {
+  CLIENT_PAYMENT_FREQUENCY,
+  CLIENT_PAYMENT_METHOD,
+  CLIENT_PAYMENT_STATUS,
+} from '@/constants/client/add-form.constant';
+import { CLIENT_MEMBERSHIP_TENURE } from '@/constants/client/membership.constant';
 
 // Virtuals are not included in the schema type
 export interface IIncomeVirtuals {
@@ -13,7 +18,10 @@ export interface IIncomeVirtuals {
 }
 
 export interface IIncomeSchema extends InferSchemaType<typeof IncomeSchema>, IIncomeVirtuals {
-  _id: mongoose.Schema.Types.ObjectId;
+  paymentMethod: keyof typeof CLIENT_PAYMENT_METHOD;
+  paymentStatus: keyof typeof CLIENT_PAYMENT_STATUS;
+  paymentFrequency: keyof typeof CLIENT_PAYMENT_FREQUENCY;
+  tenure: keyof typeof CLIENT_MEMBERSHIP_TENURE;
 }
 
 // Here, You have to explicity mention the type of methods.
@@ -40,27 +48,33 @@ const IncomeSchema = new mongoose.Schema(
     organization: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organization',
+      required: true,
     },
     client: { type: mongoose.Schema.Types.ObjectId, ref: 'Client' },
-    mode: {
-      type: String,
-      enum: [...Object.values(PaymentMode)],
-      default: PaymentMode.cash,
-    },
-    status: {
-      type: String,
-      enum: [...Object.keys(PaymentStatus)],
-      default: PaymentStatus.pending,
-    },
-    date: { type: Date },
-    dueDate: { type: Date },
-    membership: {
+    membershipPlan: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'MembershipPlan',
     },
-    cycle: {
+    paymentMethod: {
       type: String,
-      enum: [...Object.values(BillingCycle)],
+      enum: Object.keys(CLIENT_PAYMENT_METHOD),
+      default: CLIENT_PAYMENT_METHOD.CASH.value,
+    },
+    paymentStatus: {
+      type: String,
+      enum: Object.keys(CLIENT_PAYMENT_STATUS),
+      default: CLIENT_PAYMENT_STATUS.PENDING.value,
+    },
+    paymentFrequency: {
+      type: String,
+      enum: Object.keys(CLIENT_PAYMENT_FREQUENCY),
+      default: CLIENT_PAYMENT_FREQUENCY.ONE_TIME.value,
+    },
+    date: { type: Date },
+    dueDate: { type: Date },
+    tenure: {
+      type: String,
+      enum: Object.keys(CLIENT_MEMBERSHIP_TENURE),
     },
     amount: { type: Number },
     notes: { type: String },

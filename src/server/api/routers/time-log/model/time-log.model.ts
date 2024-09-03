@@ -10,9 +10,7 @@ export interface ITimeLogVirtuals {
   id: string;
 }
 
-export interface ITimeLogSchema extends InferSchemaType<typeof TimeLogSchema>, ITimeLogVirtuals {
-  _id: mongoose.Schema.Types.ObjectId;
-}
+export interface ITimeLogSchema extends InferSchemaType<typeof TimeLogSchema>, ITimeLogVirtuals {}
 
 // Here, You have to explicity mention the type of methods.
 export interface ITimeLogSchemaMethods {}
@@ -38,9 +36,10 @@ const TimeLogSchema = new mongoose.Schema(
     organization: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organization',
+      required: true,
     },
     checkIn: { type: Date, default: new Date() },
-    checkOut: { type: Date },
+    checkOut: { type: Date, default: null },
   },
   schemaOptions
 );

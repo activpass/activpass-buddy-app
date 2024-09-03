@@ -1,7 +1,3 @@
-export type ClientRecord = {
-  id: string;
-  fullName: string;
-  phoneNumber: number;
-  membershipPlan: string;
-  status: 'pending' | 'processing' | 'success' | 'failed';
-};
+import type { RouterOutputs } from '@/trpc/shared';
+
+export type ClientData = RouterOutputs['clients']['list'][number];

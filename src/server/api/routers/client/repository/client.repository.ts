@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import mongoose from 'mongoose';
 
-import { generateRandomToken } from '@/server/api/helpers/common';
+import { generateClientCode } from '@/server/api/helpers/common';
 import {
   type AnalyticsClientParams,
   type CreateClientParams,
@@ -20,20 +20,28 @@ class ClientRepository {
     return ClientModel.get(id);
   };
 
-  getByEmail = async (email: IClientSchema['email']) => {
+  getPopulatedById = async (id: IClientSchema['id']) => {
+    return ClientModel.getPopulated(id, ['organization', 'membershipPlan']);
+  };
+
+  findByEmail = async (email: IClientSchema['email']) => {
     return ClientModel.findByEmail(email);
   };
 
-  isClientExists = async (email: string) => {
+  findByPhoneNumber = async (phoneNumber: IClientSchema['phoneNumber']) => {
+    return ClientModel.findByPhoneNumber(phoneNumber);
+  };
+
+  isClientExists = async (email: string, phoneNumber: number) => {
     try {
       const client = await ClientModel.findOne({
-        email,
+        $or: [{ email }, { phoneNumber }],
       }).exec();
 
       if (client) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `Client with email "${client.email}" already exist.`,
+          message: `Client with phoneNumber "${phoneNumber}" already exist.`,
         });
       }
     } catch (error) {
@@ -42,21 +50,31 @@ class ClientRepository {
     }
   };
 
-  create = async ({ data, orgId }: CreateClientParams) => {
+  create = async ({ data, orgId, docSave = true }: CreateClientParams) => {
     try {
-      await this.isClientExists(data.email);
+      const { clientInformation, ...rest } = data;
 
+      await this.isClientExists(clientInformation.email, clientInformation.phoneNumber);
+
+      const goalsAndPreference: IClientSchema['goalsAndPreference'] = {
+        ...rest.goalsAndPreference,
+        additionalServices: rest.goalsAndPreference.additionalServices || [],
+      };
       const dataBody: Omit<IClientSchema, keyof IClientVirtuals> = {
-        ...data,
-        uniqueId: generateRandomToken(),
+        ...clientInformation,
+        clientCode: generateClientCode(),
         organization: new mongoose.Types.ObjectId(orgId),
+        membershipPlan: new mongoose.Types.ObjectId(rest.membershipDetail.planId),
+        healthAndFitness: rest.healthAndFitness,
+        goalsAndPreference,
+        consentAndAgreement: rest.consentAndAgreement,
         isDeleted: false,
-        membership: null,
-        income: null,
       };
 
       const client = new ClientModel(dataBody);
-      await client.save();
+      if (docSave) {
+        await client.save();
+      }
       return client;
     } catch (error) {
       this.logger.error('Failed to create client', error);

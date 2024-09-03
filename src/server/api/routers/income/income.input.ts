@@ -1,45 +1,19 @@
+import { convertObjectKeysIntoZodEnum } from '@paalan/react-shared/lib';
 import { z } from 'zod';
 
-export const createIncomeInputSchema = z.object({
-  name: z.string({ required_error: 'Income name is required' }).min(1, {
-    message: 'Income name is required',
-  }),
-  type: z.string({ required_error: 'Income type is required' }).min(1, {
-    message: 'Income type is required',
-  }),
-  subscription: z.string().optional(),
-  email: z.string().optional(),
-  website: z.string().optional(),
-  coordinates: z.object({
-    lat: z.string().optional(),
-    lng: z.string().optional(),
-  }),
-  address: z.string().optional(),
-  billingInfo: z
-    .object({
-      paymentMethod: z.enum(['creditCard', 'debitCard', 'cash', 'upi', 'bankTransfer']),
-    })
-    .optional(),
-  softwareIntegration: z
-    .object({
-      existingSoftware: z.enum([
-        'gymMgmtSoftware',
-        'accountingSoftware',
-        'crmSoftware',
-        'noSoftware',
-        'other',
-      ]),
-      challenges: z.string().optional(),
-      preferences: z.string().optional(),
-    })
-    .optional(),
-  employeePayrollOptions: z
-    .object({
-      earnings: z.array(z.object({})).optional(),
-      deductions: z.array(z.object({})).optional(),
-    })
-    .optional(),
-  declaredHolidays: z.array(z.object({})).optional(),
+import { CLIENT_MEMBERSHIP_TENURE } from '@/constants/client/membership.constant';
+import { clientFormSchema } from '@/validations/client/add-form.validation';
+
+export const createIncomeInputSchema = clientFormSchema.shape.paymentDetail.extend({
+  invoiceId: z.string(),
+  organization: z.string(),
+  client: z.string().optional(),
+  membershipPlan: z.string().optional(),
+  date: z.string().optional(),
+  dueDate: z.string().optional(),
+  tenure: convertObjectKeysIntoZodEnum(CLIENT_MEMBERSHIP_TENURE).optional(),
+  amount: z.number().optional(),
+  notes: z.string().optional(),
 });
 export type CreateIncomeInputSchema = z.infer<typeof createIncomeInputSchema>;
 

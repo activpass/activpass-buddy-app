@@ -91,6 +91,7 @@ const config = {
         'tailwindcss/enforces-negative-arbitrary-values': 'error',
         'tailwindcss/enforces-shorthand': 'error',
         'tailwindcss/no-contradicting-classname': 'error',
+        'no-underscore-dangle': 'off',
       },
     },
     // Configuration for testing

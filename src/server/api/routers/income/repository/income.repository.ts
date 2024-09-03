@@ -16,13 +16,23 @@ class IncomeRepository {
     return IncomeModel.get(id);
   };
 
-  create = async ({ data, orgId }: CreateIncomeParams) => {
+  create = async ({
+    data,
+    orgId,
+    clientId,
+    membershipPlanId,
+    docSave = true,
+  }: CreateIncomeParams) => {
     try {
       const doc = new IncomeModel({
         ...data,
         organization: orgId,
+        client: data.client || clientId || null,
+        membershipPlan: data.membershipPlan || membershipPlanId || null,
       });
-      await doc.save();
+      if (docSave) {
+        await doc.save();
+      }
       return doc;
     } catch (error) {
       this.logger.error('Failed to create income', error);

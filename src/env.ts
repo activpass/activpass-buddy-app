@@ -10,6 +10,7 @@ export const env = createEnv({
   server: {
     MONGODB_URI: z.string(),
     REDIS_URL: z.string(),
+    IMAGEKIT_PRIVATE_KEY: z.string(),
     ANALYZE: z
       .enum(['true', 'false'])
       .optional()
@@ -23,6 +24,8 @@ export const env = createEnv({
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string(),
+    NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: z.string(),
+    NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: z.string(),
   },
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtime (e.g.
@@ -31,9 +34,13 @@ export const env = createEnv({
   runtimeEnv: {
     MONGODB_URI: process.env.MONGODB_URI,
     REDIS_URL: process.env.REDIS_URL,
+    IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
     ANALYZE: process.env.ANALYZE,
 
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY,
+    NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT,
+
     LOGTAIL_SOURCE_TOKEN: process.env.LOGTAIL_SOURCE_TOKEN,
 
     ADMIN_USERNAME: process.env.ADMIN_USERNAME,
