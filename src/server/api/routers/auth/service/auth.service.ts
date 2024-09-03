@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server';
-import argon2 from 'argon2';
 
 import { TimeInSeconds } from '@/server/api/enums/time-in-seconds.enum';
-import { type IUserData, UserModel } from '@/server/api/routers/users/model/user.model';
-import { userRepository } from '@/server/api/routers/users/repository/user.repository';
+import { getHashToken } from '@/server/api/helpers/common';
+import { type IUserData, UserModel } from '@/server/api/routers/user/model/user.model';
+import { userRepository } from '@/server/api/routers/user/repository/user.repository';
 import { createSecureCookie, deleteCookie } from '@/server/api/utils/cookie-management';
 import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { redis } from '@/server/database/redis';
@@ -86,7 +86,7 @@ class AuthService {
 
   private async generateSessionToken(userId: IUserData['id']): Promise<string> {
     const rawToken = `${userId}-${Date.now()}-${Math.random()}`;
-    const hashedToken = await argon2.hash(rawToken);
+    const hashedToken = getHashToken(rawToken);
     return hashedToken;
   }
 
@@ -156,12 +156,9 @@ class AuthService {
   };
 
   signIn = async (args: SignInArgs): Promise<ServerSession> => {
-    const {
-      input: { credentials },
-      headers,
-    } = args;
+    const { input, headers } = args;
     try {
-      const verifiedUser = await userRepository.verifyCredentials(credentials);
+      const verifiedUser = await userRepository.authenticate(input.email, input.password);
       const user = verifiedUser.toClientObject();
 
       const expiresIn = TimeInSeconds.TwoWeeks;
@@ -201,7 +198,7 @@ class AuthService {
       ...input,
       role: AUTH_ROLES.OWNER,
     };
-    const newUser = await userRepository.createUser({ data });
+    const newUser = await userRepository.create({ data });
 
     if (!newUser) {
       throw getTRPCError('Failed to create user');
@@ -251,7 +248,7 @@ class AuthService {
 
     return {
       success: true,
-      userInfo: await userRepository.getUserById(args.userId, {
+      userInfo: await userRepository.getById(args.userId, {
         includeSensitiveInfo: true,
       }),
       sessionToken: finalSessionToken,

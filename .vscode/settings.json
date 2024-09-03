@@ -6,13 +6,16 @@
     "package-lock.json": true
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "editor.formatOnSave": false,
-  "editor.codeActionsOnSave": [
-    "source.addMissingImports",
-    "source.fixAll.eslint",
-    "source.fixAll.stylelint",
-    "source.fixAll.markdownlint"
-  ],
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.addMissingImports.ts": "explicit",
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit",
+    "source.removeUnusedImports": "explicit",
+    "source.fixAll.markdownlint": "explicit"
+  },
+  "prettier.prettierPath": "node_modules/prettier",
+  "prettier.configPath": "prettier.config.cjs",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "typescript.tsdk": "node_modules/typescript/lib", // Use the workspace version of TypeScript
@@ -38,16 +41,17 @@
   "i18n-ally.keystyle": "nested",
   "cSpell.words": [
     "activpass",
+    "Checkin",
     "conventionalcommits",
     "corepack",
     "favicons",
     "heroicons",
     "hookform",
+    "IMAGEKIT",
     "Jiti",
     "libsql",
     "LOGTAIL",
     "lucide",
-    "luxon",
     "paalan",
     "preinstall",
     "REDISMS",

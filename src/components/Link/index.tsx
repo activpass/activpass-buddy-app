@@ -1,4 +1,4 @@
-import type { ComponentProps, FC } from 'react';
+import { type ComponentProps, forwardRef } from 'react';
 
 import { Link as LocalizedLink } from '@/lib/navigation';
 
@@ -6,20 +6,24 @@ type LinkProps = Omit<ComponentProps<typeof LocalizedLink>, 'href'> & {
   href?: string;
 };
 
-const Link: FC<LinkProps> = ({ children, href, ...props }) => {
-  if (!href || href.toString().startsWith('http')) {
+const Link = forwardRef<React.ComponentRef<typeof LocalizedLink>, LinkProps>(
+  ({ children, href, ...props }, ref) => {
+    if (!href || href.toString().startsWith('http')) {
+      return (
+        <a href={href} {...props}>
+          {children}
+        </a>
+      );
+    }
+
     return (
-      <a href={href} {...props}>
+      <LocalizedLink href={href?.toString()} {...props} ref={ref}>
         {children}
-      </a>
+      </LocalizedLink>
     );
   }
+);
 
-  return (
-    <LocalizedLink href={href?.toString()} {...props}>
-      {children}
-    </LocalizedLink>
-  );
-};
+Link.displayName = 'Link';
 
 export default Link;

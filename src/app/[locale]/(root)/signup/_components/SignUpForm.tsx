@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, type FormItemField, useToast } from '@paalan/react-ui';
+import { Form, type FormFieldItem, useToast } from '@paalan/react-ui';
 import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -13,7 +13,7 @@ import {
   type SignUpValidationSchemaType,
 } from '@/validations/auth.validation';
 
-const fields: FormItemField[] = [
+const fields: FormFieldItem<SignUpValidationSchemaType>[] = [
   {
     name: 'firstName',
     label: 'First name',
@@ -46,6 +46,15 @@ const fields: FormItemField[] = [
     formItemClassName: 'col-span-2',
     required: true,
   },
+  {
+    name: 'confirmPassword',
+    label: 'Confirm Password',
+    type: 'input',
+    inputType: 'password',
+    placeholder: 'Enter your password again',
+    formItemClassName: 'col-span-2',
+    required: true,
+  },
 ];
 
 export const SignUpForm: FC = () => {
@@ -61,7 +70,12 @@ export const SignUpForm: FC = () => {
       lastName: '',
       email: '',
       password: '',
+      confirmPassword: '',
       provider: UserProviderEnum.email,
+      organization: {
+        name: 'dummy-organization',
+        type: 'gym',
+      },
     },
   });
 

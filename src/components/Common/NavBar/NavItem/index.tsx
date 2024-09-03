@@ -1,8 +1,8 @@
-import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
+import { cn } from '@paalan/react-shared/lib';
 import type { FC, HTMLAttributeAnchorTarget, PropsWithChildren, ReactNode } from 'react';
+import { HiArrowUpRight } from 'react-icons/hi2';
 
 import ActiveLink from '@/components/Common/ActiveLink';
-import { cn } from '@/lib/cn';
 
 import styles from './index.module.css';
 
@@ -35,7 +35,7 @@ const NavItem: FC<PropsWithChildren<NavItemProps>> = ({
     <span className={styles.label}>{children}</span>
 
     {((type === 'nav' && href.startsWith('http')) || target === '_blank') && (
-      <ArrowUpRightIcon className={styles.icon} />
+      <HiArrowUpRight className={styles.icon} />
     )}
   </ActiveLink>
 );

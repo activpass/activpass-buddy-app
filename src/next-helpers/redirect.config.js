@@ -22,19 +22,19 @@ const redirects = {
     { source: '/api/ping', destination: '/api/health' },
     {
       source: '/(static/|)favicon.ico',
-      destination: '/static/favicons/favicon.ico',
+      destination: '/favicons/favicon.ico',
     },
     {
       source: '/(static/|)favicon.png',
-      destination: '/static/favicons/favicon.ico',
+      destination: '/favicons/favicon.ico',
     },
     {
       source: '/(static/|)apple-touch-icon(.*).png',
-      destination: '/static/favicons/apple-touch-icon.png',
+      destination: '/favicons/apple-touch-icon.png',
     },
     {
       source: '/(static/)logo.png',
-      destination: '/static/images/logo.png',
+      destination: '/logos/png/activpass-buddy-logo-white-blue.png',
     },
   ],
   internals: [],

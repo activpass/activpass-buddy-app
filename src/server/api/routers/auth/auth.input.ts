@@ -1,10 +1,12 @@
 import { z } from 'zod';
 
-import { signInValidationSchema, signUpValidationSchema } from '@/validations/auth.validation';
+import {
+  baseSignUpValidationSchema,
+  signInValidationSchema,
+  signUpValidationSchema,
+} from '@/validations/auth.validation';
 
-export const signInInputSchema = z.object({
-  credentials: signInValidationSchema,
-});
+export const signInInputSchema = signInValidationSchema;
 export type SignInInputSchemaType = z.infer<typeof signInInputSchema>;
 
 export const signUpInputSchema = signUpValidationSchema;
@@ -15,14 +17,15 @@ export const accountVerifyInputSchema = z.object({
 });
 export type AccountVerifyInputSchema = z.infer<typeof accountVerifyInputSchema>;
 
-export const resetPasswordInputSchema = z.object({
-  passwordToken: z.string(),
-  password: z.string().min(3),
-  email: z.string().email(),
-});
+export const resetPasswordInputSchema = baseSignUpValidationSchema
+  .pick({
+    email: true,
+    password: true,
+  })
+  .extend({
+    passwordToken: z.string(),
+  });
 export type ResetPasswordInputSchema = z.infer<typeof resetPasswordInputSchema>;
 
-export const forgotPasswordInputSchema = z.object({
-  email: z.string().email(),
-});
+export const forgotPasswordInputSchema = baseSignUpValidationSchema.pick({ email: true });
 export type ForgotPasswordInputSchema = z.infer<typeof forgotPasswordInputSchema>;

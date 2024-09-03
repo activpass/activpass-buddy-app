@@ -17,8 +17,12 @@ const intlMiddleware = createMiddleware({
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
   '/:locale/dashboard(.*)',
-  '/profile(.*)',
-  '/:locale/profile(.*)',
+  '/client(.*)',
+  '/:locale/client(.*)',
+  '/employee(.*)',
+  '/:locale/employee(.*)',
+  '/finance(.*)',
+  '/:locale/finance(.*)',
 ]);
 
 const authMiddleware = (request: NextRequest) => {

@@ -12,10 +12,12 @@ import {
   Input,
   useToast,
 } from '@paalan/react-ui';
-import { type FC } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { type FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import Link from '@/components/Link';
+import { useRouter } from '@/lib/navigation';
 import { useSession } from '@/stores/session-store';
 import { api } from '@/trpc/client';
 import {
@@ -25,6 +27,10 @@ import {
 
 type SignInFormProps = {};
 export const SignInForm: FC<SignInFormProps> = _props => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectBackUrl = searchParams.get('redirectBackUrl') || '/dashboard';
+
   const form = useForm({
     resolver: zodResolver(signInValidationSchema),
     defaultValues: {
@@ -35,6 +41,10 @@ export const SignInForm: FC<SignInFormProps> = _props => {
   const session = useSession();
   const toast = useToast();
 
+  useEffect(() => {
+    router.prefetch(redirectBackUrl);
+  }, [router, redirectBackUrl]);
+
   const signInMutation = api.auth.signIn.useMutation({
     onSuccess(data) {
       if (!data) {
@@ -43,6 +53,7 @@ export const SignInForm: FC<SignInFormProps> = _props => {
       }
       session.update(data);
       toast.success('Signed in successfully');
+      router.push(redirectBackUrl);
     },
     onError(error) {
       toast.error(error.message || 'Failed to sign in');
@@ -51,7 +62,7 @@ export const SignInForm: FC<SignInFormProps> = _props => {
   });
 
   const onSubmit = async (credentials: SignInValidationSchemaType) => {
-    signInMutation.mutate({ credentials });
+    signInMutation.mutate(credentials);
   };
 
   const isLoading = signInMutation.isPending || session.status === 'loading';
@@ -78,7 +89,10 @@ export const SignInForm: FC<SignInFormProps> = _props => {
             <FormItem>
               <div className="flex items-center">
                 <FormLabel htmlFor="password">Password</FormLabel>
-                <Link href="/forgot-password" className="ml-auto inline-block text-sm underline">
+                <Link
+                  href="/forgot-password"
+                  className="ml-auto inline-block text-sm text-link underline"
+                >
                   Forgot your password?
                 </Link>
               </div>
@@ -90,7 +104,7 @@ export const SignInForm: FC<SignInFormProps> = _props => {
           )}
         />
         <Button type="submit" className="w-full" isLoading={isLoading}>
-          {isLoading ? 'Signing in...' : 'Sign in'}
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </Button>
       </form>
     </FormRoot>

@@ -1,10 +1,19 @@
 import { Heading } from '@paalan/react-ui';
 
+import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+
 const FinancePage = () => {
   return (
-    <div>
+    <>
+      <SetBreadcrumbItems
+        items={[
+          {
+            label: 'Finance',
+          },
+        ]}
+      />
       <Heading>Finance Page</Heading>
-    </div>
+    </>
   );
 };
 

@@ -41,7 +41,7 @@ const nextConfig = {
   // is being built on a subdirectory (e.g. /nodejs-website)
   basePath: BASE_PATH,
   images: {
-    // We disable image optimisation during static export builds
+    // We disable image optimization during static export builds
     unoptimized: ENABLE_STATIC_EXPORT,
     // We allow SVGs to be used as images
     dangerouslyAllowSVG: true,
@@ -49,27 +49,14 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'raw.githubusercontent.com',
-        port: '',
-        pathname: '/nodejs/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'user-images.githubusercontent.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'tailwindui.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
         hostname: 'fonts.googleapis.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ik.imagekit.io',
+        port: '',
       },
     ],
   },
@@ -101,7 +88,7 @@ const nextConfig = {
     });
 
     // Tree-shakes modules from Sentry Bundle
-    // config.plugins.push(new webpack.DefinePlugin(SENTRY_EXTENSIONS));
+    config.plugins.push(new webpack.DefinePlugin(SENTRY_EXTENSIONS));
 
     // Ignore Sentry's Critical Dependency from Open Telemetry
     // (which is genuinely a cause of concern, but there is no work around at the moment)
@@ -132,10 +119,10 @@ const nextConfig = {
 const sentrySettings = {
   // We don't want Sentry to emit logs
   silent: true,
-  // Define the Sentry Organisation
-  org: 'nextjs-boilerplate-org',
-  // Define the Sentry Project on our Sentry Organisation
-  project: 'nextjs-boilerplate',
+  // Define the Sentry Organization
+  org: 'activpass',
+  // Define the Sentry Project on our Sentry Organization
+  project: 'activpass-buddy',
   // Sentry DSN for the Your Website
   dsn: SENTRY_DSN,
   // Sentry Auth Token for the Your Website
@@ -179,5 +166,8 @@ const nextWithSentry = withSentryConfig(
 
 // Decides whether enabling Sentry or not
 // By default we only want to enable Sentry within a Vercel Environment
-// export default SENTRY_ENABLE ? nextWithSentry : nextIntlWithBundleAnalyzer;
-export default IS_ANALYZE ? nextIntlWithBundleAnalyzer : nextWithIntl;
+export default SENTRY_ENABLE
+  ? nextWithSentry
+  : IS_ANALYZE
+    ? nextIntlWithBundleAnalyzer
+    : nextWithIntl;
