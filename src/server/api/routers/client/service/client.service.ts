@@ -145,7 +145,7 @@ class ClientService {
           avatar: client.avatar,
           name: `${client.firstName} ${client.lastName}`.trim(),
           phoneNumber: client.phoneNumber,
-          membershipPlanName: client.membershipPlan.name,
+          membershipPlanName: client.membershipPlan?.name || 'N/A',
           status: client.income.paymentStatus,
           orgId: client.organization.toHexString(),
         };
