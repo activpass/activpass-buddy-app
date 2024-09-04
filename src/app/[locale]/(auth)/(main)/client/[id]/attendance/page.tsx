@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import type { FC } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+import { AttendanceTable } from './_components/AttendanceTable';
 
 export const metadata: Metadata = {
   title: 'Client Profile - Attendance',
@@ -35,7 +36,7 @@ const AttendancePage: FC<AttendancePageProps> = ({ params }) => {
         </div>
         <Separator />
         <div>
-          <Text>attendance page content</Text>
+          <AttendanceTable />
         </div>
       </div>
     </>

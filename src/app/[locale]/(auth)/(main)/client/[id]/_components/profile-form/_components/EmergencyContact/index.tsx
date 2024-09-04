@@ -5,11 +5,11 @@ import { Form, type FormItemField, toast } from '@paalan/react-ui';
 import { useForm } from 'react-hook-form';
 
 import {
+  type ClientEmergencyContactFormSchema,
   clientEmergencyContactFormSchema,
-  type ClientEmergencyContactFormSchemaType,
 } from '@/validations/client-profile/client-emergency-contact.validation';
 
-const defaultValues: Partial<ClientEmergencyContactFormSchemaType> = {
+const defaultValues: Partial<ClientEmergencyContactFormSchema> = {
   name: 'Jane Doe',
   relationship: 'Spouse',
   phoneNumber: '0987654321',
@@ -36,6 +36,7 @@ const formFields: FormItemField[] = [
     name: 'phoneNumber',
     label: 'Phone Number',
     placeholder: '0987654321',
+    inputType: 'number',
   },
   {
     type: 'input',
@@ -54,13 +55,13 @@ const formFields: FormItemField[] = [
 ];
 
 export const EmergencyContact = () => {
-  const form = useForm<ClientEmergencyContactFormSchemaType>({
+  const form = useForm<ClientEmergencyContactFormSchema>({
     resolver: zodResolver(clientEmergencyContactFormSchema),
     defaultValues,
     mode: 'onChange',
   });
 
-  const onSubmit = (data: ClientEmergencyContactFormSchemaType) => {
+  const onSubmit = (data: ClientEmergencyContactFormSchema) => {
     toast('Emergency Contact Information Submitted:', {
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
@@ -71,7 +72,7 @@ export const EmergencyContact = () => {
   };
 
   return (
-    <Form<ClientEmergencyContactFormSchemaType>
+    <Form<ClientEmergencyContactFormSchema>
       form={form}
       fields={formFields}
       onSubmit={onSubmit}

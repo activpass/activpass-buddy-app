@@ -46,4 +46,4 @@ export const clientEmergencyContactFormSchema = z.object({
     }),
 });
 
-export type ClientEmergencyContactFormSchemaType = z.infer<typeof clientEmergencyContactFormSchema>;
+export type ClientEmergencyContactFormSchema = z.infer<typeof clientEmergencyContactFormSchema>;

@@ -5,11 +5,11 @@ import { Form, type FormItemField, toast } from '@paalan/react-ui';
 import { useForm } from 'react-hook-form';
 
 import {
+  type ClientGoalsPreferencesFormSchema,
   clientGoalsPreferencesFormSchema,
-  type ClientGoalsPreferencesFormSchemaType,
 } from '@/validations/client-profile/client-goals-preferences.validation';
 
-const defaultValues: Partial<ClientGoalsPreferencesFormSchemaType> = {
+const defaultValues: Partial<ClientGoalsPreferencesFormSchema> = {
   fitnessGoals: 'Muscle Building',
   dayPreference: 'Morning',
   timePreference: '07:00',
@@ -53,24 +53,25 @@ const formFields: FormItemField[] = [
     label: 'Preferred Time',
     placeholder: '07:00 AM',
     inputType: 'time',
+    description: 'Select if you want an preferred workout time.',
   },
   {
     type: 'select',
     name: 'instructorPreference',
     label: 'Do you prefer an instructor?',
-    description: 'Select if you want an instructor.',
     options: ['Yes', 'No'],
+    description: 'Select if you want an instructor.',
   },
 ];
 
 export const GoalsPreferences = () => {
-  const form = useForm<ClientGoalsPreferencesFormSchemaType>({
+  const form = useForm<ClientGoalsPreferencesFormSchema>({
     resolver: zodResolver(clientGoalsPreferencesFormSchema),
     defaultValues,
     mode: 'onChange',
   });
 
-  const onSubmit = (data: ClientGoalsPreferencesFormSchemaType) => {
+  const onSubmit = (data: ClientGoalsPreferencesFormSchema) => {
     toast('Goals and Preferences Information Submitted:', {
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
@@ -81,7 +82,7 @@ export const GoalsPreferences = () => {
   };
 
   return (
-    <Form<ClientGoalsPreferencesFormSchemaType>
+    <Form<ClientGoalsPreferencesFormSchema>
       form={form}
       fields={formFields}
       onSubmit={onSubmit}

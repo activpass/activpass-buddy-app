@@ -26,4 +26,4 @@ export const clientHealthFitnessFormSchema = z.object({
   }),
 });
 
-export type ClientHealthFitnessFormSchemaType = z.infer<typeof clientHealthFitnessFormSchema>;
+export type ClientHealthFitnessFormSchema = z.infer<typeof clientHealthFitnessFormSchema>;

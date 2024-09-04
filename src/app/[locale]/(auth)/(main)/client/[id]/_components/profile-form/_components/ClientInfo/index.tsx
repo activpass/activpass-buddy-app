@@ -5,12 +5,13 @@ import { Form, type FormItemField, toast } from '@paalan/react-ui';
 import { useForm } from 'react-hook-form';
 
 import {
+  type ClientInfoFormSchema,
   clientInfoFormSchema,
-  type ClientInfoFormSchemaType,
 } from '@/validations/client-profile/client-profile-info.validation';
 
-const defaultValues: Partial<ClientInfoFormSchemaType> = {
-  username: 'Cristiano Ronaldo',
+const defaultValues: Partial<ClientInfoFormSchema> = {
+  firstName: 'Cristiano',
+  lastName: 'Ronaldo',
   email: 'cristiano.ronaldo@email.com',
   phoneNumber: '1234567890',
   gender: 'Male',
@@ -21,15 +22,22 @@ const defaultValues: Partial<ClientInfoFormSchemaType> = {
 const formFields: FormItemField[] = [
   {
     type: 'input',
-    name: 'username',
-    label: 'Name',
-    placeholder: 'Cristiano Ronaldo',
+    name: 'firstName',
+    label: 'First Name',
+    placeholder: 'Cristiano',
+  },
+  {
+    type: 'input',
+    name: 'lastName',
+    label: 'Last Name',
+    placeholder: 'Ronaldo',
   },
   {
     type: 'input',
     name: 'phoneNumber',
     label: 'Phone Number',
     placeholder: '1234567890',
+    inputType: 'number',
   },
   {
     type: 'input',
@@ -49,7 +57,6 @@ const formFields: FormItemField[] = [
     name: 'dob',
     label: 'Date of Birth',
     placeholder: '1985-02-05',
-    description: 'Your date of birth.',
   },
   {
     type: 'textarea',
@@ -61,14 +68,14 @@ const formFields: FormItemField[] = [
   },
 ];
 
-export const ClientInfoForm = () => {
-  const form = useForm<ClientInfoFormSchemaType>({
+export const ClientInfo = () => {
+  const form = useForm<ClientInfoFormSchema>({
     resolver: zodResolver(clientInfoFormSchema),
     defaultValues,
     mode: 'onChange',
   });
 
-  const onSubmit = (data: ClientInfoFormSchemaType) => {
+  const onSubmit = (data: ClientInfoFormSchema) => {
     toast('You submitted the following values:', {
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
@@ -79,7 +86,7 @@ export const ClientInfoForm = () => {
   };
 
   return (
-    <Form<ClientInfoFormSchemaType>
+    <Form<ClientInfoFormSchema>
       form={form}
       fields={formFields}
       onSubmit={onSubmit}

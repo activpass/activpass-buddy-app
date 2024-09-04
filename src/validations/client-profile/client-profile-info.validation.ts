@@ -1,7 +1,15 @@
 import { z } from 'zod';
 
 export const clientInfoFormSchema = z.object({
-  username: z
+  firstName: z
+    .string()
+    .min(2, {
+      message: 'Name must be at least 2 characters.',
+    })
+    .max(50, {
+      message: 'Name must not be longer than 50 characters.',
+    }),
+  lastName: z
     .string()
     .min(2, {
       message: 'Name must be at least 2 characters.',
@@ -43,4 +51,4 @@ export const clientInfoFormSchema = z.object({
     }),
 });
 
-export type ClientInfoFormSchemaType = z.infer<typeof clientInfoFormSchema>;
+export type ClientInfoFormSchema = z.infer<typeof clientInfoFormSchema>;

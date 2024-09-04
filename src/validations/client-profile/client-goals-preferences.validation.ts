@@ -26,4 +26,4 @@ export const clientGoalsPreferencesFormSchema = z.object({
     .optional(),
 });
 
-export type ClientGoalsPreferencesFormSchemaType = z.infer<typeof clientGoalsPreferencesFormSchema>;
+export type ClientGoalsPreferencesFormSchema = z.infer<typeof clientGoalsPreferencesFormSchema>;

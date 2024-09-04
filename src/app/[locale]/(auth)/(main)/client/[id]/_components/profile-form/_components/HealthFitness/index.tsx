@@ -5,11 +5,11 @@ import { Form, type FormItemField, toast } from '@paalan/react-ui';
 import { useForm } from 'react-hook-form';
 
 import {
+  type ClientHealthFitnessFormSchema,
   clientHealthFitnessFormSchema,
-  type ClientHealthFitnessFormSchemaType,
 } from '@/validations/client-profile/client-health-fitness.validation';
 
-const defaultValues: Partial<ClientHealthFitnessFormSchemaType> = {
+const defaultValues: Partial<ClientHealthFitnessFormSchema> = {
   height: 175,
   weight: 80,
   medicalConditions: 'None',
@@ -36,6 +36,7 @@ const formFields: FormItemField[] = [
     name: 'medicalConditions',
     label: 'Medical Conditions',
     placeholder: 'None',
+    description: 'Specify if you have medical issue.',
   },
   {
     type: 'select',
@@ -74,13 +75,13 @@ const formFields: FormItemField[] = [
 ];
 
 export const HealthFitness = () => {
-  const form = useForm<ClientHealthFitnessFormSchemaType>({
+  const form = useForm<ClientHealthFitnessFormSchema>({
     resolver: zodResolver(clientHealthFitnessFormSchema),
     defaultValues,
     mode: 'onChange',
   });
 
-  const onSubmit = (data: ClientHealthFitnessFormSchemaType) => {
+  const onSubmit = (data: ClientHealthFitnessFormSchema) => {
     toast('Health and Fitness Information Submitted:', {
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
@@ -91,7 +92,7 @@ export const HealthFitness = () => {
   };
 
   return (
-    <Form<ClientHealthFitnessFormSchemaType>
+    <Form<ClientHealthFitnessFormSchema>
       form={form}
       fields={formFields}
       onSubmit={onSubmit}
