@@ -3,16 +3,18 @@ import mongoose, {
   type HydratedDocument,
   type InferSchemaType,
   type Model,
+  type PopulateOption,
 } from 'mongoose';
 
 import {
-  AdditionalService,
-  BillingCycle,
-  DayPreference,
-  FitnessLevel,
-  Gender,
-  RelationShip,
-} from '@/server/api/constants/common.constant';
+  CLIENT_ADDITIONAL_SERVICE,
+  CLIENT_CLASS_PREFERENCE,
+  CLIENT_FITNESS_GOAL,
+  CLIENT_FITNESS_LEVEL,
+  CLIENT_GENDER,
+  CLIENT_RELATIONSHIP,
+} from '@/constants/client/add-form.constant';
+import { generateClientCode } from '@/server/api/helpers/common';
 
 // Virtuals are not included in the schema type
 export interface IClientVirtuals {
@@ -22,12 +24,7 @@ export interface IClientVirtuals {
   updatedAt: Date;
 }
 
-export interface IClientSchema
-  extends Omit<InferSchemaType<typeof ClientSchema>, 'membership' | 'income'>,
-    IClientVirtuals {
-  membership?: mongoose.Schema.Types.ObjectId | null;
-  income?: mongoose.Schema.Types.ObjectId | null;
-}
+export interface IClientSchema extends InferSchemaType<typeof ClientSchema>, IClientVirtuals {}
 
 // Here, You have to explicity mention the type of methods.
 export interface IClientSchemaMethods {}
@@ -37,8 +34,12 @@ export interface IClientDocument extends HydratedDocument<IClientSchema, IClient
 // Here, You have to explicity mention the type of statics.
 export interface IClientModel extends Model<IClientSchema, {}, IClientSchemaMethods> {
   get(id: string | mongoose.Schema.Types.ObjectId): Promise<IClientDocument>;
+  getPopulated(
+    id: string | mongoose.Schema.Types.ObjectId,
+    populatedOption: PopulateOption['populate']
+  ): Promise<IClientDocument>;
   findByEmail(email: string): Promise<IClientDocument>;
-  findByPhoneNumber(phoneNumber: string): Promise<IClientDocument>;
+  findByPhoneNumber(phoneNumber: number): Promise<IClientDocument>;
   list(filter?: FilterQuery<IClientSchema>): Promise<IClientDocument[]>;
 }
 
@@ -56,71 +57,73 @@ const ClientSchema = new mongoose.Schema(
       ref: 'Organization',
       required: true,
     },
-    membership: {
+    membershipPlan: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'MembershipPlan',
       required: true,
     },
-    income: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Income',
-      required: true,
-    },
 
-    uniqueId: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    phoneNumber: { type: String, required: true, unique: true },
+    clientCode: { type: String, required: true, unique: true, default: () => generateClientCode() },
+    avatar: { type: String },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    designation: { type: String, required: true },
-    address: { type: String, required: true },
+    phoneNumber: { type: Number, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
     gender: {
       type: String,
       required: true,
-      enum: Object.values(Gender),
+      enum: Object.keys(CLIENT_GENDER),
     },
-    avatar: { type: String },
-    dob: { type: Date },
+    dob: { type: Date, required: true, max: new Date() },
+    address: { type: String, required: true },
 
-    validity: { type: Date },
-    cycle: { type: String, enum: Object.values(BillingCycle) },
     emergencyContact: {
       name: { type: String, required: true },
-      relationship: {
-        type: String,
-        enum: Object.values(RelationShip),
-      },
-      phoneNumber: { type: String },
+      relationship: { type: String, required: true, enum: Object.keys(CLIENT_RELATIONSHIP) },
+      phoneNumber: { type: Number, required: true },
       email: { type: String },
       address: { type: String },
     },
-    role: { type: String },
-    healthFitness: {
-      height: { type: Number },
-      weight: { type: Number },
-      medicalConditions: { type: String },
-      allergies: { type: String },
-      injuries: { type: String },
-      currentFitnessLevel: {
-        type: String,
-        enum: Object.values(FitnessLevel),
-      },
+
+    healthAndFitness: {
+      height: { type: Number, required: true },
+      weight: { type: Number, required: true },
+      fitnessLevel: { type: String, required: true, enum: Object.keys(CLIENT_FITNESS_LEVEL) },
+      medicalCondition: { type: String },
+      allergy: { type: String },
+      injury: { type: String },
     },
-    goalsPreferences: {
-      fitnessGoals: { type: String },
-      dayPreference: {
+
+    goalsAndPreference: {
+      fitnessGoals: [{ type: String, enum: Object.keys(CLIENT_FITNESS_GOAL) }],
+      classPreference: {
         type: String,
-        enum: Object.values(DayPreference),
+        required: true,
+        enum: Object.keys(CLIENT_CLASS_PREFERENCE),
       },
-      timePreference: { type: Date },
-      instructorPreference: { type: Boolean },
-      personalAssistance: { type: Boolean },
-      additionalService: {
+      classTimePreference: {
         type: String,
-        enum: Object.values(AdditionalService),
+        required: true,
       },
-      otherService: { type: String },
-      fitnessAssessment: { type: Boolean },
+      additionalServices: [{ type: String, enum: Object.keys(CLIENT_ADDITIONAL_SERVICE) }],
+      instructorSupport: { type: Boolean, default: false },
+      fitnessAssessment: { type: Boolean, default: false },
+    },
+
+    consentAndAgreement: {
+      termsAndConditions: { type: Boolean, default: false },
+      privacyPolicy: { type: Boolean, default: false },
+      websAppCommunication: { type: Boolean, default: false },
+      promotionalCommunication: { type: Boolean, default: false },
+      signature: {
+        name: {
+          type: String,
+          required: true,
+        },
+        provider: {
+          type: String,
+        },
+      },
     },
     isDeleted: { type: Boolean, default: false },
   },
@@ -133,6 +136,14 @@ ClientSchema.virtual('fullName').get(function fullName() {
 
 ClientSchema.static('get', async function get(id: string) {
   const client = await this.findById(id).exec();
+  if (!client) {
+    throw new Error(`No Client found with id '${id}'.`);
+  }
+  return client;
+});
+
+ClientSchema.static('getPopulated', async function get(id, populatedOption) {
+  const client = await this.findById(id).populate(populatedOption).exec();
   if (!client) {
     throw new Error(`No Client found with id '${id}'.`);
   }
@@ -157,15 +168,15 @@ ClientSchema.static('findByPhoneNumber', async function findByPhoneNumber(phoneN
 
 ClientSchema.static('list', async function list(options) {
   const newOptions = options || {};
-  const clients = await this.find({
+  const clients: IClientDocument[] = await this.find({
     isDeleted: false,
     ...newOptions,
   })
-    .populate(['membership', 'organization', 'income'])
+    .populate(['membershipPlan', 'organization'])
     .sort({ createdAt: -1 });
   return clients;
 });
 
 export const ClientModel =
-  (mongoose.models.Client as IClientModel) ||
+  (mongoose.models.Client as unknown as IClientModel) ||
   mongoose.model<IClientSchema, IClientModel>('Client', ClientSchema);

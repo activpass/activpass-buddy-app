@@ -7,8 +7,8 @@ import {
   Form,
   FormControl,
   FormField,
+  type FormFieldItem,
   FormItem,
-  type FormItemField,
   FormLabel,
   FormMessage,
   IconButton,
@@ -19,7 +19,7 @@ import {
 import { type FC } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
-import { MEMBERSHIP_TENURE_DISPLAY_ITEM } from '@/constants/client/membership';
+import { CLIENT_MEMBERSHIP_TENURE } from '@/constants/client/membership.constant';
 import { api } from '@/trpc/client';
 import {
   type CreateMembershipPlanSchema,
@@ -28,21 +28,28 @@ import {
 
 import type { MembershipPlan } from '../../types';
 
-const formFields: FormItemField[] = [
+const formFields: FormFieldItem<CreateMembershipPlanSchema>[] = [
   {
     type: 'input',
-    name: 'planName',
+    name: 'name',
     label: 'Plan Name',
     placeholder: 'Enter plan name',
+    required: true,
+  },
+  {
+    type: 'input',
+    name: 'description',
+    label: 'Plan Description',
+    placeholder: 'Enter plan description',
     required: true,
   },
   {
     type: 'select',
     name: 'tenure',
     label: 'Tenure',
-    options: Object.keys(MEMBERSHIP_TENURE_DISPLAY_ITEM).map(key => ({
+    options: Object.keys(CLIENT_MEMBERSHIP_TENURE).map(key => ({
       value: key,
-      label: MEMBERSHIP_TENURE_DISPLAY_ITEM[key as keyof typeof MEMBERSHIP_TENURE_DISPLAY_ITEM],
+      label: CLIENT_MEMBERSHIP_TENURE[key as keyof typeof CLIENT_MEMBERSHIP_TENURE].display,
     })),
     placeholder: 'Select tenure',
     required: true,
@@ -61,7 +68,8 @@ const formFields: FormItemField[] = [
 ];
 
 const defaultValues: Partial<CreateMembershipPlanSchema> = {
-  planName: '',
+  name: '',
+  description: '',
   tenure: undefined,
   amount: undefined,
   features: [
@@ -87,8 +95,8 @@ export const AddEditMembershipPlanDialog: FC<AddEditMembershipPlanDialogProps> =
   const toast = useToast();
   const { id } = membershipPlan || {};
 
-  const createMembershipPlanMutation = api.membershipPlan.create.useMutation();
-  const updateMembershipPlanMutation = api.membershipPlan.update.useMutation();
+  const createMembershipPlanMutation = api.membershipPlans.create.useMutation();
+  const updateMembershipPlanMutation = api.membershipPlans.update.useMutation();
 
   const form = useForm<CreateMembershipPlanSchema>({
     resolver: zodResolver(createMembershipPlanSchema),
@@ -204,11 +212,12 @@ export const AddEditMembershipPlanDialog: FC<AddEditMembershipPlanDialogProps> =
                     isPositiveFloat
                     name={field.name}
                     disabled={field.disabled}
-                    value={field.value || ''}
+                    value={field.value || undefined}
                     onBlur={field.onBlur}
                     ref={field.ref}
                     onValueChange={value => {
-                      field.onChange(value || '');
+                      if (value > 100) return;
+                      field.onChange(value || undefined);
                     }}
                   />
                 </FormControl>

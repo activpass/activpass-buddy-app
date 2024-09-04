@@ -38,9 +38,10 @@ const TimeLogSchema = new mongoose.Schema(
     organization: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organization',
+      required: true,
     },
     checkIn: { type: Date, default: new Date() },
-    checkOut: { type: Date },
+    checkOut: { type: Date, default: null },
   },
   schemaOptions
 );

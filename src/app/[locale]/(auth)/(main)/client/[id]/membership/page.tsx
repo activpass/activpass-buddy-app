@@ -3,8 +3,9 @@ import type { Metadata } from 'next';
 import type { FC } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
-import { MembershipHeader } from './_components/MembershipHeader';
+
 import { InvoiceTable } from './_components/InvoiceTable';
+import { MembershipHeader } from './_components/MembershipHeader';
 
 export const metadata: Metadata = {
   title: 'Client Profile - Membership',

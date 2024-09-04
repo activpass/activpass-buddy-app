@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, type FormItemField, toast } from '@paalan/react-ui';
+import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
 import { useForm } from 'react-hook-form';
 
 import {
@@ -17,7 +17,7 @@ const defaultValues: Partial<ClientEmergencyContactFormSchema> = {
   address: '456 Elm St, Springfield',
 };
 
-const formFields: FormItemField[] = [
+const formFields: FormFieldItem<ClientEmergencyContactFormSchema>[] = [
   {
     type: 'input',
     name: 'name',

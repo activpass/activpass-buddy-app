@@ -48,7 +48,8 @@ const MembershipPlanSchema = new mongoose.Schema(
       ref: 'Organization',
       required: true,
     },
-    planName: { type: String, required: true },
+    name: { type: String, required: true },
+    description: { type: String, required: true },
     tenure: {
       type: String,
       enum: Object.values(createMembershipPlanInputSchema.shape.tenure.enum),

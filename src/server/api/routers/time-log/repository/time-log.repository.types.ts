@@ -15,3 +15,14 @@ export type ListTimeLogsParams = {
   orgId: string;
   clientId?: string;
 };
+
+export type UpdateCheckInTimeLogParams = {
+  orgId: string;
+  data: Pick<CreateTimeLogInputSchema, 'clientId' | 'checkIn'>;
+};
+
+export type UpdateCheckOutTimeLogParams = {
+  orgId: string;
+  clientId: string;
+  data: Pick<CreateTimeLogInputSchema, 'checkOut'>;
+};

@@ -1,57 +1,19 @@
-'use client';
-
 import { AddIcon } from '@paalan/react-icons';
 import { Button, DataTable } from '@paalan/react-ui';
 
 import Link from '@/components/Link';
+import { api } from '@/trpc/server';
 
-import { getClientColumns } from './columns';
-import type { ClientRecord } from './types';
-
-const data: ClientRecord[] = [
-  {
-    id: 'c1gr84i9',
-    fullName: 'John Doe',
-    phoneNumber: 9500329174,
-    membershipPlan: 'Gold',
-    status: 'success',
-  },
-  {
-    id: 'c2j8u4k3',
-    fullName: 'Jane Smith',
-    phoneNumber: 9500329175,
-    membershipPlan: 'Silver',
-    status: 'processing',
-  },
-  {
-    id: 'c3p9k5n7',
-    fullName: 'Alice Johnson',
-    phoneNumber: 9500329176,
-    membershipPlan: 'Platinum',
-    status: 'pending',
-  },
-  {
-    id: 'c4q7l3h5',
-    fullName: 'Michael Brown',
-    phoneNumber: 9500329177,
-    membershipPlan: 'Bronze',
-    status: 'failed',
-  },
-  {
-    id: 'c5m6w2z9',
-    fullName: 'Davis',
-    phoneNumber: 9500329178,
-    membershipPlan: 'Gold',
-    status: 'success',
-  },
-];
+import { CLIENT_TABLE_COLUMNS } from './columns';
 
 export const ClientTable = async () => {
+  const clients = await api.clients.list();
   return (
     <div className="space-y-4">
       <DataTable
-        rows={data}
-        columns={getClientColumns()}
+        rows={clients}
+        columns={CLIENT_TABLE_COLUMNS}
+        noResultsMessage="No client results found."
         search={{
           enabled: true,
           accessorKey: 'name',
@@ -59,12 +21,12 @@ export const ClientTable = async () => {
         }}
         toolbarRightSideContent={
           <div className="flex gap-2">
-            <Button variant="outline" as={Link} href="/client/membership">
-              Manage Membership
-            </Button>
-            <Button leftIcon={<AddIcon className="size-3" />} as={Link} href="/client/new">
-              Add Client
-            </Button>
+            <Link href="/client/membership">
+              <Button variant="outline">Manage Membership</Button>
+            </Link>
+            <Link href="/client/new">
+              <Button leftIcon={<AddIcon className="size-3" />}>Add Client</Button>
+            </Link>
           </div>
         }
         pagination={{

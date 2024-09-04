@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import type { FC } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+
 import { AttendanceTable } from './_components/AttendanceTable';
 
 export const metadata: Metadata = {

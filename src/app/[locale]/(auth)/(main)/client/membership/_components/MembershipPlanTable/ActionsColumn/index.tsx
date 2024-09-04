@@ -44,7 +44,7 @@ export const ActionsColumn: FC<ActionsColumnProps> = ({ row, onUpdate, onDelete 
       <DeleteMembershipPlanDialog
         isOpen={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
-        planName={row.planName}
+        planName={row.name}
         id={row.id}
         onDelete={onDelete}
       />

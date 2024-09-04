@@ -3,7 +3,7 @@
 import { DataTable } from '@paalan/react-ui';
 import { type FC, use, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { MEMBERSHIP_TENURE_DISPLAY_ITEM } from '@/constants/client/membership';
+import { CLIENT_MEMBERSHIP_TENURE } from '@/constants/client/membership.constant';
 
 import type { MembershipPlan } from '../../types';
 import { AddMembershipPlanButton } from '../AddMembershipPlanButton';
@@ -37,8 +37,8 @@ export const MembershipPlanTable: FC<MembershipPlanTableProps> = ({ membershipLi
   }, []);
 
   const tenureFacetOptions = useMemo(() => {
-    return Object.entries(MEMBERSHIP_TENURE_DISPLAY_ITEM).map(([key, value]) => ({
-      label: value,
+    return Object.entries(CLIENT_MEMBERSHIP_TENURE).map(([key, value]) => ({
+      label: value.display,
       value: key,
     }));
   }, []);
@@ -57,7 +57,7 @@ export const MembershipPlanTable: FC<MembershipPlanTableProps> = ({ membershipLi
       ]}
       search={{
         enabled: true,
-        accessorKey: 'planName',
+        accessorKey: 'name',
         className: 'lg:w-full max-w-sm',
         placeholder: 'Search by plan name',
       }}
