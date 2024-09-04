@@ -16,15 +16,15 @@ export const getMembershipColumns = ({
 }: GetMembershipColumnsProps): DataTableColumnDef<MembershipPlan>[] => {
   return [
     {
-      id: 'planName',
+      id: 'name',
       accessorKey: 'name',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Plan Name" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
       enableSorting: false,
     },
     {
-      id: 'planDescription',
+      id: 'description',
       accessorKey: 'description',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Plan Description" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,
       enableSorting: false,
     },
     {

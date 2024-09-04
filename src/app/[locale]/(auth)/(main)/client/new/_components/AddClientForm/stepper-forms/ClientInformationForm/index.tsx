@@ -10,6 +10,7 @@ import {
   useStepper,
   VStack,
 } from '@paalan/react-ui';
+import { startOfDay } from 'date-fns';
 import { type FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -30,7 +31,6 @@ export const ClientInformationForm: FC = () => {
     resolver: zodResolver(clientInformationSchema),
     defaultValues: {
       ...clientInFormation,
-      dob: undefined,
       phoneNumber: clientInFormation.phoneNumber || undefined,
       emergencyContact: {
         ...clientInFormation.emergencyContact,
@@ -54,7 +54,10 @@ export const ClientInformationForm: FC = () => {
   };
 
   const onSubmit = (data: ClientInformationSchema) => {
-    setClientInformation(data);
+    setClientInformation({
+      ...data,
+      dob: startOfDay(new Date(data.dob)),
+    });
     nextStep();
   };
 

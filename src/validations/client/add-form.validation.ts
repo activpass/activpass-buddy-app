@@ -38,7 +38,12 @@ export const clientPersonalInformationSchema = z.object({
     .date({
       message: 'Date of birth is required',
     })
-    .refine(value => value < startOfDay(new Date()), {
+    .or(
+      z.string({
+        message: 'Date of birth is required',
+      })
+    )
+    .refine(value => new Date(value) < startOfDay(new Date()), {
       message: 'Date of birth must be before today',
     }),
   phoneNumber: phoneNumberSchema,

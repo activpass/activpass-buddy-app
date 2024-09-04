@@ -103,6 +103,7 @@ class ClientService {
         phoneNumber: IClientSchema['phoneNumber'];
         membershipPlan: IMembershipPlanSchema;
         income: IIncomeSchema;
+        organization: mongoose.Types.ObjectId;
       }>([
         {
           $match: {
@@ -131,13 +132,14 @@ class ClientService {
             phoneNumber: 1,
             membershipPlan: 1,
             income: 1,
+            organization: 1,
           },
         },
       ]);
       await MembershipPlanModel.populate(clients, { path: 'membershipPlan' });
       return clients.map(client => {
         return {
-          id: client._id.toString(),
+          id: client._id.toHexString(),
           firstName: client.firstName,
           lastName: client.lastName,
           avatar: client.avatar,
@@ -145,6 +147,7 @@ class ClientService {
           phoneNumber: client.phoneNumber,
           membershipPlanName: client.membershipPlan.name,
           status: client.income.paymentStatus,
+          orgId: client.organization.toHexString(),
         };
       });
     } catch (error) {
