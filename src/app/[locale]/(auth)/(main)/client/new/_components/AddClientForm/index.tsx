@@ -1,11 +1,21 @@
 'use client';
 
 import { Heading, Step, Stepper } from '@paalan/react-ui';
-import type { FC } from 'react';
+import { type FC, useEffect } from 'react';
 
 import { ADD_CLIENT_STEPPER_COMPONENT, ADD_CLIENT_STEPS } from './constants';
+import { useClientFormStore } from './store';
 
 export const AddClientForm: FC = () => {
+  const resetClientForm = useClientFormStore(state => state.resetClientForm);
+
+  useEffect(() => {
+    return () => {
+      // reset the form when the component is unmounted
+      resetClientForm();
+    };
+  }, [resetClientForm]);
+
   return (
     <Stepper
       steps={ADD_CLIENT_STEPS}
@@ -15,7 +25,7 @@ export const AddClientForm: FC = () => {
       timelineContainerClassName="gap-20"
       timelineContentClassName="bg-background py-6 px-8"
       styles={{
-        'vertical-step-content': 'bg-background py-4',
+        'vertical-step-content': 'py-4',
       }}
     >
       {ADD_CLIENT_STEPS.map(stepProps => {

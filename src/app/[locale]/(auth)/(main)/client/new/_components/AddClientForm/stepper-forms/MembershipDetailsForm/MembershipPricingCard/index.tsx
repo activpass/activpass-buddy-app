@@ -33,7 +33,7 @@ export const MembershipPricingCard: FC<MembershipPricingCardProps> = ({
     if (selected) return;
     onSelect();
   };
-  const discountApplied = !!discountPercentage && !!discountedAmount;
+  const discountApplied = !!discountPercentage;
   return (
     <Card
       className={cn(`mx-auto flex w-72 cursor-pointer flex-col justify-between p-1`, {
@@ -55,7 +55,7 @@ export const MembershipPricingCard: FC<MembershipPricingCardProps> = ({
             >
               {planName}
             </CardTitle>
-            {!!discountPercentage && (
+            {discountApplied && (
               <div
                 className={cn(
                   'h-fit rounded-xl bg-zinc-200 px-2.5 py-1 text-sm text-black dark:bg-zinc-800 dark:text-white'

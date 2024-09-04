@@ -72,6 +72,7 @@ export const ConsentAndAgreementsForm: FC = () => {
         ...clientFormState,
         clientInformation: {
           ...clientFormState.clientInformation,
+          dob: clientFormState.clientInformation.dob || new Date(),
           avatar: '',
         },
         consentAndAgreement: data,

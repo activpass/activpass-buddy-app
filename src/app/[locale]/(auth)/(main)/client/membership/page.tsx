@@ -22,7 +22,7 @@ const MembershipPage: React.FC = () => {
         ]}
       />
       <div className="mb-5">
-        <Heading as="h1">Membership</Heading>
+        <Heading as="h1">Membership Plan</Heading>
         <Text className="text-muted-foreground">
           This section you can manage your membership plans.
         </Text>

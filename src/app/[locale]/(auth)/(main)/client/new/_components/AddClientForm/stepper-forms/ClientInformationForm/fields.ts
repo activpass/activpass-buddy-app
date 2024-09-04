@@ -53,11 +53,15 @@ export const getPersonalInfoFields = (form: UseFormReturn<ClientInformationSchem
       required: true,
     },
     {
-      type: 'date-picker',
+      type: 'input',
       name: 'dob',
       label: 'Date of Birth',
       placeholder: 'Enter date of birth eg. 01/01/1990',
       required: true,
+      inputType: 'date',
+      inputProps: {
+        value: (form.watch('dob') || '').toString(),
+      },
     },
     {
       type: 'textarea',
