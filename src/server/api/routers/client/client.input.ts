@@ -2,9 +2,10 @@ import { z } from 'zod';
 
 import { clientFormSchema } from '@/validations/client/add-form.validation';
 
-export const createClientInputSchema = clientFormSchema.extend({
+export const createClientInputSchema = clientFormSchema.omit({ clientInformation: true }).extend({
   clientInformation: clientFormSchema.shape.clientInformation.extend({
     avatar: z.string().optional(),
+    dob: z.date(),
   }),
 });
 export type CreateClientInputSchema = z.infer<typeof createClientInputSchema>;

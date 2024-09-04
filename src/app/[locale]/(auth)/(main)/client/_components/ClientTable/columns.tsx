@@ -71,4 +71,23 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
       return value.includes(row.getValue(id));
     },
   },
+  {
+    accessorKey: 'checkIn',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="QR Check In" />,
+    enableSorting: false,
+    cell: ({ row }) => {
+      return (
+        <Button
+          as={Link}
+          variant="link"
+          color="blue"
+          href={`/${row.original.orgId}/check-in`}
+          className="pl-0"
+          target="_blank"
+        >
+          Check In
+        </Button>
+      );
+    },
+  },
 ];

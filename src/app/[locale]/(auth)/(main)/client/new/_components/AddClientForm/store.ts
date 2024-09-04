@@ -12,7 +12,10 @@ import { createMembershipPlanSchema } from '@/validations/client/membership.vali
 
 import type { MembershipPlan } from '../../../membership/types';
 
-export type ClientFormState = ClientFormSchema & {
+export type ClientFormState = Omit<ClientFormSchema, 'clientInformation' | 'membershipDetail'> & {
+  clientInformation: Omit<ClientFormSchema['clientInformation'], 'dob'> & {
+    dob: Date | undefined;
+  };
   membershipDetail: ClientFormSchema['membershipDetail'] & {
     selectedPlan: MembershipPlan | null;
   };
@@ -31,7 +34,7 @@ export type ClientFormActions = {
   updatePaymentDetail: (data: Partial<ClientFormState['paymentDetail']>) => void;
   updateGoalsAndPreferences: (data: Partial<ClientFormState['goalsAndPreference']>) => void;
   updateConsentAndAgreement: (data: Partial<ClientFormState['consentAndAgreement']>) => void;
-  reset: () => void;
+  resetClientForm: () => void;
 };
 export type ClientFormStore = ClientFormState & ClientFormActions;
 
@@ -41,7 +44,7 @@ const defaultValues: ClientFormState = {
     lastName: '',
     email: '',
     phoneNumber: 0,
-    dob: new Date(),
+    dob: undefined,
     address: '',
     emergencyContact: {
       name: '',
@@ -110,7 +113,7 @@ export const useClientFormStore = create<ClientFormStore>()(set => ({
     set(state => ({ goalsAndPreference: { ...state.goalsAndPreference, ...data } })),
   updateConsentAndAgreement: data =>
     set(state => ({ consentAndAgreement: { ...state.consentAndAgreement, ...data } })),
-  reset: () => set(defaultValues),
+  resetClientForm: () => set(defaultValues),
 }));
 
 export const useClientInformation = () => useClientFormStore(state => state.clientInformation);
