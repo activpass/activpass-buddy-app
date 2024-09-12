@@ -25,7 +25,7 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
             as={Link}
             variant="link"
             color="blue"
-            href={`/client/${row.original.id}`}
+            href={`/client/${row.original.id}?name=${row.original.name}`}
             className="pl-0"
           >
             {row.getValue('name')}

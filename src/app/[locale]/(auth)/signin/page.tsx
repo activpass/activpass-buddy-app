@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, Text } from 
 import { getTranslations } from 'next-intl/server';
 
 import Link from '@/components/Link';
-import { FeedbackLayout } from '@/layouts/FeedbackLayout';
+import { HomeLayout } from '@/layouts/HomeLayout';
 
 import { SignInForm } from './_components/SignInForm';
 
@@ -20,7 +20,7 @@ export async function generateMetadata(props: { params: { locale: string } }) {
 
 const SignInPage = () => {
   return (
-    <FeedbackLayout>
+    <HomeLayout>
       <Card className="lg:min-w-128">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Sign In</CardTitle>
@@ -38,7 +38,7 @@ const SignInPage = () => {
           </Text>
         </CardContent>
       </Card>
-    </FeedbackLayout>
+    </HomeLayout>
   );
 };
 

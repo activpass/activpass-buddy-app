@@ -16,9 +16,11 @@ import { ClientModel, type IClientSchema } from '../model/client.model';
 import type {
   AnalyticsClientsArgs,
   CreateClientArgs,
+  GenerateOnboardingLinkArgs,
   GetClientByIdArgs,
   ListClientsArgs,
   UpdateClientArgs,
+  VerifyOnboardingTokenArgs,
 } from './client.service.types';
 
 class ClientService {
@@ -166,6 +168,14 @@ class ClientService {
         message: 'Failed to calculate client analytics',
       });
     }
+  };
+
+  generateOnboardingLink = ({ orgId, userId }: GenerateOnboardingLinkArgs) => {
+    return clientRepository.generateOnboardingLink({ orgId, userId });
+  };
+
+  verifyOnboardingToken = ({ token }: VerifyOnboardingTokenArgs) => {
+    return clientRepository.verifyOnboardingToken({ token });
   };
 }
 

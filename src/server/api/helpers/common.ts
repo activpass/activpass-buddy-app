@@ -1,12 +1,12 @@
-import { createHash, getRandomValues, randomBytes } from 'crypto';
+import crypto, { createHash } from 'crypto';
 import mongoose from 'mongoose';
 /**
  * Generates a random token of the specified length.
  * @param length The length of the token to generate. Defaults to 30.
  * @returns A random token.
  */
-export const generateRandomToken = (length: number = 30) => {
-  return getRandomValues(new Uint8Array(length)).toString();
+export const generateRandomToken = (length: number = 20) => {
+  return crypto.randomBytes(length).toString('hex');
 };
 
 /**
@@ -28,7 +28,7 @@ export const getHashToken = (rawToken: string): string => {
  */
 export const generateRandomAlphanumericString = (length: number) => {
   // Generate random bytes
-  const randomBytesBuffer = randomBytes(Math.ceil((length * 3) / 4));
+  const randomBytesBuffer = crypto.randomBytes(Math.ceil((length * 3) / 4));
   // Convert the random bytes to a base64 string
   let randomString = randomBytesBuffer.toString('base64');
   // Remove non-alphanumeric characters

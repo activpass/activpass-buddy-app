@@ -19,3 +19,12 @@ export type ListClientParams = {
 export type AnalyticsClientParams = {
   orgId: string;
 };
+
+export type GenerateOnboardingLinkParams = {
+  orgId: string;
+  userId: string;
+};
+
+export type VerifyOnboardingTokenParams = {
+  token: string;
+};

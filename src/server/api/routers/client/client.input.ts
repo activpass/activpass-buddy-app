@@ -17,3 +17,17 @@ export const updateClientInputSchema = z.object({
   data: createClientInputSchema.optional(),
 });
 export type UpdateClientInputSchema = z.infer<typeof updateClientInputSchema>;
+
+export const verifyOnboardingTokenInputSchema = z.object({
+  token: z.string().min(1, {
+    message: 'Token is required',
+  }),
+});
+export type VerifyOnboardingTokenInputSchema = z.infer<typeof verifyOnboardingTokenInputSchema>;
+
+export const submitOnboardingClientInputSchema = createClientInputSchema.extend({
+  orgId: z.string().min(1, {
+    message: 'Organization ID is required',
+  }),
+});
+export type SubmitOnboardingClientInputSchema = z.infer<typeof submitOnboardingClientInputSchema>;

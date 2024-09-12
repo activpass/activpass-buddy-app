@@ -21,3 +21,12 @@ export type ListClientsArgs = {
 export type AnalyticsClientsArgs = {
   orgId: string;
 };
+
+export type GenerateOnboardingLinkArgs = {
+  orgId: string;
+  userId: string;
+};
+
+export type VerifyOnboardingTokenArgs = {
+  token: string;
+};

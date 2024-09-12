@@ -5,7 +5,7 @@ import { FaStar } from 'react-icons/fa';
 import ThemeToggle from '../components/Common/ThemeToggle';
 import { Logo } from '../components/Logo';
 
-export const FeedbackLayout: FC<PropsWithChildren> = ({ children }) => {
+export const HomeLayout: FC<PropsWithChildren> = ({ children }) => {
   const starIndexes = Array.from({ length: 5 }).map((_, i) => i);
   const quotes = [
     {

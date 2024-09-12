@@ -7,6 +7,7 @@ import { httpBatchLink, loggerLink } from '@trpc/client';
 import { createTRPCReact } from '@trpc/react-query';
 import { useMemo } from 'react';
 
+import { usePathname, useRouter } from '@/lib/navigation';
 import { isTRPCClientErrorWithCode } from '@/lib/utils/is-trpc-client-error-with-code';
 import { type AppRouter } from '@/server/api/root';
 
@@ -19,6 +20,9 @@ type Props = {
 };
 
 export const TRPCReactProvider: React.FC<Props> = props => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const queryClient = useMemo(
     () =>
       new QueryClient({
@@ -26,6 +30,7 @@ export const TRPCReactProvider: React.FC<Props> = props => {
           queries: {
             retry(failureCount, error) {
               if (isTRPCClientErrorWithCode(error) && error.data.code === 'UNAUTHORIZED') {
+                router.push(`/signin?redirectBackUrl=${pathname}`);
                 return false;
               }
               return failureCount < 2;
@@ -33,7 +38,7 @@ export const TRPCReactProvider: React.FC<Props> = props => {
           },
         },
       }),
-    []
+    [pathname, router]
   );
 
   const trpcClient = useMemo(
