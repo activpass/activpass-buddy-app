@@ -3,12 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
 import { useParams } from 'next/navigation';
+import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { CLIENT_RELATIONSHIP } from '@/constants/client/add-form.constant';
 import { api } from '@/trpc/client';
-// import { useState } from 'react';
 import { getOptionsFromDisplayConstant } from '@/utils/helpers';
+import type { ClientFormSchema } from '@/validations/client/add-form.validation';
 import {
   type ClientEmergencyContactFormSchema,
   clientEmergencyContactFormSchema,
@@ -51,39 +52,37 @@ const formFields: FormFieldItem<ClientEmergencyContactFormSchema>[] = [
   },
 ];
 
-export const EmergencyContact = () => {
+type ClientInfoProps = {
+  data: ClientFormSchema['emergencyContact'];
+};
+
+export const EmergencyContact: FC<ClientInfoProps> = ({ data }) => {
   const { id } = useParams<{ id: string }>();
-
-  const { data: clientData, isLoading } = api.clients.get.useQuery(id);
-  // const [clientData, setClientData] = useState(initialClientData);
-
-  const defaultValues: Partial<ClientEmergencyContactFormSchema> = {
-    name: clientData?.emergencyContact?.name,
-    relationship: clientData?.emergencyContact?.relationship,
-    phoneNumber: clientData?.emergencyContact?.phoneNumber,
-    email: clientData?.emergencyContact?.email,
-    address: clientData?.emergencyContact?.address,
-  };
 
   const form = useForm<ClientEmergencyContactFormSchema>({
     resolver: zodResolver(clientEmergencyContactFormSchema),
-    defaultValues,
+    defaultValues: data,
     mode: 'onChange',
   });
 
-  const onSubmit = (data: ClientEmergencyContactFormSchema) => {
-    toast('Emergency Contact Information Submitted:', {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  const updateEmergencyContact = api.clients.update.useMutation();
+
+  const onSubmit = async (updateData: ClientEmergencyContactFormSchema) => {
+    try {
+      await updateEmergencyContact.mutateAsync({
+        id,
+        data: {
+          emergencyContact: updateData,
+        },
+      });
+
+      toast.success('Emergency Contact Information updated successfully!');
+    } catch (err) {
+      const error = err as Error;
+      toast.error(`Failed to update emergency contact: ${error.message}`);
+    }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
   return (
     <Form<ClientEmergencyContactFormSchema>
       form={form}

@@ -3,11 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
 import { useParams } from 'next/navigation';
+import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { CLIENT_FITNESS_LEVEL } from '@/constants/client/add-form.constant';
 import { api } from '@/trpc/client';
 import { getOptionsFromDisplayConstant } from '@/utils/helpers';
+import type { ClientFormSchema } from '@/validations/client/add-form.validation';
 import {
   type ClientHealthFitnessFormSchema,
   clientHealthFitnessFormSchema,
@@ -65,38 +67,36 @@ const formFields: FormFieldItem<ClientHealthFitnessFormSchema>[] = [
   },
 ];
 
-export const HealthFitness = () => {
+type HealthFitnessProps = {
+  data: ClientFormSchema['healthAndFitness'];
+};
+
+export const HealthFitness: FC<HealthFitnessProps> = ({ data }) => {
   const { id } = useParams<{ id: string }>();
 
-  const { data: clientData, isLoading } = api.clients.get.useQuery(id);
-
-  const defaultValues: Partial<ClientHealthFitnessFormSchema> = {
-    height: clientData?.healthAndFitness?.height,
-    weight: clientData?.healthAndFitness?.weight,
-    fitnessLevel: clientData?.healthAndFitness?.fitnessLevel,
-    medicalCondition: clientData?.healthAndFitness?.medicalCondition ?? '',
-    allergy: clientData?.healthAndFitness?.allergy ?? '',
-    injury: clientData?.healthAndFitness?.injury ?? '',
-  };
   const form = useForm<ClientHealthFitnessFormSchema>({
     resolver: zodResolver(clientHealthFitnessFormSchema),
-    defaultValues,
+    defaultValues: data,
     mode: 'onChange',
   });
 
-  const onSubmit = (data: ClientHealthFitnessFormSchema) => {
-    toast('Health and Fitness Information Submitted:', {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  };
+  const updateHealthFitness = api.clients.update.useMutation();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const onSubmit = async (updateData: ClientHealthFitnessFormSchema) => {
+    try {
+      await updateHealthFitness.mutateAsync({
+        id,
+        data: {
+          healthAndFitness: updateData,
+        },
+      });
+
+      toast.success('Health and Fitness Information updated successfully!');
+    } catch (err) {
+      const error = err as Error;
+      toast.error(`Failed to update health and fitness information: ${error.message}`);
+    }
+  };
 
   return (
     <Form<ClientHealthFitnessFormSchema>

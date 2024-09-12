@@ -3,11 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
 import { useParams } from 'next/navigation';
+import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { CLIENT_CLASS_PREFERENCE, CLIENT_FITNESS_GOAL } from '@/constants/client/add-form.constant';
 import { api } from '@/trpc/client';
 import { getOptionsFromDisplayConstant } from '@/utils/helpers';
+import type { ClientFormSchema } from '@/validations/client/add-form.validation';
 import {
   type ClientGoalsPreferencesFormSchema,
   clientGoalsPreferencesFormSchema,
@@ -45,37 +47,36 @@ const formFields: FormFieldItem<ClientGoalsPreferencesFormSchema>[] = [
   },
 ];
 
-export const GoalsPreferences = () => {
+type GoalsPreferencesProps = {
+  data: Omit<ClientFormSchema['goalsAndPreference'], 'fitnessAssessment' | 'additionalServices'>;
+};
+
+export const GoalsPreferences: FC<GoalsPreferencesProps> = ({ data }) => {
   const { id } = useParams<{ id: string }>();
-
-  const { data: clientData, isLoading } = api.clients.get.useQuery(id);
-
-  const defaultValues: Partial<ClientGoalsPreferencesFormSchema> = {
-    fitnessGoals: clientData?.goalsAndPreference?.fitnessGoals,
-    classPreference: clientData?.goalsAndPreference?.classPreference,
-    classTimePreference: clientData?.goalsAndPreference?.classTimePreference,
-    instructorSupport: clientData?.goalsAndPreference?.instructorSupport,
-  };
 
   const form = useForm<ClientGoalsPreferencesFormSchema>({
     resolver: zodResolver(clientGoalsPreferencesFormSchema),
-    defaultValues,
+    defaultValues: data,
     mode: 'onChange',
   });
 
-  const onSubmit = (data: ClientGoalsPreferencesFormSchema) => {
-    toast('Goals and Preferences Information Submitted:', {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  };
+  const updateGoalsPreferences = api.clients.update.useMutation();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const onSubmit = async (updateData: ClientGoalsPreferencesFormSchema) => {
+    try {
+      await updateGoalsPreferences.mutateAsync({
+        id,
+        data: {
+          goalsAndPreference: updateData,
+        },
+      });
+
+      toast.success('Goals and Preferences Information updated successfully!');
+    } catch (err) {
+      const error = err as Error;
+      toast.error(`Failed to update goals and preferences information: ${error.message}`);
+    }
+  };
 
   return (
     <Form<ClientGoalsPreferencesFormSchema>
