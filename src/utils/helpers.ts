@@ -36,3 +36,12 @@ export const getOptionsFromDisplayConstant = (
     label: obj[key]?.display || '',
   }));
 };
+
+/**
+ * Retrieves the keys of an object.
+ * @param obj - The object from which to retrieve the keys.
+ * @returns An array of keys from the object.
+ */
+export const getObjectKeys = <T extends Record<string, unknown>>(obj: T) => {
+  return Object.keys(obj) as Array<keyof T>;
+};

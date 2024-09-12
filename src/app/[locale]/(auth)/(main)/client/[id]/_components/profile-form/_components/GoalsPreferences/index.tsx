@@ -2,69 +2,61 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
+import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
+import { CLIENT_CLASS_PREFERENCE, CLIENT_FITNESS_GOAL } from '@/constants/client/add-form.constant';
+import { api } from '@/trpc/client';
+import { getOptionsFromDisplayConstant } from '@/utils/helpers';
 import {
   type ClientGoalsPreferencesFormSchema,
   clientGoalsPreferencesFormSchema,
 } from '@/validations/client-profile/client-goals-preferences.validation';
 
-const defaultValues: Partial<ClientGoalsPreferencesFormSchema> = {
-  fitnessGoals: 'Muscle Building',
-  dayPreference: 'Morning',
-  timePreference: '07:00',
-  instructorPreference: 'Yes',
-  additionalService: 'Nutrition Plan',
-};
-
 const formFields: FormFieldItem<ClientGoalsPreferencesFormSchema>[] = [
   {
-    type: 'select',
+    type: 'multi-select',
     name: 'fitnessGoals',
     label: 'Fitness Goals',
-    placeholder: 'Enter your fitness goals',
-    options: [
-      'Weight Loss',
-      'Fat Loss',
-      'Muscle Building',
-      'Improving Strength',
-      'Toning and Sculpting',
-      'Increasing Flexibility',
-      'Improving Posture',
-      'Boosting Athletic Performance',
-      'Rehabilitation and Recovery',
-      'Weight Maintenance',
-    ],
+    placeholder: 'Enter your fitness goals eg. Weight Loss',
+    options: getOptionsFromDisplayConstant(CLIENT_FITNESS_GOAL),
   },
   {
     type: 'select',
-    name: 'dayPreference',
+    name: 'classPreference',
     label: 'Preferred Time of Day',
-    placeholder: 'Select your preferred time of day',
-    options: [
-      { value: 'Morning', label: 'Morning' },
-      { value: 'Afternoon', label: 'Afternoon' },
-      { value: 'Evening', label: 'Evening' },
-    ],
+    placeholder: 'Select your preferred time of day eg. Morning',
+    options: getOptionsFromDisplayConstant(CLIENT_CLASS_PREFERENCE),
   },
   {
     type: 'input',
-    name: 'timePreference',
+    name: 'classTimePreference',
     label: 'Preferred Time',
-    placeholder: '07:00 AM',
+    placeholder: 'Enter preferred time eg. 07:00 AM',
     inputType: 'time',
-    description: 'Select if you want an preferred workout time.',
+    description: 'Select your preferred workout time.',
   },
   {
-    type: 'select',
-    name: 'instructorPreference',
+    type: 'checkbox',
+    name: 'instructorSupport',
     label: 'Do you prefer an instructor?',
-    options: ['Yes', 'No'],
-    description: 'Select if you want an instructor.',
+    description: 'Select if you want an instructor for guidance.',
+    formItemClassName: 'pt-5 space-y-1',
   },
 ];
 
 export const GoalsPreferences = () => {
+  const { id } = useParams<{ id: string }>();
+
+  const { data: clientData, isLoading } = api.clients.get.useQuery(id);
+
+  const defaultValues: Partial<ClientGoalsPreferencesFormSchema> = {
+    fitnessGoals: clientData?.goalsAndPreference?.fitnessGoals,
+    classPreference: clientData?.goalsAndPreference?.classPreference,
+    classTimePreference: clientData?.goalsAndPreference?.classTimePreference,
+    instructorSupport: clientData?.goalsAndPreference?.instructorSupport,
+  };
+
   const form = useForm<ClientGoalsPreferencesFormSchema>({
     resolver: zodResolver(clientGoalsPreferencesFormSchema),
     defaultValues,
@@ -81,6 +73,10 @@ export const GoalsPreferences = () => {
     });
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Form<ClientGoalsPreferencesFormSchema>
       form={form}
@@ -88,7 +84,7 @@ export const GoalsPreferences = () => {
       onSubmit={onSubmit}
       submitText="Update Goals & Preferences"
       hideResetButton
-      className="grid grid-cols-2 gap-4 space-y-0"
+      className="grid grid-cols-1 gap-4 space-y-0 sm:grid-cols-2"
     />
   );
 };

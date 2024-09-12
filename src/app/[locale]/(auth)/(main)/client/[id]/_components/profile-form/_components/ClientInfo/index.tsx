@@ -2,88 +2,106 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
+import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
+import { CLIENT_GENDER } from '@/constants/client/add-form.constant';
+import { api } from '@/trpc/client';
+import { getOptionsFromDisplayConstant } from '@/utils/helpers';
 import {
   type ClientInfoFormSchema,
   clientInfoFormSchema,
 } from '@/validations/client-profile/client-profile-info.validation';
-
-const defaultValues: Partial<ClientInfoFormSchema> = {
-  firstName: 'Cristiano',
-  lastName: 'Ronaldo',
-  email: 'cristiano.ronaldo@email.com',
-  phoneNumber: '1234567890',
-  gender: 'Male',
-  dob: '1985-02-05',
-  address: '123 Main St, Springfield',
-};
 
 const formFields: FormFieldItem<ClientInfoFormSchema>[] = [
   {
     type: 'input',
     name: 'firstName',
     label: 'First Name',
-    placeholder: 'Cristiano',
+    placeholder: 'Enter first name eg. Cristiano',
   },
   {
     type: 'input',
     name: 'lastName',
     label: 'Last Name',
-    placeholder: 'Ronaldo',
+    placeholder: 'Enter last name eg. Ronaldo',
   },
   {
     type: 'input',
     name: 'phoneNumber',
     label: 'Phone Number',
-    placeholder: '1234567890',
+    placeholder: 'Enter phone number eg. 1234567890',
     inputType: 'number',
   },
   {
     type: 'input',
     name: 'email',
     label: 'Email',
-    placeholder: 'cristiano.ronaldo@email.com',
+    placeholder: 'Enter email eg. abc@gmail.com',
   },
   {
     type: 'select',
     name: 'gender',
     label: 'Gender',
-    placeholder: 'Male',
-    options: ['Male', 'Female', 'Transgender', 'Others'],
+    placeholder: 'Select gender eg. Male',
+    options: getOptionsFromDisplayConstant(CLIENT_GENDER),
   },
   {
     type: 'date-picker',
     name: 'dob',
     label: 'Date of Birth',
-    placeholder: '1985-02-05',
+    placeholder: 'Enter date of birth eg. 1985-02-05',
   },
   {
     type: 'textarea',
     name: 'address',
     label: 'Address',
     className: 'resize-none',
-    placeholder: '123 Main St, Springfield',
-    formItemClassName: 'col-span-2',
+    placeholder: 'Enter address eg. 123 Main St, Springfield',
+    formItemClassName: 'col-span-1 sm:col-span-2',
   },
 ];
 
 export const ClientInfo = () => {
+  const { id } = useParams<{ id: string }>();
+
+  const { data: clientData, isLoading } = api.clients.get.useQuery(id);
+
+  const defaultValues: Partial<ClientInfoFormSchema> = {
+    firstName: clientData?.firstName,
+    lastName: clientData?.lastName,
+    email: clientData?.email,
+    phoneNumber: clientData?.phoneNumber,
+    gender: clientData?.gender,
+    dob: clientData?.dob,
+    address: clientData?.address,
+  };
+
   const form = useForm<ClientInfoFormSchema>({
     resolver: zodResolver(clientInfoFormSchema),
     defaultValues,
     mode: 'onChange',
   });
 
-  const onSubmit = (data: ClientInfoFormSchema) => {
-    toast('You submitted the following values:', {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  const updateProfile = api.clients.update.useMutation();
+
+  const onSubmit = async (data: ClientInfoFormSchema) => {
+    try {
+      await updateProfile.mutateAsync({
+        id,
+        ...data,
+      });
+
+      toast.success('Personal Information updated successfully!');
+    } catch (err) {
+      const error = err as Error;
+      toast.error(`Failed to update personal information: ${error.message}`);
+    }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Form<ClientInfoFormSchema>
@@ -92,7 +110,7 @@ export const ClientInfo = () => {
       onSubmit={onSubmit}
       submitText="Update Profile Info"
       hideResetButton
-      className="grid grid-cols-2 gap-4 space-y-0"
+      className="grid grid-cols-1 gap-4 space-y-0 sm:grid-cols-2"
     />
   );
 };

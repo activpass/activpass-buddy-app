@@ -15,6 +15,7 @@ import {
   CLIENT_RELATIONSHIP,
 } from '@/constants/client/add-form.constant';
 import { generateClientCode } from '@/server/api/helpers/common';
+import { getObjectKeys } from '@/utils/helpers';
 
 // Virtuals are not included in the schema type
 export interface IClientVirtuals {
@@ -72,14 +73,14 @@ const ClientSchema = new mongoose.Schema(
     gender: {
       type: String,
       required: true,
-      enum: Object.keys(CLIENT_GENDER),
+      enum: getObjectKeys(CLIENT_GENDER),
     },
     dob: { type: Date, required: true, max: new Date() },
     address: { type: String, required: true },
 
     emergencyContact: {
       name: { type: String, required: true },
-      relationship: { type: String, required: true, enum: Object.keys(CLIENT_RELATIONSHIP) },
+      relationship: { type: String, required: true, enum: getObjectKeys(CLIENT_RELATIONSHIP) },
       phoneNumber: { type: Number, required: true },
       email: { type: String },
       address: { type: String },
@@ -88,24 +89,24 @@ const ClientSchema = new mongoose.Schema(
     healthAndFitness: {
       height: { type: Number, required: true },
       weight: { type: Number, required: true },
-      fitnessLevel: { type: String, required: true, enum: Object.keys(CLIENT_FITNESS_LEVEL) },
+      fitnessLevel: { type: String, required: true, enum: getObjectKeys(CLIENT_FITNESS_LEVEL) },
       medicalCondition: { type: String },
       allergy: { type: String },
       injury: { type: String },
     },
 
     goalsAndPreference: {
-      fitnessGoals: [{ type: String, enum: Object.keys(CLIENT_FITNESS_GOAL) }],
+      fitnessGoals: [{ type: String, enum: getObjectKeys(CLIENT_FITNESS_GOAL) }],
       classPreference: {
         type: String,
         required: true,
-        enum: Object.keys(CLIENT_CLASS_PREFERENCE),
+        enum: getObjectKeys(CLIENT_CLASS_PREFERENCE),
       },
       classTimePreference: {
         type: String,
         required: true,
       },
-      additionalServices: [{ type: String, enum: Object.keys(CLIENT_ADDITIONAL_SERVICE) }],
+      additionalServices: [{ type: String, enum: getObjectKeys(CLIENT_ADDITIONAL_SERVICE) }],
       instructorSupport: { type: Boolean, default: false },
       fitnessAssessment: { type: Boolean, default: false },
     },
