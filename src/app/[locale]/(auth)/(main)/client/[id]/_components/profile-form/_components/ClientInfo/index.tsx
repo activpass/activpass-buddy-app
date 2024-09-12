@@ -3,11 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
 import { useParams } from 'next/navigation';
+import { type FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { CLIENT_GENDER } from '@/constants/client/add-form.constant';
 import { api } from '@/trpc/client';
 import { getOptionsFromDisplayConstant } from '@/utils/helpers';
+import type { ClientFormSchema } from '@/validations/client/add-form.validation';
 import {
   type ClientInfoFormSchema,
   clientInfoFormSchema,
@@ -62,34 +64,30 @@ const formFields: FormFieldItem<ClientInfoFormSchema>[] = [
   },
 ];
 
-export const ClientInfo = () => {
+type ClientInfoProps = {
+  data: Omit<ClientFormSchema['personalInformation'], 'avatar'>;
+};
+export const ClientInfo: FC<ClientInfoProps> = ({ data }) => {
   const { id } = useParams<{ id: string }>();
-
-  const { data: clientData, isLoading } = api.clients.get.useQuery(id);
-
-  const defaultValues: Partial<ClientInfoFormSchema> = {
-    firstName: clientData?.firstName,
-    lastName: clientData?.lastName,
-    email: clientData?.email,
-    phoneNumber: clientData?.phoneNumber,
-    gender: clientData?.gender,
-    dob: clientData?.dob,
-    address: clientData?.address,
-  };
 
   const form = useForm<ClientInfoFormSchema>({
     resolver: zodResolver(clientInfoFormSchema),
-    defaultValues,
+    defaultValues: data,
     mode: 'onChange',
   });
 
   const updateProfile = api.clients.update.useMutation();
 
-  const onSubmit = async (data: ClientInfoFormSchema) => {
+  const onSubmit = async (updateData: ClientInfoFormSchema) => {
     try {
       await updateProfile.mutateAsync({
         id,
-        ...data,
+        data: {
+          personalInformation: {
+            ...updateData,
+            dob: new Date(updateData.dob),
+          },
+        },
       });
 
       toast.success('Personal Information updated successfully!');
@@ -98,10 +96,6 @@ export const ClientInfo = () => {
       toast.error(`Failed to update personal information: ${error.message}`);
     }
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <Form<ClientInfoFormSchema>

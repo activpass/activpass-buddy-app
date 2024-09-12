@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import mongoose from 'mongoose';
 
-import { generateClientCode } from '@/server/api/helpers/common';
+import { generateClientCode, generateMongooseObjectId } from '@/server/api/helpers/common';
 import {
   type AnalyticsClientParams,
   type CreateClientParams,
@@ -52,22 +52,23 @@ class ClientRepository {
 
   create = async ({ data, orgId, docSave = true }: CreateClientParams) => {
     try {
-      const { clientInformation, ...rest } = data;
+      const { personalInformation, ...rest } = data;
 
-      await this.isClientExists(clientInformation.email, clientInformation.phoneNumber);
+      await this.isClientExists(personalInformation.email, personalInformation.phoneNumber);
 
       const goalsAndPreference: IClientSchema['goalsAndPreference'] = {
         ...rest.goalsAndPreference,
         additionalServices: rest.goalsAndPreference.additionalServices || [],
       };
       const dataBody: Omit<IClientSchema, keyof IClientVirtuals> = {
-        ...clientInformation,
-        clientCode: generateClientCode(),
-        organization: new mongoose.Types.ObjectId(orgId),
-        membershipPlan: new mongoose.Types.ObjectId(rest.membershipDetail.planId),
+        ...personalInformation,
+        emergencyContact: rest.emergencyContact,
         healthAndFitness: rest.healthAndFitness,
         goalsAndPreference,
         consentAndAgreement: rest.consentAndAgreement,
+        clientCode: generateClientCode(),
+        organization: generateMongooseObjectId(orgId),
+        membershipPlan: generateMongooseObjectId(rest.membershipDetail.planId),
         isDeleted: false,
       };
 
@@ -84,7 +85,12 @@ class ClientRepository {
 
   update = async ({ id, data }: UpdateClientParams) => {
     try {
-      const updatedClient = await ClientModel.findByIdAndUpdate(id, data, { new: true }).exec();
+      const { personalInformation, ...restData } = data;
+      const updatedClient = await ClientModel.findByIdAndUpdate(
+        id,
+        { ...personalInformation, ...restData },
+        { new: true }
+      ).exec();
       if (!updatedClient) {
         throw new TRPCError({
           code: 'NOT_FOUND',

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import type { FC } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+import { api } from '@/trpc/server';
 
 import { ProfileForm } from './_components/profile-form';
 
@@ -16,10 +17,24 @@ type ClientProfilePageProps = {
     id: string;
   };
 };
-const ClientProfilePage: FC<ClientProfilePageProps> = ({ params }) => {
+const ClientProfilePage: FC<ClientProfilePageProps> = async ({ params }) => {
+  const clientData = await api.clients.get(params.id);
+
+  const personalInformationData = {
+    firstName: clientData.firstName,
+    lastName: clientData.lastName,
+    email: clientData.email,
+    phoneNumber: clientData.phoneNumber,
+    address: clientData.address,
+    dob: clientData.dob,
+    gender: clientData.gender,
+  };
+
   return (
     <>
-      <SetBreadcrumbItems items={[{ label: 'Client', href: '/client' }, { label: params.id }]} />
+      <SetBreadcrumbItems
+        items={[{ label: 'Client', href: '/client' }, { label: clientData.fullName }]}
+      />
       <div className="space-y-6">
         <div>
           <Heading as="h3">Profile</Heading>
@@ -27,8 +42,8 @@ const ClientProfilePage: FC<ClientProfilePageProps> = ({ params }) => {
             Manage your profile details
           </Text>
         </div>
-        <ProfileForm />
         <Separator />
+        <ProfileForm personalInformation={personalInformationData} />
       </div>
     </>
   );

@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import {
   clientEmergencyContactSChema,
   type ClientFormSchema,
-  clientInformationSchema,
+  clientPersonalInformationSchema,
   goalsAndPreferenceSchema,
   healthAndFitnessSchema,
   paymentDetailSchema,
@@ -12,8 +12,8 @@ import { createMembershipPlanSchema } from '@/validations/client/membership.vali
 
 import type { MembershipPlan } from '../../../membership/types';
 
-export type ClientFormState = Omit<ClientFormSchema, 'clientInformation' | 'membershipDetail'> & {
-  clientInformation: Omit<ClientFormSchema['clientInformation'], 'dob'> & {
+export type ClientFormState = Omit<ClientFormSchema, 'personalInformation' | 'membershipDetail'> & {
+  personalInformation: Omit<ClientFormSchema['personalInformation'], 'dob'> & {
     dob: Date | undefined;
   };
   membershipDetail: ClientFormSchema['membershipDetail'] & {
@@ -22,13 +22,15 @@ export type ClientFormState = Omit<ClientFormSchema, 'clientInformation' | 'memb
 };
 
 export type ClientFormActions = {
-  setClientInformation: (data: ClientFormState['clientInformation']) => void;
+  setPersonalInformation: (data: ClientFormState['personalInformation']) => void;
+  setEmergencyContact: (data: ClientFormState['emergencyContact']) => void;
   setHealthAndFitness: (data: ClientFormState['healthAndFitness']) => void;
   setMembershipDetail: (data: ClientFormState['membershipDetail']) => void;
   setPaymentDetail: (data: ClientFormState['paymentDetail']) => void;
   setGoalsAndPreferences: (data: ClientFormState['goalsAndPreference']) => void;
   setConsentAndAgreement: (data: ClientFormState['consentAndAgreement']) => void;
-  updateClientInformation: (data: Partial<ClientFormState['clientInformation']>) => void;
+  updatePersonalInformation: (data: Partial<ClientFormState['personalInformation']>) => void;
+  updateEmergencyContact: (data: Partial<ClientFormState['emergencyContact']>) => void;
   updateHealthAndFitness: (data: Partial<ClientFormState['healthAndFitness']>) => void;
   updateMembershipDetail: (data: Partial<ClientFormState['membershipDetail']>) => void;
   updatePaymentDetail: (data: Partial<ClientFormState['paymentDetail']>) => void;
@@ -39,22 +41,22 @@ export type ClientFormActions = {
 export type ClientFormStore = ClientFormState & ClientFormActions;
 
 const defaultValues: ClientFormState = {
-  clientInformation: {
+  personalInformation: {
     firstName: '',
     lastName: '',
     email: '',
     phoneNumber: 0,
     dob: undefined,
     address: '',
-    emergencyContact: {
-      name: '',
-      relationship: clientEmergencyContactSChema.shape.relationship.enum.PARENT,
-      phoneNumber: 0,
-      email: '',
-      address: '',
-    },
-    gender: clientInformationSchema.shape.gender.enum.MEN,
+    gender: clientPersonalInformationSchema.shape.gender.enum.MEN,
     avatar: null,
+  },
+  emergencyContact: {
+    name: '',
+    relationship: clientEmergencyContactSChema.shape.relationship.enum.PARENT,
+    phoneNumber: 0,
+    email: '',
+    address: '',
   },
   healthAndFitness: {
     height: 0,
@@ -95,14 +97,18 @@ const defaultValues: ClientFormState = {
 };
 export const useClientFormStore = create<ClientFormStore>()(set => ({
   ...defaultValues,
-  setClientInformation: data => set({ clientInformation: data }),
+  setPersonalInformation: data => set({ personalInformation: data }),
+  setEmergencyContact: data => set({ emergencyContact: data }),
   setHealthAndFitness: data => set({ healthAndFitness: data }),
   setMembershipDetail: data => set({ membershipDetail: data }),
   setPaymentDetail: data => set({ paymentDetail: data }),
   setGoalsAndPreferences: data => set({ goalsAndPreference: data }),
   setConsentAndAgreement: data => set({ consentAndAgreement: data }),
-  updateClientInformation: data =>
-    set(state => ({ clientInformation: { ...state.clientInformation, ...data } })),
+  updatePersonalInformation: data =>
+    set(state => ({ personalInformation: { ...state.personalInformation, ...data } })),
+  updateEmergencyContact: data =>
+    set(state => ({ emergencyContact: { ...state.emergencyContact, ...data } })),
+
   updateHealthAndFitness: data =>
     set(state => ({ healthAndFitness: { ...state.healthAndFitness, ...data } })),
   updateMembershipDetail: data =>
@@ -116,7 +122,8 @@ export const useClientFormStore = create<ClientFormStore>()(set => ({
   resetClientForm: () => set(defaultValues),
 }));
 
-export const useClientInformation = () => useClientFormStore(state => state.clientInformation);
+export const usePersonalInformation = () => useClientFormStore(state => state.personalInformation);
+export const useEmergencyContact = () => useClientFormStore(state => state.emergencyContact);
 export const useClientHealthAndFitness = () => useClientFormStore(state => state.healthAndFitness);
 export const useClientMemberShipDetail = () => useClientFormStore(state => state.membershipDetail);
 export const useClientPaymentDetail = () => useClientFormStore(state => state.paymentDetail);
@@ -127,21 +134,6 @@ export const useClientConsentAndAgreement = () =>
 
 export const useClientFormState = () => {
   return useClientFormStore(state => {
-    const {
-      clientInformation,
-      healthAndFitness,
-      membershipDetail,
-      paymentDetail,
-      goalsAndPreference,
-      consentAndAgreement,
-    } = state;
-    return {
-      clientInformation,
-      healthAndFitness,
-      membershipDetail,
-      paymentDetail,
-      goalsAndPreference,
-      consentAndAgreement,
-    };
+    return state;
   });
 };

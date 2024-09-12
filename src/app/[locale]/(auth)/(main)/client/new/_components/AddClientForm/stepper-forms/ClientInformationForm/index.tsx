@@ -19,22 +19,25 @@ import {
   clientInformationSchema,
 } from '@/validations/client/add-form.validation';
 
-import { useClientFormStore, useClientInformation } from '../../store';
+import { useClientFormStore, useEmergencyContact, usePersonalInformation } from '../../store';
 import { StepperFormActions } from '../StepperFormActions';
 import { getEmergencyContactFields, getPersonalInfoFields } from './fields';
 
 export const ClientInformationForm: FC = () => {
   const { nextStep } = useStepper();
-  const setClientInformation = useClientFormStore(state => state.setClientInformation);
-  const clientInFormation = useClientInformation();
+  const setPersonalInformation = useClientFormStore(state => state.setPersonalInformation);
+  const setEmergencyContact = useClientFormStore(state => state.setEmergencyContact);
+  const clientPersonalInformation = usePersonalInformation();
+  const clientEmergencyContact = useEmergencyContact();
+
   const form = useForm<ClientInformationSchema>({
     resolver: zodResolver(clientInformationSchema),
     defaultValues: {
-      ...clientInFormation,
-      phoneNumber: clientInFormation.phoneNumber || undefined,
+      ...clientPersonalInformation,
+      phoneNumber: clientPersonalInformation.phoneNumber || undefined,
       emergencyContact: {
-        ...clientInFormation.emergencyContact,
-        phoneNumber: clientInFormation.phoneNumber || undefined,
+        ...clientEmergencyContact,
+        phoneNumber: clientEmergencyContact.phoneNumber || undefined,
       },
     },
   });
@@ -53,11 +56,12 @@ export const ClientInformationForm: FC = () => {
     form.setValue('avatar', file);
   };
 
-  const onSubmit = (data: ClientInformationSchema) => {
-    setClientInformation({
+  const onSubmit = ({ emergencyContact, ...data }: ClientInformationSchema) => {
+    setPersonalInformation({
       ...data,
       dob: startOfDay(new Date(data.dob)),
     });
+    setEmergencyContact(emergencyContact);
     nextStep();
   };
 

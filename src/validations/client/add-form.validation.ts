@@ -141,7 +141,8 @@ export const consentAndAgreementSchema = z.object({
 export type ConsentAndAgreementSchema = z.infer<typeof consentAndAgreementSchema>;
 
 export const clientFormSchema = z.object({
-  clientInformation: clientInformationSchema,
+  personalInformation: clientPersonalInformationSchema,
+  emergencyContact: clientEmergencyContactSChema,
   healthAndFitness: healthAndFitnessSchema,
   goalsAndPreference: goalsAndPreferenceSchema,
   membershipDetail: membershipDetailSchema,
