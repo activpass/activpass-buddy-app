@@ -67,7 +67,6 @@ export const clientEmergencyContactSChema = z.object({
     z.string().email({
       message: 'Invalid email address',
     }),
-    z.string().nullish(),
   ]),
   address: z.string().nullish(),
 });

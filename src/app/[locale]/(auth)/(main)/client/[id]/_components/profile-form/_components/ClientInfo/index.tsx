@@ -1,84 +1,41 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
+import { Form, toast } from '@paalan/react-ui';
 import { useParams } from 'next/navigation';
 import { type FC } from 'react';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { CLIENT_GENDER } from '@/constants/client/add-form.constant';
 import { api } from '@/trpc/client';
-import { getOptionsFromDisplayConstant } from '@/utils/helpers';
+import { formFields } from './fields';
 import type { ClientFormSchema } from '@/validations/client/add-form.validation';
-import {
-  type ClientInfoFormSchema,
-  clientInfoFormSchema,
-} from '@/validations/client-profile/client-profile-info.validation';
+import { clientPersonalInformationSchema } from '@/validations/client/add-form.validation';
 
-const formFields: FormFieldItem<ClientInfoFormSchema>[] = [
-  {
-    type: 'input',
-    name: 'firstName',
-    label: 'First Name',
-    placeholder: 'Enter first name eg. Cristiano',
-  },
-  {
-    type: 'input',
-    name: 'lastName',
-    label: 'Last Name',
-    placeholder: 'Enter last name eg. Ronaldo',
-  },
-  {
-    type: 'input',
-    name: 'phoneNumber',
-    label: 'Phone Number',
-    placeholder: 'Enter phone number eg. 1234567890',
-    inputType: 'number',
-  },
-  {
-    type: 'input',
-    name: 'email',
-    label: 'Email',
-    placeholder: 'Enter email eg. abc@gmail.com',
-  },
-  {
-    type: 'select',
-    name: 'gender',
-    label: 'Gender',
-    placeholder: 'Select gender eg. Male',
-    options: getOptionsFromDisplayConstant(CLIENT_GENDER),
-  },
-  {
-    type: 'date-picker',
-    name: 'dob',
-    label: 'Date of Birth',
-    placeholder: 'Enter date of birth eg. 1985-02-05',
-  },
-  {
-    type: 'textarea',
-    name: 'address',
-    label: 'Address',
-    className: 'resize-none',
-    placeholder: 'Enter address eg. 123 Main St, Springfield',
-    formItemClassName: 'col-span-1 sm:col-span-2',
-  },
-];
+const clientPersonalInformationWithoutAvatarSchema = clientPersonalInformationSchema.omit({
+  avatar: true,
+});
+
+export type ClientPersonalInformationSchema = z.infer<
+  typeof clientPersonalInformationWithoutAvatarSchema
+>;
 
 type ClientInfoProps = {
   data: Omit<ClientFormSchema['personalInformation'], 'avatar'>;
 };
+
 export const ClientInfo: FC<ClientInfoProps> = ({ data }) => {
   const { id } = useParams<{ id: string }>();
 
-  const form = useForm<ClientInfoFormSchema>({
-    resolver: zodResolver(clientInfoFormSchema),
+  const form = useForm<ClientPersonalInformationSchema>({
+    resolver: zodResolver(clientPersonalInformationWithoutAvatarSchema),
     defaultValues: data,
     mode: 'onChange',
   });
 
   const updateProfile = api.clients.update.useMutation();
 
-  const onSubmit = async (updateData: ClientInfoFormSchema) => {
+  const onSubmit = async (updateData: ClientPersonalInformationSchema) => {
     try {
       await updateProfile.mutateAsync({
         id,
@@ -93,12 +50,12 @@ export const ClientInfo: FC<ClientInfoProps> = ({ data }) => {
       toast.success('Personal Information updated successfully!');
     } catch (err) {
       const error = err as Error;
-      toast.error(`Failed to update personal information: ${error.message}`);
+      toast.error(error.message);
     }
   };
 
   return (
-    <Form<ClientInfoFormSchema>
+    <Form<ClientPersonalInformationSchema>
       form={form}
       fields={formFields}
       onSubmit={onSubmit}

@@ -1,56 +1,18 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
+import { Form, toast } from '@paalan/react-ui';
 import { useParams } from 'next/navigation';
 import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { CLIENT_RELATIONSHIP } from '@/constants/client/add-form.constant';
 import { api } from '@/trpc/client';
-import { getOptionsFromDisplayConstant } from '@/utils/helpers';
+import { formFields } from './fields';
 import type { ClientFormSchema } from '@/validations/client/add-form.validation';
 import {
-  type ClientEmergencyContactFormSchema,
-  clientEmergencyContactFormSchema,
-} from '@/validations/client-profile/client-emergency-contact.validation';
-
-const formFields: FormFieldItem<ClientEmergencyContactFormSchema>[] = [
-  {
-    type: 'input',
-    name: 'name',
-    label: 'Name',
-    placeholder: 'Enter full name eg. Jane Doe',
-  },
-  {
-    type: 'select',
-    name: 'relationship',
-    label: 'Relationship',
-    placeholder: 'Select relationship eg. Spouse',
-    options: getOptionsFromDisplayConstant(CLIENT_RELATIONSHIP),
-  },
-  {
-    type: 'input',
-    name: 'phoneNumber',
-    label: 'Phone Number',
-    placeholder: 'Enter phone number eg. 0987654321',
-    inputType: 'number',
-  },
-  {
-    type: 'input',
-    name: 'email',
-    label: 'Email',
-    placeholder: 'Enter email eg. jane.doe@email.com',
-  },
-  {
-    type: 'textarea',
-    name: 'address',
-    label: 'Address',
-    className: 'resize-none',
-    placeholder: 'Enter address eg. 456 Elm St, Springfield',
-    formItemClassName: 'col-span-1 sm:col-span-2',
-  },
-];
+  clientEmergencyContactSChema,
+  type ClientEmergencyContactSchema,
+} from '@/validations/client/add-form.validation';
 
 type ClientInfoProps = {
   data: ClientFormSchema['emergencyContact'];
@@ -59,15 +21,15 @@ type ClientInfoProps = {
 export const EmergencyContact: FC<ClientInfoProps> = ({ data }) => {
   const { id } = useParams<{ id: string }>();
 
-  const form = useForm<ClientEmergencyContactFormSchema>({
-    resolver: zodResolver(clientEmergencyContactFormSchema),
+  const form = useForm<ClientEmergencyContactSchema>({
+    resolver: zodResolver(clientEmergencyContactSChema),
     defaultValues: data,
     mode: 'onChange',
   });
 
   const updateEmergencyContact = api.clients.update.useMutation();
 
-  const onSubmit = async (updateData: ClientEmergencyContactFormSchema) => {
+  const onSubmit = async (updateData: ClientEmergencyContactSchema) => {
     try {
       await updateEmergencyContact.mutateAsync({
         id,
@@ -79,12 +41,12 @@ export const EmergencyContact: FC<ClientInfoProps> = ({ data }) => {
       toast.success('Emergency Contact Information updated successfully!');
     } catch (err) {
       const error = err as Error;
-      toast.error(`Failed to update emergency contact: ${error.message}`);
+      toast.error(error.message);
     }
   };
 
   return (
-    <Form<ClientEmergencyContactFormSchema>
+    <Form<ClientEmergencyContactSchema>
       form={form}
       fields={formFields}
       onSubmit={onSubmit}

@@ -8,17 +8,10 @@ import { HealthFitness } from './_components/HealthFitness';
 
 type ProfileFormProps = {
   personalInformation: React.ComponentPropsWithoutRef<typeof ClientInfo>['data'];
-  emergencyContact: React.ComponentPropsWithoutRef<typeof EmergencyContact>['data'];
-  healthAndFitness: React.ComponentPropsWithoutRef<typeof HealthFitness>['data'];
-  goalsAndPreference: React.ComponentPropsWithoutRef<typeof GoalsPreferences>['data'];
+  clientData: React.ComponentPropsWithoutRef<typeof Object>['data'];
 };
 
-export const ProfileForm: FC<ProfileFormProps> = ({
-  personalInformation,
-  emergencyContact,
-  healthAndFitness,
-  goalsAndPreference,
-}) => {
+export const ProfileForm: FC<ProfileFormProps> = ({ personalInformation, clientData }) => {
   return (
     <div className="flex flex-col gap-6">
       <Card className="pt-5">
@@ -27,15 +20,15 @@ export const ProfileForm: FC<ProfileFormProps> = ({
       </Card>
       <Card className="pt-5">
         <CardTitle className="my-5">Emergency Contact</CardTitle>
-        <EmergencyContact data={emergencyContact} />
+        <EmergencyContact data={clientData.emergencyContact} />
       </Card>
       <Card className="pt-5">
         <CardTitle className="my-5">Health & Fitness</CardTitle>
-        <HealthFitness data={healthAndFitness} />
+        <HealthFitness data={clientData.healthAndFitness} />
       </Card>
       <Card className="pt-5">
         <CardTitle className="my-5">Goals & Preferences</CardTitle>
-        <GoalsPreferences data={goalsAndPreference} />
+        <GoalsPreferences data={clientData.goalsAndPreference} />
       </Card>
     </div>
   );

@@ -4,6 +4,7 @@ import type { FC, PropsWithChildren } from 'react';
 
 import { ClientProfileInfo } from './_components/ClientProfileInfo';
 import { SidebarNav } from './_components/sidebar-nav';
+import { api } from '@/trpc/server';
 
 export const metadata: Metadata = {
   title: 'Client Profile',
@@ -16,7 +17,9 @@ type ProfileLayoutProps = PropsWithChildren<{
   };
 }>;
 
-const ProfileLayout: FC<ProfileLayoutProps> = ({ children, params }) => {
+const ProfileLayout: FC<ProfileLayoutProps> = async ({ children, params }) => {
+  const clientData = await api.clients.get(params.id);
+
   const sidebarNavItems = [
     {
       title: 'Profile',
@@ -43,7 +46,7 @@ const ProfileLayout: FC<ProfileLayoutProps> = ({ children, params }) => {
       <Separator className="my-6" />
       <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
         <aside className="-mx-4 flex flex-col gap-6 lg:w-72">
-          <ClientProfileInfo clientId={params.id} />
+          <ClientProfileInfo clientData={clientData} />
           <SidebarNav items={sidebarNavItems} />
         </aside>
         <div className="flex-1">{children}</div>

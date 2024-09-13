@@ -19,6 +19,8 @@ type ClientProfilePageProps = {
 };
 const ClientProfilePage: FC<ClientProfilePageProps> = async ({ params }) => {
   const clientData = await api.clients.get(params.id);
+  // console.log(clientData)
+  const plainClientData = JSON.parse(JSON.stringify(clientData));
 
   const personalInformationData = {
     firstName: clientData.firstName,
@@ -28,30 +30,6 @@ const ClientProfilePage: FC<ClientProfilePageProps> = async ({ params }) => {
     address: clientData.address,
     dob: clientData.dob,
     gender: clientData.gender,
-  };
-
-  const emergencyContactData = {
-    name: clientData?.emergencyContact?.name || '',
-    phoneNumber: clientData?.emergencyContact?.phoneNumber || 0,
-    relationship: clientData?.emergencyContact?.relationship || 'OTHERS',
-    email: clientData?.emergencyContact?.email || null,
-    address: clientData?.emergencyContact?.address || '',
-  };
-
-  const healthAndFitnessData = {
-    height: clientData?.healthAndFitness?.height || 0,
-    weight: clientData?.healthAndFitness?.weight || 0,
-    medicalCondition: clientData?.healthAndFitness?.medicalCondition || '',
-    allergy: clientData?.healthAndFitness?.allergy || '',
-    injury: clientData?.healthAndFitness?.injury || '',
-    fitnessLevel: clientData?.healthAndFitness?.fitnessLevel || 'BEGINNER',
-  };
-
-  const goalsAndPreferenceData = {
-    fitnessGoals: clientData?.goalsAndPreference?.fitnessGoals || [],
-    classPreference: clientData?.goalsAndPreference?.classPreference || 'BOTH',
-    classTimePreference: clientData?.goalsAndPreference?.classTimePreference || '',
-    instructorSupport: clientData?.goalsAndPreference?.instructorSupport || false,
   };
 
   return (
@@ -67,12 +45,7 @@ const ClientProfilePage: FC<ClientProfilePageProps> = async ({ params }) => {
           </Text>
         </div>
         <Separator />
-        <ProfileForm
-          personalInformation={personalInformationData}
-          emergencyContact={emergencyContactData}
-          healthAndFitness={healthAndFitnessData}
-          goalsAndPreference={goalsAndPreferenceData}
-        />
+        <ProfileForm personalInformation={personalInformationData} clientData={plainClientData} />
       </div>
     </>
   );
