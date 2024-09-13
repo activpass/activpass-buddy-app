@@ -12,6 +12,8 @@ import { createMembershipPlanInputSchema } from '../membership-plan.input';
 export interface IMembershipPlanVirtuals {
   id: string;
   discountedAmount: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IMembershipPlanSchema
