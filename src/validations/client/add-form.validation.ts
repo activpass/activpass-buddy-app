@@ -62,12 +62,14 @@ export const clientEmergencyContactSChema = z.object({
   }),
   relationship: convertObjectKeysIntoZodEnum(CLIENT_RELATIONSHIP),
   phoneNumber: phoneNumberSchema,
-  email: z.union([
-    z.literal(''),
-    z.string().email({
-      message: 'Invalid email address',
-    }),
-  ]),
+  email: z
+    .union([
+      z.literal(''),
+      z.string().email({
+        message: 'Invalid email address',
+      }),
+    ])
+    .nullish(),
   address: z.string().nullish(),
 });
 export type ClientEmergencyContactSchema = z.infer<typeof clientEmergencyContactSChema>;
@@ -85,9 +87,9 @@ export const healthAndFitnessSchema = z.object({
     message: 'Weight is required',
   }),
   fitnessLevel: convertObjectKeysIntoZodEnum(CLIENT_FITNESS_LEVEL),
-  medicalCondition: z.string(),
-  allergy: z.string(),
-  injury: z.string(),
+  medicalCondition: z.string().nullish(),
+  allergy: z.string().nullish(),
+  injury: z.string().nullish(),
 });
 export type HealthAndFitnessSchema = z.infer<typeof healthAndFitnessSchema>;
 

@@ -32,8 +32,13 @@ class ClientService {
           message: 'Client ID is required',
         });
       }
-      const client = await clientRepository.getById(id);
-      return client;
+      const client = await (await clientRepository.getById(id)).populate('membershipPlan');
+
+      return client.toObject({
+        flattenObjectIds: true,
+      }) as Omit<IClientSchema, 'membershipPlan'> & {
+        membershipPlan: IMembershipPlanSchema | null;
+      };
     } catch (error: unknown) {
       this.logger.error('Failed to get client by id', error);
       throw new TRPCError({

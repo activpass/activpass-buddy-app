@@ -7,6 +7,7 @@ import { clientRouter } from './routers/client/client.router';
 import { incomeRouter } from './routers/income/income.router';
 import { membershipPlanRouter } from './routers/membership-plan/membership-plan.router';
 import { organizationRouter } from './routers/organization/organization.router';
+import { timeLogRouter } from './routers/time-log/time-log.router';
 
 /**
  * This is the primary router for your server.
@@ -21,6 +22,7 @@ export const appRouter = createTRPCRouter({
   membershipPlans: membershipPlanRouter,
   organizations: organizationRouter,
   checkIn: checkInRouter,
+  timeLogs: timeLogRouter,
 });
 
 // export type definition of API

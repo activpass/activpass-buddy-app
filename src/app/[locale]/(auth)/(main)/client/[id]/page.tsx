@@ -19,19 +19,6 @@ type ClientProfilePageProps = {
 };
 const ClientProfilePage: FC<ClientProfilePageProps> = async ({ params }) => {
   const clientData = await api.clients.get(params.id);
-  // console.log(clientData)
-  const plainClientData = JSON.parse(JSON.stringify(clientData));
-
-  const personalInformationData = {
-    firstName: clientData.firstName,
-    lastName: clientData.lastName,
-    email: clientData.email,
-    phoneNumber: clientData.phoneNumber,
-    address: clientData.address,
-    dob: clientData.dob,
-    gender: clientData.gender,
-  };
-
   return (
     <>
       <SetBreadcrumbItems
@@ -45,7 +32,7 @@ const ClientProfilePage: FC<ClientProfilePageProps> = async ({ params }) => {
           </Text>
         </div>
         <Separator />
-        <ProfileForm personalInformation={personalInformationData} clientData={plainClientData} />
+        <ProfileForm clientData={clientData} />
       </div>
     </>
   );
