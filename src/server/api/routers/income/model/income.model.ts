@@ -33,10 +33,10 @@ export interface IIncomeDocument extends HydratedDocument<IIncomeSchema, IIncome
 // Here, You have to explicity mention the type of statics.
 export interface IIncomeModel extends Model<IIncomeSchema, {}, IIncomeSchemaMethods> {
   get(id: string | mongoose.Schema.Types.ObjectId): Promise<IIncomeDocument>;
-  list(
+  list<TData = IIncomeDocument>(
     filter?: FilterQuery<IIncomeSchema>,
     populatedOption?: PopulateOption['populate']
-  ): Promise<IIncomeDocument[]>;
+  ): Promise<TData[]>;
 }
 
 const schemaOptions = {

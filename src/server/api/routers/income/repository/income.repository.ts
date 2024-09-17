@@ -2,7 +2,8 @@ import { TRPCError } from '@trpc/server';
 
 import { Logger } from '@/server/logger/logger';
 
-import { type IIncomeSchema, IncomeModel } from '../model/income.model';
+import type { IMembershipPlanSchema } from '../../membership-plan/model/membership-plan.model';
+import { type IIncomeDocument, type IIncomeSchema, IncomeModel } from '../model/income.model';
 import {
   type CreateIncomeParams,
   type ListIncomesParams,
@@ -65,7 +66,9 @@ class IncomeRepository {
     if (clientId) {
       filter.client = clientId;
     }
-    return IncomeModel.list(filter, ['membershipPlan']);
+    return IncomeModel.list<
+      Omit<IIncomeDocument, 'membershipPlan'> & { membershipPlan: IMembershipPlanSchema | null }
+    >(filter, ['membershipPlan']);
   };
 }
 
