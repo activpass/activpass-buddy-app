@@ -3,6 +3,7 @@ import mongoose, {
   type HydratedDocument,
   type InferSchemaType,
   type Model,
+  type PopulateOption,
 } from 'mongoose';
 
 import {
@@ -32,7 +33,10 @@ export interface IIncomeDocument extends HydratedDocument<IIncomeSchema, IIncome
 // Here, You have to explicity mention the type of statics.
 export interface IIncomeModel extends Model<IIncomeSchema, {}, IIncomeSchemaMethods> {
   get(id: string | mongoose.Schema.Types.ObjectId): Promise<IIncomeDocument>;
-  list(filter?: FilterQuery<IIncomeSchema>): Promise<IIncomeDocument[]>;
+  list(
+    filter?: FilterQuery<IIncomeSchema>,
+    populatedOption?: PopulateOption['populate']
+  ): Promise<IIncomeDocument[]>;
 }
 
 const schemaOptions = {
@@ -90,11 +94,13 @@ IncomeSchema.static('get', async function get(id: string) {
   return org;
 });
 
-IncomeSchema.static('list', async function list(options) {
+IncomeSchema.static('list', async function list(options, populatedOption) {
   const newOptions = options || {};
   const orgs = await this.find({
     ...newOptions,
-  }).sort({ createdAt: -1 });
+  })
+    .populate(populatedOption)
+    .sort({ createdAt: -1 });
   return orgs;
 });
 

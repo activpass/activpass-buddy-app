@@ -65,7 +65,7 @@ class IncomeRepository {
     if (clientId) {
       filter.client = clientId;
     }
-    return IncomeModel.list(filter);
+    return IncomeModel.list(filter, ['membershipPlan']);
   };
 }
 
