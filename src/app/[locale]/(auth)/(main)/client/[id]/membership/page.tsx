@@ -6,6 +6,7 @@ import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 
 import { InvoiceTable } from './_components/InvoiceTable';
 import { MembershipHeader } from './_components/MembershipHeader';
+import { api } from '@/trpc/server';
 
 export const metadata: Metadata = {
   title: 'Client Profile - Membership',
@@ -17,13 +18,18 @@ type MembershipPageProps = {
     id: string;
   };
 };
-const MembershipPage: FC<MembershipPageProps> = ({ params }) => {
+const MembershipPage: FC<MembershipPageProps> = async ({ params }) => {
+  const clientData = await api.clients.get(params.id);
+  const membershipIncomesList = await api.incomes.list({ clientId: params.id });
+
+  // console.log(membershipIncomesList);
+
   return (
     <>
       <SetBreadcrumbItems
         items={[
           { label: 'Client', href: '/client' },
-          { label: params.id, href: `/client/${params.id}` },
+          { label: clientData.fullName, href: `/client/${params.id}` },
           {
             label: 'Membership',
           },
@@ -38,8 +44,8 @@ const MembershipPage: FC<MembershipPageProps> = ({ params }) => {
         </div>
         <Separator />
         <div>
-          <MembershipHeader />
-          <InvoiceTable />
+          <MembershipHeader clientData={clientData} />
+          <InvoiceTable data={membershipIncomesList} />
         </div>
       </div>
     </>

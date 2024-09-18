@@ -1,96 +1,54 @@
 'use client';
 
-import { DataTable, type DataTableColumnDef, DataTableColumnHeader } from '@paalan/react-ui';
+import { DataTable } from '@paalan/react-ui';
+import { invoiceColumns } from './columns';
+import type { IncomesType } from '../../types';
+import type { FC } from 'react';
 
-type InvoiceData = {
-  id: number;
-  clientName: string;
-  planName: string;
-  amount: number;
-  tenure: string;
-  status: string;
-  dueDate: string;
+type InvoiceTableProps = {
+  data: IncomesType[];
 };
 
-const data: InvoiceData[] = [
-  {
-    id: 1,
-    clientName: 'John Doe',
-    planName: 'Gold Plan',
-    amount: 5000,
-    tenure: '1 Year',
-    status: 'Active',
-    dueDate: '2024-12-31',
-  },
-  {
-    id: 2,
-    clientName: 'Jane Smith',
-    planName: 'Silver Plan',
-    amount: 3000,
-    tenure: '6 Months',
-    status: 'Expired',
-    dueDate: '2024-06-30',
-  },
-  {
-    id: 3,
-    clientName: 'Alice Johnson',
-    planName: 'Bronze Plan',
-    amount: 2000,
-    tenure: '3 Months',
-    status: 'Active',
-    dueDate: '2024-03-31',
-  },
-];
+export const InvoiceTable: FC<InvoiceTableProps> = ({ data }) => {
+  // console.log('Income Data :', data);
+  // const { membershipPlan } = data;
+  // [
+  //   {
+  //     _id: new ObjectId('66d85f95d734776b6a22ba7a'),
+  //     invoiceId: '66d85f95d734776b6a22ba79',
+  //     organization: new ObjectId('66d14b33e3f8cdd3c7edefbe'),
+  //     client: new ObjectId('66d85f95d734776b6a22ba7c'),
+  //     membershipPlan: {
+  //       _id: new ObjectId('66d14bd2e3f8cdd3c7edefcb'),
+  //       organization: new ObjectId('66d14b33e3f8cdd3c7edefbe'),
+  //       planName: 'Pilot',
+  //       tenure: 'MONTHLY',
+  //       amount: 299,
+  //       features: [Array],
+  //       discountPercentage: 5,
+  //       createdAt: 2024-08-30T04:34:26.309Z,
+  //       updatedAt: 2024-08-30T04:34:26.309Z,
+  //       discountedAmount: 284.05,
+  //       id: '66d14bd2e3f8cdd3c7edefcb'
+  //     },
+  //     paymentMethod: 'CASH',
+  //     paymentStatus: 'PAID',
+  //     paymentFrequency: 'ONE_TIME',
+  //     tenure: 'MONTHLY',
+  //     createdAt: 2024-09-04T13:24:37.974Z,
+  //     updatedAt: 2024-09-04T13:24:37.974Z,
+  //     id: '66d85f95d734776b6a22ba7a'
+  //   }
+  // ]
 
-const invoiceColumns: DataTableColumnDef<InvoiceData>[] = [
-  {
-    id: 'clientName',
-    accessorKey: 'clientName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Client Name" />,
-    enableSorting: true,
-  },
-  {
-    id: 'planName',
-    accessorKey: 'planName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Membership Plan" />,
-    enableSorting: false,
-  },
-  {
-    id: 'amount',
-    accessorKey: 'amount',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
-    cell: ({ row }: { row: { original: InvoiceData } }) =>
-      `₹${row.original.amount.toLocaleString()}`,
-    enableSorting: false,
-  },
-  {
-    id: 'tenure',
-    accessorKey: 'tenure',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Tenure" />,
-    enableSorting: false,
-  },
-  {
-    id: 'status',
-    accessorKey: 'status',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
-    enableSorting: false,
-  },
-  {
-    id: 'dueDate',
-    accessorKey: 'dueDate',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Due Date" />,
-    cell: ({ row }: { row: { original: InvoiceData } }) => <p>{row.original.dueDate}</p>,
-    enableSorting: false,
-  },
-  // {
-  //   id: 'actions',
-  //   cell: () => {
-  //     return <div></div>;
-  //   },
-  // },
-];
+  // const parsedData = data.map(item => ({
+  //   clientName: 'Client Name',
+  //   planName: item?.membershipPlan?.name,
+  //   amount: item?.membershipPlan?.amount,
+  //   tenure: item.tenure,
+  //   paymentStatus: item.paymentStatus,
+  // }));
 
-export const InvoiceTable = () => {
   return (
     <DataTable
       columns={invoiceColumns}

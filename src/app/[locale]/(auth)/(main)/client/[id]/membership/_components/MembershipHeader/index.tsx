@@ -1,25 +1,57 @@
 'use client';
 
+import type { RouterOutputs } from '@/trpc/shared';
 import { Button, Card, Heading, Text } from '@paalan/react-ui';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, type FC } from 'react';
 
-const isActive = true;
-const expiryDate = new Date('2024-09-10');
+type MembershipHeaderProps = {
+  clientData: RouterOutputs['clients']['get'];
+};
 
-export const MembershipHeader = () => {
+type Tenure = 'MONTHLY' | 'QUARTERLY' | 'HALF_YEARLY' | 'YEARLY';
+
+const calculateExpiryDate = (purchaseDate: Date, tenure: Tenure): Date => {
+  const expiryDate = new Date(purchaseDate);
+
+  if (tenure === 'MONTHLY') {
+    expiryDate.setDate(expiryDate.getDate() + 28);
+  } else if (tenure === 'QUARTERLY') {
+    expiryDate.setDate(expiryDate.getDate() + 84);
+  } else if (tenure === 'HALF_YEARLY') {
+    expiryDate.setMonth(expiryDate.getMonth() + 6);
+  } else if (tenure === 'YEARLY') {
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+  }
+
+  return expiryDate;
+};
+
+export const MembershipHeader: FC<MembershipHeaderProps> = ({ clientData }) => {
+  const { membershipPlan } = clientData;
+
   const [remainingDays, setRemainingDays] = useState(0);
+  const [isActive, setIsActive] = useState(true);
   const [showPriceCard, setShowPriceCard] = useState(false);
 
+  const purchaseDate = useMemo(
+    () => (membershipPlan?.createdAt ? new Date(membershipPlan.createdAt) : new Date()),
+    [membershipPlan?.createdAt]
+  );
+  const tenure = (membershipPlan?.tenure ?? 'MONTHLY') as Tenure;
+
   useEffect(() => {
+    const expiryDate = calculateExpiryDate(purchaseDate, tenure);
+
     const calculateRemainingDays = () => {
       const today = new Date();
       const differenceInTime = expiryDate.getTime() - today.getTime();
       const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
       setRemainingDays(differenceInDays);
+      setIsActive(differenceInDays > 0);
     };
 
     calculateRemainingDays();
-  }, []);
+  }, [purchaseDate, tenure]);
 
   const handleUpgradeClick = () => {
     setShowPriceCard(true);
@@ -45,10 +77,10 @@ export const MembershipHeader = () => {
               }`}
             >
               <div className={`size-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}`} />
-              <span>{isActive ? 'Active' : 'Deactive'}</span>
+              <span>{isActive ? 'Active' : 'Inactive'}</span>
             </Button>
             <Heading as="h1" className="mt-2 md:mt-5">
-              $1,329
+              {`₹ ${membershipPlan?.amount}`}
             </Heading>
             {isActive && (
               <Text fontSize="sm" className="text-muted-foreground">
