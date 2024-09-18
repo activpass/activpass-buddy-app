@@ -62,7 +62,11 @@ class IncomeService {
   list = async ({ orgId, clientId }: ListIncomesArgs) => {
     try {
       const incomes = await incomeRepository.list({ orgId, clientId });
-      return incomes;
+      return incomes.map(income => {
+        return income.toObject({
+          flattenObjectIds: true,
+        });
+      });
     } catch (error: unknown) {
       this.logger.error('Failed to list incomes', error);
       throw new TRPCError({

@@ -3,10 +3,10 @@ import type { Metadata } from 'next';
 import type { FC } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+import { api } from '@/trpc/server';
 
 import { InvoiceTable } from './_components/InvoiceTable';
 import { MembershipHeader } from './_components/MembershipHeader';
-import { api } from '@/trpc/server';
 
 export const metadata: Metadata = {
   title: 'Client Profile - Membership',

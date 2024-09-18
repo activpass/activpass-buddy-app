@@ -3,10 +3,10 @@ import type { Metadata } from 'next';
 import type { FC } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
-
-import { AttendanceTable } from './_components/AttendanceTable';
 import { api } from '@/trpc/server';
+
 import { AttendanceCalendar } from './_components/AttendanceCalendar';
+import { AttendanceTable } from './_components/AttendanceTable';
 
 export const metadata: Metadata = {
   title: 'Client Profile - Attendance',

@@ -1,8 +1,9 @@
 'use client';
 
-import type { RouterOutputs } from '@/trpc/shared';
 import { Button, Card, Heading, Text } from '@paalan/react-ui';
-import { useEffect, useMemo, useState, type FC } from 'react';
+import { type FC, useEffect, useMemo, useState } from 'react';
+
+import type { RouterOutputs } from '@/trpc/shared';
 
 type MembershipHeaderProps = {
   clientData: RouterOutputs['clients']['get'];

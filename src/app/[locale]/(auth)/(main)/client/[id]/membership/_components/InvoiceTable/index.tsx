@@ -1,9 +1,10 @@
 'use client';
 
 import { DataTable } from '@paalan/react-ui';
-import { invoiceColumns } from './columns';
-import type { IncomesType } from '../../types';
 import type { FC } from 'react';
+
+import type { IncomesType } from '../../types';
+import { invoiceColumns } from './columns';
 
 type InvoiceTableProps = {
   data: IncomesType[];

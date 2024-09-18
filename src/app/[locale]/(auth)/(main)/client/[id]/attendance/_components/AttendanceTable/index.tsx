@@ -1,9 +1,10 @@
 'use client';
 
 import { DataTable } from '@paalan/react-ui';
-import { attendanceColumns } from './columns';
-import type { TimeLogListType } from '../../types';
 import type { FC } from 'react';
+
+import type { TimeLogListType } from '../../types';
+import { attendanceColumns } from './columns';
 
 type AttendanceTableProps = {
   data: TimeLogListType[];
