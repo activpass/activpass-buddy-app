@@ -12,13 +12,16 @@ import {
   type IMembershipPlanSchema,
   MembershipPlanModel,
 } from '../../membership-plan/model/membership-plan.model';
+import { organizationService } from '../../organization/service/organization.service';
 import { ClientModel, type IClientSchema } from '../model/client.model';
+import { onboardClientRepository } from '../repository/onboard-client.repository';
 import type {
   AnalyticsClientsArgs,
   CreateClientArgs,
   GenerateOnboardingLinkArgs,
   GetClientByIdArgs,
   ListClientsArgs,
+  SubmitOnboardingClientArgs,
   UpdateClientArgs,
   VerifyOnboardingTokenArgs,
 } from './client.service.types';
@@ -171,11 +174,40 @@ class ClientService {
   };
 
   generateOnboardingLink = ({ orgId, userId }: GenerateOnboardingLinkArgs) => {
-    return clientRepository.generateOnboardingLink({ orgId, userId });
+    return onboardClientRepository.generateOnboardingLink({ orgId, userId });
   };
 
   verifyOnboardingToken = ({ token }: VerifyOnboardingTokenArgs) => {
-    return clientRepository.verifyOnboardingToken({ token });
+    return onboardClientRepository.verifyOnboardingToken({ token });
+  };
+
+  submitOnboardingClient = async ({ input }: SubmitOnboardingClientArgs) => {
+    const { onboardClientId, ...restInput } = input;
+    const onboardClient = await onboardClientRepository.getById(onboardClientId);
+
+    const organization = await organizationService.getById({
+      id: onboardClient.organization.toHexString(),
+    });
+
+    if (onboardClient.onBoarded) {
+      throw new Error('Client already onboarded');
+    }
+
+    await this.create({
+      orgId: organization.id,
+      input: restInput,
+    });
+
+    onboardClient.onBoarded = true;
+    onboardClient.onBoardedAt = new Date();
+    await onboardClient.save();
+
+    return {
+      message: 'Client onboarded successfully',
+      data: {
+        id: onboardClient.id,
+      },
+    };
   };
 }
 

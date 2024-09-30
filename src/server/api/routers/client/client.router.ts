@@ -51,11 +51,9 @@ export const clientRouter = createTRPCRouter({
     }),
   submitOnboardingClient: publicProcedure
     .input(submitOnboardingClientInputSchema)
-    .mutation(({ input }) => {
-      const { orgId, ...restInput } = input;
-      return clientService.create({
-        orgId,
-        input: restInput,
+    .mutation(async ({ input }) => {
+      return clientService.submitOnboardingClient({
+        input,
       });
     }),
 });

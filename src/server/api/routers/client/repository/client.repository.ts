@@ -1,23 +1,17 @@
 import { TRPCError } from '@trpc/server';
-import { addDays, isAfter } from 'date-fns';
 import mongoose from 'mongoose';
 
-import { generateClientCode, generateRandomToken } from '@/server/api/helpers/common';
+import { generateClientCode } from '@/server/api/helpers/common';
 import {
   type AnalyticsClientParams,
   type CreateClientParams,
-  type GenerateOnboardingLinkParams,
   type ListClientParams,
   type UpdateClientParams,
-  type VerifyOnboardingTokenParams,
 } from '@/server/api/routers/client/repository/client.repository.types';
 import { Logger } from '@/server/logger/logger';
 
-import { MembershipPlanModel } from '../../membership-plan/model/membership-plan.model';
-import type { IOrganizationSchema } from '../../organization/model/organization.model';
 import { TimeLogModel } from '../../time-log/model/time-log.model';
 import { ClientModel, type IClientSchema, type IClientVirtuals } from '../model/client.model';
-import { type IOnboardClientDocument, OnboardClientModel } from '../model/onboard-client.model';
 
 class ClientRepository {
   private readonly logger = new Logger(ClientRepository.name);
@@ -178,72 +172,6 @@ class ClientRepository {
       return result;
     } catch (error) {
       this.logger.error('Failed to get client analytics', error);
-      throw error;
-    }
-  };
-
-  generateOnboardingLink = async ({ orgId, userId }: GenerateOnboardingLinkParams) => {
-    try {
-      const body = {
-        organization: orgId,
-        user: userId,
-        token: generateRandomToken(),
-        expiresAt: addDays(new Date(), 1),
-      };
-      const doc = new OnboardClientModel(body);
-      await doc.save();
-      return doc;
-    } catch (error) {
-      this.logger.error('Failed to generate onboarding external link', error);
-      throw error;
-    }
-  };
-
-  verifyOnboardingToken = async ({ token }: VerifyOnboardingTokenParams) => {
-    try {
-      if (!token) {
-        throw new Error('Verification token is required');
-      }
-
-      const onboardClient = await OnboardClientModel.findOne<
-        IOnboardClientDocument & {
-          organization: IOrganizationSchema;
-        }
-      >({ token }).populate('organization');
-
-      if (!onboardClient) {
-        throw new Error('Invalid verification token');
-      }
-
-      if (onboardClient.onBoarded) {
-        throw new Error('Client already onBoarded');
-      }
-
-      if (isAfter(new Date(), onboardClient.expiresAt)) {
-        throw new Error('Verification token expired, please request a new one');
-      }
-
-      const membershipPlans = await MembershipPlanModel.find({
-        organization: onboardClient.organization._id,
-      });
-
-      if (!onboardClient.verified) {
-        onboardClient.verified = true;
-        await onboardClient.save();
-      }
-
-      return {
-        onBoardingId: onboardClient.id,
-        verified: onboardClient.verified,
-        membershipPlans,
-        organization: {
-          name: onboardClient.organization.name,
-          id: onboardClient.organization.id,
-          type: onboardClient.organization.type,
-        },
-      };
-    } catch (error) {
-      this.logger.error('Error verifying OnboardClient:', error);
       throw error;
     }
   };

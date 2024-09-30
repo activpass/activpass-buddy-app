@@ -1,4 +1,8 @@
-import type { CreateClientInputSchema, UpdateClientInputSchema } from '../client.input';
+import type {
+  CreateClientInputSchema,
+  SubmitOnboardingClientInputSchema,
+  UpdateClientInputSchema,
+} from '../client.input';
 
 export type GetClientByIdArgs = {
   id: string;
@@ -29,4 +33,8 @@ export type GenerateOnboardingLinkArgs = {
 
 export type VerifyOnboardingTokenArgs = {
   token: string;
+};
+
+export type SubmitOnboardingClientArgs = {
+  input: SubmitOnboardingClientInputSchema;
 };

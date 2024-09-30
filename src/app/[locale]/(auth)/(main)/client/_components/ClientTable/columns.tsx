@@ -73,7 +73,7 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
   },
   {
     accessorKey: 'checkIn',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="QR Check In" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Check In" />,
     enableSorting: false,
     cell: ({ row }) => {
       return (

@@ -1,5 +1,5 @@
 .baseLayout {
-  @apply grid size-auto min-h-full grid-cols-[1fr] grid-rows-[auto_1fr] bg-muted/10;
+  @apply mx-auto grid size-auto min-h-full max-w-7xl grid-cols-[1fr] grid-rows-[auto_1fr] border-x bg-muted/10;
 
   main {
     @apply bg-muted/10;
@@ -15,5 +15,5 @@
 }
 
 .rootLayout {
-  @apply row-span-2;
+  @apply row-span-2 h-[calc(100vh-4.5rem)] overflow-auto;
 }
