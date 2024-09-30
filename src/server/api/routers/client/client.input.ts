@@ -25,3 +25,30 @@ export const updateClientInputSchema = z.object({
     .partial(),
 });
 export type UpdateClientInputSchema = z.infer<typeof updateClientInputSchema>;
+
+export const verifyOnboardingTokenInputSchema = z.object({
+  token: z.string().min(1, {
+    message: 'Token is required',
+  }),
+});
+export type VerifyOnboardingTokenInputSchema = z.infer<typeof verifyOnboardingTokenInputSchema>;
+
+export const submitOnboardingClientInputSchema = createClientInputSchema.extend({
+  orgId: z.string().min(1, {
+    message: 'Organization ID is required',
+  }),
+  onboardClientId: z.string().min(1, {
+    message: 'Onboard client ID is required',
+  }),
+});
+export type SubmitOnboardingClientInputSchema = z.infer<typeof submitOnboardingClientInputSchema>;
+
+export const updateOnboardClientInputSchema = z.object({
+  onboardClientId: z.string().min(1, {
+    message: 'Onboard client ID is required',
+  }),
+  data: z.object({
+    onBoarded: z.boolean().optional(),
+  }),
+});
+export type UpdateOnboardClientInputSchema = z.infer<typeof updateOnboardClientInputSchema>;

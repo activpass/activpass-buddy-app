@@ -1,26 +1,26 @@
 'use client';
 
 import { Text } from '@paalan/react-ui';
+import { signOut } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
+import { forwardRef } from 'react';
 
-import { useSession } from '@/stores/session-store';
-import { api } from '@/trpc/client';
-
-export const SignOutButton = () => {
+export const SignOutButton = forwardRef<HTMLParagraphElement>((props, ref) => {
   const t = useTranslations('auth.navbar.links');
-  const session = useSession();
-  const signOutMutation = api.auth.signOut.useMutation({
-    onSuccess() {
-      session.update(null);
-    },
-  });
+
   return (
     <Text
+      {...props}
       onClick={async () => {
-        signOutMutation.mutate();
+        await signOut({
+          callbackUrl: '/signin',
+        });
       }}
+      ref={ref}
     >
       {t('signOut')}
     </Text>
   );
-};
+});
+
+SignOutButton.displayName = 'SignOutButton';

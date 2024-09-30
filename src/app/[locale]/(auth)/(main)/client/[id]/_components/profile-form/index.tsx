@@ -1,11 +1,12 @@
 import { Card, CardTitle } from '@paalan/react-ui';
 import type { FC } from 'react';
 
+import type { RouterOutputs } from '@/trpc/shared';
+
 import { ClientInfo } from './_components/ClientInfo';
 import { EmergencyContact } from './_components/EmergencyContact';
 import { GoalsPreferences } from './_components/GoalsPreferences';
 import { HealthFitness } from './_components/HealthFitness';
-import type { RouterOutputs } from '@/trpc/shared';
 
 type ProfileFormProps = {
   clientData: RouterOutputs['clients']['get'];

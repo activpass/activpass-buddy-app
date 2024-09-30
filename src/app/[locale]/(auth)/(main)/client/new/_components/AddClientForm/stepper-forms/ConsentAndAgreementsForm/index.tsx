@@ -49,9 +49,11 @@ const fields: FormFieldItem<ConsentAndAgreementSchema>[] = [
 ];
 
 export const ConsentAndAgreementsForm: FC = () => {
+  const { onboardClientId, organization } = useClientFormStore(state => state.onboardingData);
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitOnboardClientMutation = api.clients.submitOnboardingClient.useMutation();
   const clientCreateMutation = api.clients.create.useMutation();
 
   const clientFormState = useClientFormState();
@@ -86,9 +88,27 @@ export const ConsentAndAgreementsForm: FC = () => {
         requestBody.personalInformation.avatar = response.url;
       }
 
-      await clientCreateMutation.mutateAsync(requestBody);
-      router.push('/client');
-      toast.success('Client added successfully');
+      // If the client is being onboarded, we need to submit the client using the onboarding client mutation
+      if (onboardClientId) {
+        // If the organization is not found, throw an error
+        if (!organization) {
+          throw new Error('Organization not found');
+        }
+
+        await submitOnboardClientMutation.mutateAsync({
+          ...requestBody,
+          orgId: organization.id,
+          onboardClientId,
+        });
+
+        router.push(
+          `/onboarding-client/success?organizationName=${organization.name}&organizationType=${organization.type}`
+        );
+      } else {
+        await clientCreateMutation.mutateAsync(requestBody);
+        router.push('/client');
+        toast.success('Client added successfully');
+      }
     } catch (error) {
       const err = error as Error;
       toast.error(err.message);

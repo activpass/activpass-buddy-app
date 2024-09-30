@@ -1,8 +1,13 @@
 import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
 
-import { createClientInputSchema, updateClientInputSchema } from './client.input';
+import {
+  createClientInputSchema,
+  submitOnboardingClientInputSchema,
+  updateClientInputSchema,
+  verifyOnboardingTokenInputSchema,
+} from './client.input';
 import { clientService } from './service/client.service';
 
 export const clientRouter = createTRPCRouter({
@@ -31,4 +36,24 @@ export const clientRouter = createTRPCRouter({
       orgId: ctx.session.user.orgId,
     });
   }),
+  generateOnboardingLink: protectedProcedure.mutation(async ({ ctx }) => {
+    return clientService.generateOnboardingLink({
+      orgId: ctx.session.user.orgId,
+      userId: ctx.session.user.id,
+    });
+  }),
+  verifyOnboardingToken: publicProcedure
+    .input(verifyOnboardingTokenInputSchema)
+    .mutation(async ({ input }) => {
+      return clientService.verifyOnboardingToken({
+        token: input.token,
+      });
+    }),
+  submitOnboardingClient: publicProcedure
+    .input(submitOnboardingClientInputSchema)
+    .mutation(async ({ input }) => {
+      return clientService.submitOnboardingClient({
+        input,
+      });
+    }),
 });

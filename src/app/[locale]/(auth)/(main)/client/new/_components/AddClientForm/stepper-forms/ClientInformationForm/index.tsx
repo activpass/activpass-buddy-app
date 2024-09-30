@@ -7,11 +7,12 @@ import {
   FormFieldItems,
   Grid,
   Heading,
+  toast,
   useStepper,
   VStack,
 } from '@paalan/react-ui';
 import { startOfDay } from 'date-fns';
-import { type FC, useEffect, useState } from 'react';
+import { type FC, useEffect, useLayoutEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import {
@@ -52,8 +53,25 @@ export const ClientInformationForm: FC = () => {
     return () => URL.revokeObjectURL(url);
   }, [avatar]);
 
+  useLayoutEffect(() => {
+    if (form.formState.errors.avatar) {
+      setAvatarUrl('');
+      toast.error(form.formState.errors.avatar.message);
+    }
+  }, [form.formState.errors.avatar]);
+
   const onAvatarChange = (file: File) => {
-    form.setValue('avatar', file);
+    form.setValue('avatar', file, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  const onRemoveAvatar = () => {
+    form.setValue('avatar', null, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   const onSubmit = ({ emergencyContact, ...data }: ClientInformationSchema) => {
@@ -76,7 +94,7 @@ export const ClientInformationForm: FC = () => {
       <VStack gap="12">
         <div>
           <Heading as="h4">Personal Information</Heading>
-          <div className="mt-5 flex flex-col items-center justify-center gap-4 sm:float-left sm:mr-10">
+          <div className="mt-5 flex max-w-min flex-col items-center justify-center gap-4 sm:float-left sm:mr-10">
             <AvatarUpload
               src={avatarUrl}
               onAvatarChange={onAvatarChange}
@@ -87,11 +105,10 @@ export const ClientInformationForm: FC = () => {
             {avatarUrl && (
               <Button
                 type="button"
-                variant="surface"
-                color="danger"
+                variant="outline"
                 size="sm"
                 leftIcon={<TrashIcon boxSize="4" />}
-                onClick={() => form.setValue('avatar', null)}
+                onClick={onRemoveAvatar}
               >
                 Remove
               </Button>

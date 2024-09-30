@@ -1,6 +1,8 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
+import { VERCEL_ENV } from './next-helpers/next.constants';
+
 // Don't add NODE_ENV into T3 Env, it changes the tree-shaking behavior
 export const env = createEnv({
   /**
@@ -11,6 +13,23 @@ export const env = createEnv({
     MONGODB_URI: z.string(),
     REDIS_URL: z.string(),
     IMAGEKIT_PRIVATE_KEY: z.string(),
+
+    UPSTASH_REDIS_REST_TOKEN:
+      process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
+    UPSTASH_REDIS_REST_URL:
+      process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
+    UPSTASH_REDIS_REST_BASE_KEY_PREFIX:
+      process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
+
+    NEXTAUTH_SECRET: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
+    NEXTAUTH_URL: z.preprocess(
+      // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
+      // Since NextAuth.js automatically uses the VERCEL_URL if present.
+      str => process.env.VERCEL_URL ?? str,
+      // VERCEL_URL doesn't include `https` so it cant be validated as a URL
+      process.env.VERCEL ? z.string() : z.string().url()
+    ),
+
     ANALYZE: z
       .enum(['true', 'false'])
       .optional()
@@ -34,6 +53,14 @@ export const env = createEnv({
   runtimeEnv: {
     MONGODB_URI: process.env.MONGODB_URI,
     REDIS_URL: process.env.REDIS_URL,
+
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_BASE_KEY_PREFIX: process.env.UPSTASH_REDIS_REST_BASE_KEY_PREFIX,
+
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+
     IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
     ANALYZE: process.env.ANALYZE,
 
@@ -52,7 +79,7 @@ export const env = createEnv({
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
    * useful for Docker builds.
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation: !!VERCEL_ENV || !!process.env.SKIP_ENV_VALIDATION,
   /**
    * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
    * `SOME_VAR=''` will throw an error.

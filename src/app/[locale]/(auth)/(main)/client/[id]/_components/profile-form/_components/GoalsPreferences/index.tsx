@@ -7,12 +7,13 @@ import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/trpc/client';
-import { formFields } from './fields';
-import type { ClientFormSchema } from '@/validations/client/add-form.validation';
-import {
-  goalsAndPreferenceSchema,
-  type GoalsAndPreferencesSchema,
+import type {
+  ClientFormSchema,
+  GoalsAndPreferencesSchema,
 } from '@/validations/client/add-form.validation';
+import { goalsAndPreferenceSchema } from '@/validations/client/add-form.validation';
+
+import { formFields } from './fields';
 
 type GoalsPreferencesProps = {
   data: ClientFormSchema['goalsAndPreference'];

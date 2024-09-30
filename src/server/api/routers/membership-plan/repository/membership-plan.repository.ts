@@ -24,6 +24,10 @@ class MembershipPlanRepository {
     return (await MembershipPlanModel.get(id)).toObject();
   };
 
+  findByOrganizationId = async (orgId: string) => {
+    return MembershipPlanModel.list({ organization: orgId });
+  };
+
   create = async ({ data, orgId }: CreateMembershipPlanParams) => {
     try {
       const doc = new MembershipPlanModel({

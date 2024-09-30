@@ -1,3 +1,4 @@
+import { dateIntl } from '@paalan/react-shared/lib';
 import type { FormFieldItem } from '@paalan/react-ui';
 import type { UseFormReturn } from 'react-hook-form';
 
@@ -6,6 +7,10 @@ import { getOptionsFromDisplayConstant } from '@/utils/helpers';
 import type { ClientInformationSchema } from '@/validations/client/add-form.validation';
 
 export const getPersonalInfoFields = (form: UseFormReturn<ClientInformationSchema>) => {
+  const dob = form.watch('dob');
+  const dobValue = dateIntl.formatDate(dob, {
+    dateFormat: 'yyyy-MM-dd',
+  });
   const fields: FormFieldItem<ClientInformationSchema>[] = [
     {
       type: 'input',
@@ -60,7 +65,7 @@ export const getPersonalInfoFields = (form: UseFormReturn<ClientInformationSchem
       required: true,
       inputType: 'date',
       inputProps: {
-        value: (form.watch('dob') || '').toString(),
+        value: dobValue,
       },
     },
     {

@@ -7,12 +7,13 @@ import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/trpc/client';
-import { formFields } from './fields';
-import type { ClientFormSchema } from '@/validations/client/add-form.validation';
-import {
-  healthAndFitnessSchema,
-  type HealthAndFitnessSchema,
+import type {
+  ClientFormSchema,
+  HealthAndFitnessSchema,
 } from '@/validations/client/add-form.validation';
+import { healthAndFitnessSchema } from '@/validations/client/add-form.validation';
+
+import { formFields } from './fields';
 
 type HealthFitnessProps = {
   data: ClientFormSchema['healthAndFitness'];

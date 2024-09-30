@@ -13,9 +13,14 @@ import { MembershipPricingHeader } from './MembershipPricingCard/MembershipPrici
 import { MembershipPricingSwitch } from './MembershipPricingCard/MembershipPricingSwitch';
 
 export const MembershipDetailsForm: FC = () => {
-  const { data: membershipPlans, isLoading } = api.membershipPlans.list.useQuery(undefined, {
+  const membershipPlansList = useClientFormStore(state => state.onboardingData.membershipPlans);
+
+  const { data: membershipPlansData, isLoading } = api.membershipPlans.list.useQuery(undefined, {
     staleTime: 1000 * 60, // 1 minute
+    enabled: !membershipPlansList.length,
   });
+
+  const membershipPlans = membershipPlansData || membershipPlansList;
 
   const { nextStep } = useStepper();
   const updateMembershipDetail = useClientFormStore(state => state.updateMembershipDetail);

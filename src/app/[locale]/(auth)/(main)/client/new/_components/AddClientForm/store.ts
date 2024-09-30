@@ -19,6 +19,15 @@ export type ClientFormState = Omit<ClientFormSchema, 'personalInformation' | 'me
   membershipDetail: ClientFormSchema['membershipDetail'] & {
     selectedPlan: MembershipPlan | null;
   };
+  onboardingData: {
+    membershipPlans: MembershipPlan[];
+    onboardClientId: string;
+    organization: {
+      name: string;
+      type: string;
+      id: string;
+    } | null;
+  };
 };
 
 export type ClientFormActions = {
@@ -37,6 +46,7 @@ export type ClientFormActions = {
   updateGoalsAndPreferences: (data: Partial<ClientFormState['goalsAndPreference']>) => void;
   updateConsentAndAgreement: (data: Partial<ClientFormState['consentAndAgreement']>) => void;
   resetClientForm: () => void;
+  setOnboardingData: (data: ClientFormState['onboardingData']) => void;
 };
 export type ClientFormStore = ClientFormState & ClientFormActions;
 
@@ -94,6 +104,11 @@ const defaultValues: ClientFormState = {
       provider: '',
     },
   },
+  onboardingData: {
+    membershipPlans: [],
+    onboardClientId: '',
+    organization: null,
+  },
 };
 export const useClientFormStore = create<ClientFormStore>()(set => ({
   ...defaultValues,
@@ -120,6 +135,7 @@ export const useClientFormStore = create<ClientFormStore>()(set => ({
   updateConsentAndAgreement: data =>
     set(state => ({ consentAndAgreement: { ...state.consentAndAgreement, ...data } })),
   resetClientForm: () => set(defaultValues),
+  setOnboardingData: data => set({ onboardingData: data }),
 }));
 
 export const usePersonalInformation = () => useClientFormStore(state => state.personalInformation);

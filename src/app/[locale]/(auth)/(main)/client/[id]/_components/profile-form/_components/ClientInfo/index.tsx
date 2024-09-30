@@ -5,12 +5,13 @@ import { Form, toast } from '@paalan/react-ui';
 import { useParams } from 'next/navigation';
 import { type FC } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import type { z } from 'zod';
 
 import { api } from '@/trpc/client';
-import { formFields } from './fields';
 import type { ClientFormSchema } from '@/validations/client/add-form.validation';
 import { clientPersonalInformationSchema } from '@/validations/client/add-form.validation';
+
+import { formFields } from './fields';
 
 const clientPersonalInformationWithoutAvatarSchema = clientPersonalInformationSchema.omit({
   avatar: true,

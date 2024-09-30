@@ -7,12 +7,13 @@ import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/trpc/client';
-import { formFields } from './fields';
-import type { ClientFormSchema } from '@/validations/client/add-form.validation';
-import {
-  clientEmergencyContactSChema,
-  type ClientEmergencyContactSchema,
+import type {
+  ClientEmergencyContactSchema,
+  ClientFormSchema,
 } from '@/validations/client/add-form.validation';
+import { clientEmergencyContactSChema } from '@/validations/client/add-form.validation';
+
+import { formFields } from './fields';
 
 type ClientInfoProps = {
   data: ClientFormSchema['emergencyContact'];

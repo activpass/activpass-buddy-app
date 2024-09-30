@@ -16,9 +16,10 @@ const CheckInClientPage: FC<CheckInClientPageProps> = async ({ params }) => {
   const { orgId } = params;
   const organization = await api.organizations.get(orgId);
   return (
-    <Card className="lg:min-w-128">
+    <Card className="m-8 lg:min-w-128">
       <CardHeader className="mb-4 text-center">
         <div className="mb-3 flex justify-center">
+          {/* FIXME: Client logo, we need to use client logo in here */}
           <Image
             className="h-14 w-48"
             src="/logos/png/activpass-logo-black-blue.png"

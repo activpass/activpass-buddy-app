@@ -2,9 +2,10 @@ import { Heading, Separator, Text } from '@paalan/react-ui';
 import type { Metadata } from 'next';
 import type { FC, PropsWithChildren } from 'react';
 
+import { api } from '@/trpc/server';
+
 import { ClientProfileInfo } from './_components/ClientProfileInfo';
 import { SidebarNav } from './_components/sidebar-nav';
-import { api } from '@/trpc/server';
 
 export const metadata: Metadata = {
   title: 'Client Profile',
