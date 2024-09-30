@@ -13,13 +13,12 @@ import {
   useToast,
 } from '@paalan/react-ui';
 import { useSearchParams } from 'next/navigation';
-import { type FC, useEffect } from 'react';
+import { signIn } from 'next-auth/react';
+import { type FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import Link from '@/components/Link';
 import { useRouter } from '@/lib/navigation';
-import { useSession } from '@/stores/session-store';
-import { api } from '@/trpc/client';
 import {
   signInValidationSchema,
   type SignInValidationSchemaType,
@@ -29,7 +28,7 @@ type SignInFormProps = {};
 export const SignInForm: FC<SignInFormProps> = _props => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectBackUrl = searchParams.get('redirectBackUrl') || '/dashboard';
+  const redirectTo = searchParams.get('redirectTo') || '/dashboard';
 
   const form = useForm({
     resolver: zodResolver(signInValidationSchema),
@@ -38,34 +37,36 @@ export const SignInForm: FC<SignInFormProps> = _props => {
       password: '',
     },
   });
-  const session = useSession();
+
   const toast = useToast();
-
-  useEffect(() => {
-    router.prefetch(redirectBackUrl);
-  }, [router, redirectBackUrl]);
-
-  const signInMutation = api.auth.signIn.useMutation({
-    onSuccess(data) {
-      if (!data) {
-        toast.error('Failed to sign in');
-        return;
-      }
-      session.update(data);
-      toast.success('Signed in successfully');
-      router.push(redirectBackUrl);
-    },
-    onError(error) {
-      toast.error(error.message || 'Failed to sign in');
-      session.update(null);
-    },
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (credentials: SignInValidationSchemaType) => {
-    signInMutation.mutate(credentials);
+    try {
+      setIsSubmitting(true);
+      const response = await signIn('credentials', {
+        ...credentials,
+        callbackUrl: redirectTo,
+        redirect: false,
+      });
+      if (response?.error) {
+        throw new Error('Invalid email or password.');
+      }
+      if (response?.url) {
+        toast.success('Signed in successfully');
+        router.push(response.url);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message || 'Failed to sign in');
+      } else {
+        toast.error('Failed to sign in');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const isLoading = signInMutation.isPending || session.status === 'loading';
   return (
     <FormRoot {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -103,8 +104,8 @@ export const SignInForm: FC<SignInFormProps> = _props => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" isLoading={isLoading}>
-          {isLoading ? 'Signing in...' : 'Sign In'}
+        <Button type="submit" className="w-full" isLoading={isSubmitting}>
+          {isSubmitting ? 'Signing in...' : 'Sign In'}
         </Button>
       </form>
     </FormRoot>

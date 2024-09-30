@@ -30,7 +30,7 @@ export const TRPCReactProvider: React.FC<Props> = props => {
           queries: {
             retry(failureCount, error) {
               if (isTRPCClientErrorWithCode(error) && error.data.code === 'UNAUTHORIZED') {
-                router.push(`/signin?redirectBackUrl=${pathname}`);
+                router.push(`/signin?redirectTo=${pathname}`);
                 return false;
               }
               return failureCount < 2;

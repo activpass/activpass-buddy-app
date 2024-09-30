@@ -41,7 +41,7 @@ class ClientRepository {
       if (client) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `Client with phoneNumber "${phoneNumber}" already exist.`,
+          message: `Client with phoneNumber "${phoneNumber}" or email "${email}" already exist.`,
         });
       }
     } catch (error) {

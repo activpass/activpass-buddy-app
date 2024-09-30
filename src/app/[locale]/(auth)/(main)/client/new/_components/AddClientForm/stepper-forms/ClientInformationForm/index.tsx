@@ -28,6 +28,7 @@ export const ClientInformationForm: FC = () => {
   const { nextStep } = useStepper();
   const setClientInformation = useClientFormStore(state => state.setClientInformation);
   const clientInFormation = useClientInformation();
+
   const form = useForm<ClientInformationSchema>({
     resolver: zodResolver(clientInformationSchema),
     defaultValues: {

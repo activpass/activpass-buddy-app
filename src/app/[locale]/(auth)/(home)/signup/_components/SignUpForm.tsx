@@ -15,6 +15,25 @@ import {
 
 const fields: FormFieldItem<SignUpValidationSchemaType>[] = [
   {
+    name: 'organization.name',
+    label: 'Organization name',
+    type: 'input',
+    placeholder: 'Enter your organization name',
+    required: true,
+  },
+  {
+    name: 'organization.type',
+    label: 'Organization Type',
+    type: 'select',
+    placeholder: 'Select organization type',
+    options: [
+      { label: 'Gym', value: 'gym' },
+      { label: 'Studio', value: 'studio' },
+      { label: 'Club', value: 'club' },
+    ],
+    required: true,
+  },
+  {
     name: 'firstName',
     label: 'First name',
     type: 'input',
@@ -73,7 +92,7 @@ export const SignUpForm: FC = () => {
       confirmPassword: '',
       provider: UserProviderEnum.email,
       organization: {
-        name: 'dummy-organization',
+        name: '',
         type: 'gym',
       },
     },

@@ -15,6 +15,7 @@ import {
   SheetTrigger,
   Text,
 } from '@paalan/react-ui';
+import { useSession } from 'next-auth/react';
 import type { FC, ReactNode } from 'react';
 import { LuMenu, LuUserCircle } from 'react-icons/lu';
 
@@ -23,7 +24,6 @@ import ActiveLink from '@/components/Common/ActiveLink';
 import ThemeToggle from '@/components/Common/ThemeToggle';
 import Link from '@/components/Link';
 import { Logo } from '@/components/Logo';
-import { useSession } from '@/stores/session-store';
 
 type NavItemProps = {
   href: string;
@@ -98,7 +98,7 @@ export const WithHeader: FC = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>
               <Flex className="flex-col">
-                {user?.fullName}
+                {user?.name}
                 <Text className="text-sm text-muted-foreground">{user?.email}</Text>
               </Flex>
             </DropdownMenuLabel>
@@ -113,7 +113,7 @@ export const WithHeader: FC = () => {
               <Link href="/dashboard/settings">Settings</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer" asChild>
               <SignOutButton />
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -42,6 +42,11 @@ class UserRepository {
     );
   };
 
+  private clearCachedUserInfo = async (userId: ServerSession['user']['id']): Promise<void> => {
+    const userKey = this.getUserInfoKey(userId);
+    await redis.del(userKey);
+  };
+
   private getCachedUserInfo = async (
     userId: ServerSession['user']['id']
   ): Promise<ServerSession['user'] | null> => {
@@ -140,6 +145,7 @@ class UserRepository {
       const user = await UserModel.authenticate(email, password);
       user.set('lastLogin', new Date());
       const savedUser = await user.save();
+      await this.clearCachedUserInfo(user.id);
       return savedUser;
     } catch (error) {
       this.logger.error('Failed to authenticate user', error);
