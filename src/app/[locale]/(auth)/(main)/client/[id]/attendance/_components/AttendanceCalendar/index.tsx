@@ -18,12 +18,12 @@ export const AttendanceCalendar = () => {
 
   return (
     <TooltipProvider>
-      <div className="max-w-sm">
+      <div className="w-[22.5rem]">
         <Calendar
+          className="rounded-md border shadow"
           mode="single"
-          selected={date}
           onSelect={setDate}
-          className="rounded-md border"
+          selected={date}
           components={{
             Day: DayComponent,
           }}

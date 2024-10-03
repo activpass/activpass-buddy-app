@@ -45,7 +45,7 @@ const MembershipPage: FC<MembershipPageProps> = async ({ params }) => {
         <Separator />
         <div>
           <MembershipHeader clientData={clientData} />
-          <InvoiceTable data={membershipIncomesList} />
+          <InvoiceTable data={membershipIncomesList} clientData={clientData} />
         </div>
       </div>
     </>

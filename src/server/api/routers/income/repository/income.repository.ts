@@ -9,12 +9,27 @@ import {
   type ListIncomesParams,
   type UpdateIncomeParams,
 } from './income.repository.types';
+import type { IClientSchema } from '../../client/model/client.model';
+import type { IOrganizationSchema } from '../../organization/model/organization.model';
 
 class IncomeRepository {
   private readonly logger = new Logger(IncomeRepository.name);
 
   getById = async (id: IIncomeSchema['id']) => {
     return IncomeModel.get(id);
+  };
+
+  getPopulatedById = async (id: IIncomeSchema['id']) => {
+    const result = await IncomeModel.getPopulated(id, ['organization', 'membershipPlan', 'client']);
+
+    return result as unknown as Omit<
+      IIncomeDocument,
+      'membershipPlan' | 'client' | 'organization'
+    > & {
+      membershipPlan: IMembershipPlanSchema | null;
+      client: IClientSchema | null;
+      organization: IOrganizationSchema | null;
+    };
   };
 
   create = async ({

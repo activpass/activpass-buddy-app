@@ -183,3 +183,22 @@ export const CLIENT_PAYMENT_STATUS = {
     display: 'Due',
   },
 } as const;
+
+export const SUBSCRIPTION_PERIOD = {
+  MONTHLY: {
+    value: 'MONTHLY',
+    display: 'Monthly',
+  },
+  QUARTERLY: {
+    value: 'QUARTERLY',
+    display: 'Quarterly',
+  },
+  HALF_YEARLY: {
+    value: 'HALF_YEARLY',
+    display: 'Half-Yearly',
+  },
+  YEARLY: {
+    value: 'YEARLY',
+    display: 'Yearly',
+  },
+} as const;

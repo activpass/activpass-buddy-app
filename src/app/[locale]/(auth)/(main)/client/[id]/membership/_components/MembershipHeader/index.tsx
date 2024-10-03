@@ -4,6 +4,8 @@ import { Button, Card, Heading, Text } from '@paalan/react-ui';
 import { type FC, useEffect, useMemo, useState } from 'react';
 
 import type { RouterOutputs } from '@/trpc/shared';
+import { MembershipDetails } from '../MembershipDetails';
+import { currencyIntl } from '@/utils/currency-intl';
 
 type MembershipHeaderProps = {
   clientData: RouterOutputs['clients']['get'];
@@ -72,16 +74,16 @@ export const MembershipHeader: FC<MembershipHeaderProps> = ({ clientData }) => {
             </Button>
           </aside>
           <div className="flex flex-col items-start space-y-2 md:items-end md:space-y-6">
-            <Button
+            <div
               className={`flex items-center space-x-2 bg-white hover:bg-white dark:bg-gray-900 ${
                 isActive ? 'text-green-500' : 'text-red-500'
               }`}
             >
               <div className={`size-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}`} />
               <span>{isActive ? 'Active' : 'Inactive'}</span>
-            </Button>
+            </div>
             <Heading as="h1" className="mt-2 md:mt-5">
-              {`₹ ${membershipPlan?.amount}`}
+              {currencyIntl.format(membershipPlan?.amount ?? 0)}
             </Heading>
             {isActive && (
               <Text fontSize="sm" className="text-muted-foreground">
@@ -93,8 +95,8 @@ export const MembershipHeader: FC<MembershipHeaderProps> = ({ clientData }) => {
       </Card>
 
       {showPriceCard && (
-        <div className="my-6 w-full rounded-lg bg-gray-100 p-4 text-center md:w-auto">
-          <Heading as="h4">Membership plans</Heading>
+        <div className="my-6 w-full rounded-lg border p-5">
+          <MembershipDetails />
         </div>
       )}
     </div>

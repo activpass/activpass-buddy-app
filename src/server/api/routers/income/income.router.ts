@@ -13,6 +13,9 @@ export const incomeRouter = createTRPCRouter({
   getById: protectedProcedure.input(z.string()).query(async ({ input }) => {
     return incomeService.getById({ id: input });
   }),
+  getPopulatedById: protectedProcedure.input(z.string()).query(async ({ input }) => {
+    return incomeService.getPopulatedById({ id: input });
+  }),
   create: protectedProcedure.input(createIncomeInputSchema).mutation(async ({ ctx, input }) => {
     return incomeService.create({ input, orgId: ctx.session.user.orgId });
   }),

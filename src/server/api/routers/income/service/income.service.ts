@@ -32,6 +32,19 @@ class IncomeService {
     }
   };
 
+  getPopulatedById = async ({ id }: GetIncomeByIdArgs) => {
+    try {
+      const income = await incomeRepository.getPopulatedById(id);
+      return income;
+    } catch (error: unknown) {
+      this.logger.error('Failed to get income by id', error);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to get income by id',
+      });
+    }
+  };
+
   create = async ({ input, orgId }: CreateIncomeArgs) => {
     try {
       const income = await incomeRepository.create({ data: input, orgId });

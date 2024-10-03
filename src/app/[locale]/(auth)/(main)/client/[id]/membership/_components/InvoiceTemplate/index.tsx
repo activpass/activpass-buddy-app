@@ -1,38 +1,50 @@
-// import { Button } from '@paalan/react-ui';
-// import { CalendarIcon, PrinterIcon } from 'lucide-react';
+'use client';
 
 import Image from 'next/image';
+import type { FC } from 'react';
 
-export const InvoiceTemplate = () => {
+import { api } from '@/trpc/client';
+import { currencyIntl } from '@/utils/currency-intl';
+// import { dateIntl } from '@paalan/react-shared/lib';
+
+type InvoiceTemplateProps = {
+  invoiceId: string;
+};
+
+export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ invoiceId }) => {
+  const { data: invoiceItems, isLoading, error } = api.incomes.getPopulatedById.useQuery(invoiceId);
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error loading invoice data.</p>;
+  if (!invoiceItems) return <p>No invoice data found.</p>;
+
+  const { organization, client, membershipPlan } = invoiceItems;
+
   const invoiceData = {
     id: '1',
-    invoiceNumber: 'INV-2023-001',
-    issueDate: '2023-06-15',
+    invoiceNumber: invoiceItems.invoiceId,
+    // issueDate: dateIntl.format(invoiceItems?.createdAt ?? new Date()),
     dueDate: '2023-07-15',
-    gymName: 'FitLife Gym',
+    gymName: organization?.name,
     gymAddress: '123 Fitness Street, Healthyville, HV 12345',
     gymEmail: 'billing@fitlifegym.com',
     gymPhone: '(555) 123-4567',
-    clientName: 'John Doe',
-    clientAddress: '456 Workout Avenue, Strengthtown, ST 67890',
-    clientEmail: 'john.doe@example.com',
-    items: [
-      {
-        id: '1',
-        description: 'Monthly Membership - Gold Plan',
-        quantity: 1,
-        unitPrice: 99.99,
-        total: 99.99,
-      },
-      { description: 'Personal Training Sessions', quantity: 4, unitPrice: 50.0, total: 200.0 },
-      { description: 'Protein Shake Pack', quantity: 1, unitPrice: 29.99, total: 29.99 },
-    ],
-    subtotal: 329.98,
-    tax: 26.4,
-    total: 356.38,
+    clientName: client?.fullName,
+    clientAddress: client?.address,
+    clientEmail: client?.email,
+    membershipPlans: {
+      // description: membershipPlan?.planName ?? 'Unknown Plan',
+      quantity: 1,
+      unitPrice: membershipPlan?.amount ?? 0,
+    },
+    subtotal: membershipPlan?.amount ?? 0,
   };
+
+  const taxRate = 0.18;
+  const tax = invoiceData.subtotal * taxRate;
+  const total = invoiceData.subtotal + tax;
+
   return (
-    <div className="relative mx-auto max-w-4xl overflow-hidden rounded-lg bg-white p-8 shadow-lg">
+    <div className="p-8 shadow-lg">
       {/* Watermark */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-5">
         <span className="-rotate-45 whitespace-nowrap text-8xl font-bold">
@@ -46,6 +58,8 @@ export const InvoiceTemplate = () => {
           <div className="mb-4 size-24 rounded-lg bg-gray-200">
             <Image
               src="/placeholder.svg?height=96&width=96"
+              width={96}
+              height={96}
               alt="FitLife Gym Logo"
               className="size-full object-contain"
             />
@@ -61,7 +75,7 @@ export const InvoiceTemplate = () => {
             <span className="font-semibold">Invoice Number:</span> {invoiceData.invoiceNumber}
           </p>
           <p className="text-sm text-gray-600">
-            <span className="font-semibold">Issue Date:</span> {invoiceData.issueDate}
+            {/* <span className="font-semibold">Issue Date:</span> {invoiceData.issueDate} */}
           </p>
           <p className="text-sm text-gray-600">
             <span className="font-semibold">Due Date:</span> {invoiceData.dueDate}
@@ -82,22 +96,18 @@ export const InvoiceTemplate = () => {
         <thead>
           <tr className="border-b border-gray-200">
             <th className="py-2 text-left text-sm font-semibold text-gray-600">Description</th>
-            <th className="py-2 text-center text-sm font-semibold text-gray-600">Quantity</th>
-            <th className="py-2 text-right text-sm font-semibold text-gray-600">Unit Price</th>
-            <th className="py-2 text-right text-sm font-semibold text-gray-600">Total</th>
+            <th className="py-2 text-right text-sm font-semibold text-gray-600">Price</th>
           </tr>
         </thead>
         <tbody>
-          {invoiceData.items.map(item => (
-            <tr key={item.id} className="border-b border-gray-200">
-              <td className="py-2 text-sm text-gray-600">{item.description}</td>
-              <td className="py-2 text-center text-sm text-gray-600">{item.quantity}</td>
-              <td className="py-2 text-right text-sm text-gray-600">
-                ${item.unitPrice.toFixed(2)}
-              </td>
-              <td className="py-2 text-right text-sm text-gray-600">${item.total.toFixed(2)}</td>
-            </tr>
-          ))}
+          <tr className="border-b border-gray-200">
+            <td className="py-2 text-sm text-gray-600">
+              {/* {invoiceData.membershipPlans?.description} */}
+            </td>
+            <td className="py-2 text-right text-sm text-gray-600">
+              {currencyIntl.format(invoiceData.membershipPlans?.unitPrice ?? 0)}
+            </td>
+          </tr>
         </tbody>
       </table>
 
@@ -107,19 +117,19 @@ export const InvoiceTemplate = () => {
           <div className="mb-2 flex justify-between">
             <span className="text-sm text-gray-600">Subtotal:</span>
             <span className="text-sm font-semibold text-gray-800">
-              ${invoiceData.subtotal.toFixed(2)}
+              {currencyIntl.format(invoiceData.subtotal ?? 0)}
             </span>
           </div>
           <div className="mb-2 flex justify-between">
-            <span className="text-sm text-gray-600">Tax (8%):</span>
+            <span className="text-sm text-gray-600">Tax (18%):</span>
             <span className="text-sm font-semibold text-gray-800">
-              ${invoiceData.tax.toFixed(2)}
+              {currencyIntl.format(tax ?? 0)}
             </span>
           </div>
           <div className="flex justify-between border-t border-gray-200 pt-2">
             <span className="text-base font-semibold text-gray-800">Total:</span>
             <span className="text-base font-bold text-gray-800">
-              ${invoiceData.total.toFixed(2)}
+              {currencyIntl.format(total ?? 0)}
             </span>
           </div>
         </div>
@@ -133,18 +143,6 @@ export const InvoiceTemplate = () => {
           <span className="font-semibold">{invoiceData.gymName}</span>.
         </p>
       </div>
-
-      {/* Action Buttons */}
-      {/* <div className="relative z-10 mt-8 flex justify-end space-x-4">
-        <Button variant="outline" className="flex items-center">
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          Add to Calendar
-        </Button>
-        <Button className="flex items-center">
-          <PrinterIcon className="mr-2 h-4 w-4" />
-          Print Invoice
-        </Button>
-      </div> */}
     </div>
   );
 };

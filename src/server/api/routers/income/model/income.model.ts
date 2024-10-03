@@ -33,6 +33,10 @@ export interface IIncomeDocument extends HydratedDocument<IIncomeSchema, IIncome
 // Here, You have to explicity mention the type of statics.
 export interface IIncomeModel extends Model<IIncomeSchema, {}, IIncomeSchemaMethods> {
   get(id: string | mongoose.Schema.Types.ObjectId): Promise<IIncomeDocument>;
+  getPopulated(
+    id: string | mongoose.Schema.Types.ObjectId,
+    populatedOption: PopulateOption['populate']
+  ): Promise<IIncomeSchema>;
   list<TData = IIncomeDocument>(
     filter?: FilterQuery<IIncomeSchema>,
     populatedOption?: PopulateOption['populate']
@@ -87,12 +91,26 @@ const IncomeSchema = new mongoose.Schema(
 );
 
 IncomeSchema.static('get', async function get(id: string) {
-  const org = await this.findById(id).exec();
-  if (!org) {
+  const income = await this.findById(id).exec();
+  if (!income) {
     throw new Error(`No Income found with id '${id}'.`);
   }
-  return org;
+  return income;
 });
+
+IncomeSchema.static(
+  'getPopulated',
+  async function getPopulated(
+    id: string | mongoose.Schema.Types.ObjectId,
+    populatedOption: PopulateOption['populate']
+  ): Promise<IIncomeDocument> {
+    const income = await this.findById(id).populate(populatedOption).exec();
+    if (!income) {
+      throw new Error(`No Income found with id '${id}'.`);
+    }
+    return income;
+  }
+);
 
 IncomeSchema.static('list', async function list(options, populatedOption) {
   const newOptions = options || {};

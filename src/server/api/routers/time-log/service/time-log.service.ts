@@ -62,7 +62,11 @@ class TimeLogService {
   list = async ({ orgId, clientId }: ListTimeLogsArgs) => {
     try {
       const timeLogs = await timeLogRepository.list({ orgId, clientId });
-      return timeLogs;
+      return timeLogs.map(timeLog => {
+        return timeLog.toObject({
+          flattenObjectIds: true,
+        });
+      });
     } catch (error: unknown) {
       this.logger.error('Failed to list timeLogs', error);
       throw new TRPCError({

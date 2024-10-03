@@ -5,17 +5,18 @@ import type { TimeLogListType } from '../../types';
 
 export const attendanceColumns: DataTableColumnDef<TimeLogListType>[] = [
   {
-    id: 'id',
-    accessorKey: 'id',
+    id: 'serialNumber',
+    accessorKey: 'serialNumber',
     header: ({ column }) => <DataTableColumnHeader column={column} title="#" />,
+    cell: ({ row, table }) => (table.getRowModel().rows.indexOf(row) + 1).toString(),
     enableSorting: false,
   },
   {
     id: 'checkIn',
     accessorKey: 'checkIn',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Check-In Date" />,
     cell: ({ row }) => dateIntl.format(row.original.checkIn),
-    enableSorting: true,
+    enableSorting: false,
   },
   {
     id: 'checkIn',
