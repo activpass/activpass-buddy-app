@@ -1,29 +1,42 @@
 'use client';
 
+import { dateIntl } from '@paalan/react-shared/lib';
+import { Center, Loading } from '@paalan/react-ui';
 import Image from 'next/image';
 import type { FC } from 'react';
 
 import { api } from '@/trpc/client';
 import { currencyIntl } from '@/utils/currency-intl';
-// import { dateIntl } from '@paalan/react-shared/lib';
 
 type InvoiceTemplateProps = {
-  invoiceId: string;
+  incomeId: string;
 };
 
-export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ invoiceId }) => {
-  const { data: invoiceItems, isLoading, error } = api.incomes.getPopulatedById.useQuery(invoiceId);
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading invoice data.</p>;
-  if (!invoiceItems) return <p>No invoice data found.</p>;
+export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
+  const {
+    data: incomeItem,
+    isLoading,
+    error,
+  } = api.incomes.getPopulatedById.useQuery({ id: incomeId });
 
-  const { organization, client, membershipPlan } = invoiceItems;
+  if (isLoading) {
+    return (
+      <Center className="h-3/4 p-8">
+        <Loading className="size-8" content="Loading invoice data..." />
+      </Center>
+    );
+  }
+
+  if (error) return <p>Error loading invoice data.</p>;
+  if (!incomeItem) return <p>No invoice data found.</p>;
+
+  const { organization, client, membershipPlan } = incomeItem;
 
   const invoiceData = {
     id: '1',
-    invoiceNumber: invoiceItems.invoiceId,
-    // issueDate: dateIntl.format(invoiceItems?.createdAt ?? new Date()),
-    dueDate: '2023-07-15',
+    invoiceNumber: incomeItem.invoiceId,
+    issueDate: dateIntl.format(incomeItem.date),
+    dueDate: dateIntl.format(incomeItem.dueDate),
     gymName: organization?.name,
     gymAddress: '123 Fitness Street, Healthyville, HV 12345',
     gymEmail: 'billing@fitlifegym.com',
@@ -31,8 +44,8 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ invoiceId }) => {
     clientName: client?.fullName,
     clientAddress: client?.address,
     clientEmail: client?.email,
-    membershipPlans: {
-      // description: membershipPlan?.planName ?? 'Unknown Plan',
+    membershipPlan: {
+      planName: membershipPlan?.name ?? 'Unknown Plan',
       quantity: 1,
       unitPrice: membershipPlan?.amount ?? 0,
     },
@@ -95,17 +108,15 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ invoiceId }) => {
       <table className="relative z-10 mb-8 w-full">
         <thead>
           <tr className="border-b border-gray-200">
-            <th className="py-2 text-left text-sm font-semibold text-gray-600">Description</th>
+            <th className="py-2 text-left text-sm font-semibold text-gray-600">Plan Name</th>
             <th className="py-2 text-right text-sm font-semibold text-gray-600">Price</th>
           </tr>
         </thead>
         <tbody>
           <tr className="border-b border-gray-200">
-            <td className="py-2 text-sm text-gray-600">
-              {/* {invoiceData.membershipPlans?.description} */}
-            </td>
+            <td className="py-2 text-sm text-gray-600">{invoiceData.membershipPlan.planName}</td>
             <td className="py-2 text-right text-sm text-gray-600">
-              {currencyIntl.format(invoiceData.membershipPlans?.unitPrice ?? 0)}
+              {currencyIntl.format(invoiceData.membershipPlan?.unitPrice)}
             </td>
           </tr>
         </tbody>
@@ -117,20 +128,16 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ invoiceId }) => {
           <div className="mb-2 flex justify-between">
             <span className="text-sm text-gray-600">Subtotal:</span>
             <span className="text-sm font-semibold text-gray-800">
-              {currencyIntl.format(invoiceData.subtotal ?? 0)}
+              {currencyIntl.format(invoiceData.subtotal)}
             </span>
           </div>
           <div className="mb-2 flex justify-between">
             <span className="text-sm text-gray-600">Tax (18%):</span>
-            <span className="text-sm font-semibold text-gray-800">
-              {currencyIntl.format(tax ?? 0)}
-            </span>
+            <span className="text-sm font-semibold text-gray-800">{currencyIntl.format(tax)}</span>
           </div>
           <div className="flex justify-between border-t border-gray-200 pt-2">
             <span className="text-base font-semibold text-gray-800">Total:</span>
-            <span className="text-base font-bold text-gray-800">
-              {currencyIntl.format(total ?? 0)}
-            </span>
+            <span className="text-base font-bold text-gray-800">{currencyIntl.format(total)}</span>
           </div>
         </div>
       </div>

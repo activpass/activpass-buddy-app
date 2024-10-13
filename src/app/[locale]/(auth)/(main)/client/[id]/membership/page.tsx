@@ -1,6 +1,6 @@
-import { Heading, Separator, Text } from '@paalan/react-ui';
+import { Heading, Separator, Skeleton, Text } from '@paalan/react-ui';
 import type { Metadata } from 'next';
-import type { FC } from 'react';
+import { type FC, Suspense } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 import { api } from '@/trpc/server';
@@ -19,10 +19,9 @@ type MembershipPageProps = {
   };
 };
 const MembershipPage: FC<MembershipPageProps> = async ({ params }) => {
-  const clientData = await api.clients.get(params.id);
-  const membershipIncomesList = await api.incomes.list({ clientId: params.id });
-
-  // console.log(membershipIncomesList);
+  const clientId = params.id;
+  const clientData = await api.clients.get(clientId);
+  const membershipIncomesPromise = api.incomes.list({ clientId });
 
   return (
     <>
@@ -44,8 +43,10 @@ const MembershipPage: FC<MembershipPageProps> = async ({ params }) => {
         </div>
         <Separator />
         <div>
-          <MembershipHeader clientData={clientData} />
-          <InvoiceTable data={membershipIncomesList} clientData={clientData} />
+          <MembershipHeader clientId={clientId} />
+          <Suspense fallback={<Skeleton className="h-28 w-full" />}>
+            <InvoiceTable membershipIncomesPromise={membershipIncomesPromise} />
+          </Suspense>
         </div>
       </div>
     </>

@@ -11,7 +11,8 @@ import { createMembershipPlanInputSchema } from '../membership-plan.input';
 // Virtuals are not included in the schema type
 export interface IMembershipPlanVirtuals {
   id: string;
-  discountedAmount: number;
+  discountAmount: number;
+  totalAmount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -63,22 +64,27 @@ const MembershipPlanSchema = new mongoose.Schema(
         value: { type: String, required: true },
       },
     ],
-    discountPercentage: { type: Number },
+    discountPercentage: { type: Number, default: 0 },
   },
   schemaOptions
 );
 
-MembershipPlanSchema.virtual('discountedAmount').get(function discountedAmount() {
+MembershipPlanSchema.virtual('discountAmount').get(function discountAmount() {
+  if (!this.amount) return 0;
+  return (this.amount * (this.discountPercentage || 0)) / 100;
+});
+
+MembershipPlanSchema.virtual('totalAmount').get(function totalAmount() {
   if (!this.amount) return 0;
   return this.amount - (this.amount * (this.discountPercentage || 0)) / 100;
 });
 
 MembershipPlanSchema.static('get', async function get(id: string) {
-  const client = await this.findById(id).exec();
-  if (!client) {
+  const doc = await this.findById(id).exec();
+  if (!doc) {
     throw new Error(`No MembershipPlan found with id '${id}'.`);
   }
-  return client;
+  return doc;
 });
 
 MembershipPlanSchema.static('list', async function list(options, projection) {

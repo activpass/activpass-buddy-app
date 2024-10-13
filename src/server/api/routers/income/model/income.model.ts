@@ -33,10 +33,10 @@ export interface IIncomeDocument extends HydratedDocument<IIncomeSchema, IIncome
 // Here, You have to explicity mention the type of statics.
 export interface IIncomeModel extends Model<IIncomeSchema, {}, IIncomeSchemaMethods> {
   get(id: string | mongoose.Schema.Types.ObjectId): Promise<IIncomeDocument>;
-  getPopulated(
+  getPopulated<TData = IIncomeDocument>(
     id: string | mongoose.Schema.Types.ObjectId,
     populatedOption: PopulateOption['populate']
-  ): Promise<IIncomeSchema>;
+  ): Promise<TData>;
   list<TData = IIncomeDocument>(
     filter?: FilterQuery<IIncomeSchema>,
     populatedOption?: PopulateOption['populate']
@@ -63,6 +63,7 @@ const IncomeSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'MembershipPlan',
     },
+    amount: { type: Number, required: true },
     paymentMethod: {
       type: String,
       enum: Object.keys(CLIENT_PAYMENT_METHOD),
@@ -84,7 +85,6 @@ const IncomeSchema = new mongoose.Schema(
       type: String,
       enum: Object.keys(CLIENT_MEMBERSHIP_TENURE),
     },
-    amount: { type: Number },
     notes: { type: String },
   },
   schemaOptions
@@ -103,7 +103,7 @@ IncomeSchema.static(
   async function getPopulated(
     id: string | mongoose.Schema.Types.ObjectId,
     populatedOption: PopulateOption['populate']
-  ): Promise<IIncomeDocument> {
+  ) {
     const income = await this.findById(id).populate(populatedOption).exec();
     if (!income) {
       throw new Error(`No Income found with id '${id}'.`);

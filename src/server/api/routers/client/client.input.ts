@@ -1,10 +1,11 @@
 import { z } from 'zod';
 
 import { clientFormSchema } from '@/validations/client/add-form.validation';
+import { imageKitImageSchema } from '@/validations/common.validation';
 
 export const createClientInputSchema = clientFormSchema.omit({ personalInformation: true }).extend({
   personalInformation: clientFormSchema.shape.personalInformation.extend({
-    avatar: z.string().optional(),
+    avatar: imageKitImageSchema.nullable(),
     dob: z.date(),
   }),
 });
@@ -20,7 +21,7 @@ export const updateClientInputSchema = z.object({
       emergencyContact: createClientInputSchema.shape.emergencyContact.partial(),
       goalsAndPreference: createClientInputSchema.shape.goalsAndPreference.partial(),
       healthAndFitness: createClientInputSchema.shape.healthAndFitness.partial(),
-      avatar: z.string().optional(),
+      avatar: imageKitImageSchema.nullable(),
     })
     .partial(),
 });
@@ -52,3 +53,37 @@ export const updateOnboardClientInputSchema = z.object({
   }),
 });
 export type UpdateOnboardClientInputSchema = z.infer<typeof updateOnboardClientInputSchema>;
+
+export const updateAvatarInputSchema = z.object({
+  avatar: imageKitImageSchema.nullable(),
+  clientId: z.string().min(1, {
+    message: 'Client ID is required',
+  }),
+});
+export type UpdateAvatarInputSchema = z.infer<typeof updateAvatarInputSchema>;
+
+export const deleteAvatarInputSchema = z.object({
+  clientId: z.string().min(1, {
+    message: 'Client ID is required',
+  }),
+});
+export type DeleteAvatarInputSchema = z.infer<typeof deleteAvatarInputSchema>;
+
+export const upgradeMembershipPlanInputSchema = z.object({
+  clientId: z.string().min(1, {
+    message: 'Client ID is required',
+  }),
+  membershipPlanId: z.string().min(1, {
+    message: 'Membership plan ID is required',
+  }),
+});
+export type UpgradeMembershipPlanInputSchema = z.infer<typeof upgradeMembershipPlanInputSchema>;
+
+export const getCurrentMembershipPlanInputSchema = z.object({
+  clientId: z.string().min(1, {
+    message: 'Client ID is required',
+  }),
+});
+export type GetCurrentMembershipPlanInputSchema = z.infer<
+  typeof getCurrentMembershipPlanInputSchema
+>;

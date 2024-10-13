@@ -1,42 +1,36 @@
 'use client';
 
-import { DataTable } from '@paalan/react-ui';
-import type { FC } from 'react';
+import { DataTable, Heading, Stack } from '@paalan/react-ui';
+import { type FC, use } from 'react';
 
 import type { IncomesType } from '../../types';
 import { invoiceColumns } from './columns';
-import type { RouterOutputs } from '@/trpc/shared';
 
 type InvoiceTableProps = {
-  data: IncomesType[];
-  clientData: RouterOutputs['clients']['get'];
+  membershipIncomesPromise: Promise<IncomesType[]>;
 };
 
-export const InvoiceTable: FC<InvoiceTableProps> = ({ data, clientData }) => {
-  // console.log('Income Data:', data);
-
-  const parsedData = data.map(item => {
-    return {
-      ...item,
-      clientName: clientData?.fullName,
-    };
-  });
+export const InvoiceTable: FC<InvoiceTableProps> = ({ membershipIncomesPromise }) => {
+  const data = use(membershipIncomesPromise);
 
   return (
-    <DataTable
-      columns={invoiceColumns}
-      rows={parsedData}
-      noResultsMessage="No Invoice found."
-      pagination={{
-        enabled: true,
-        pageSize: 10,
-      }}
-      search={{
-        enabled: true,
-        accessorKey: 'clientName',
-        className: 'lg:w-full max-w-sm',
-        placeholder: 'Search by client name',
-      }}
-    />
+    <Stack>
+      <Heading as="h3"> Invoices </Heading>
+      <DataTable
+        columns={invoiceColumns}
+        rows={data}
+        noResultsMessage="No Invoice found."
+        pagination={{
+          enabled: true,
+          pageSize: 10,
+        }}
+        search={{
+          enabled: true,
+          accessorKey: 'membershipPlan.name',
+          className: 'lg:w-full max-w-sm',
+          placeholder: 'Search by plan name',
+        }}
+      />
+    </Stack>
   );
 };

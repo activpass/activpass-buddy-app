@@ -1,20 +1,19 @@
-import { z } from 'zod';
-
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
 import {
   createIncomeInputSchema,
+  getByIdInputSchema,
   listIncomeInputSchema,
   updateIncomeInputSchema,
 } from './income.input';
 import { incomeService } from './service/income.service';
 
 export const incomeRouter = createTRPCRouter({
-  getById: protectedProcedure.input(z.string()).query(async ({ input }) => {
-    return incomeService.getById({ id: input });
+  getById: protectedProcedure.input(getByIdInputSchema).query(async ({ input }) => {
+    return incomeService.getById({ input });
   }),
-  getPopulatedById: protectedProcedure.input(z.string()).query(async ({ input }) => {
-    return incomeService.getPopulatedById({ id: input });
+  getPopulatedById: protectedProcedure.input(getByIdInputSchema).query(async ({ input }) => {
+    return incomeService.getPopulatedById({ input });
   }),
   create: protectedProcedure.input(createIncomeInputSchema).mutation(async ({ ctx, input }) => {
     return incomeService.create({ input, orgId: ctx.session.user.orgId });

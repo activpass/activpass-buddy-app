@@ -1,37 +1,52 @@
-import { SkeletonContainer, Strong, Text, toast, useStepper } from '@paalan/react-ui';
-import { type FC, type FormEvent } from 'react';
+import { SkeletonContainer, Strong, Text, toast } from '@paalan/react-ui';
+import { type FC, type FormEvent, type ReactNode } from 'react';
 
 import Link from '@/components/Link';
 import { CLIENT_MEMBERSHIP_TENURE } from '@/constants/client/membership.constant';
 import { api } from '@/trpc/client';
 import type { CreateMembershipPlanSchema } from '@/validations/client/membership.validation';
 
-import { useClientFormStore, useClientMemberShipDetail } from '../../store';
-import { StepperFormActions } from '../StepperFormActions';
+import type { ClientFormState } from '../../new/_components/AddClientForm/store';
 import { MembershipPricingCard } from './MembershipPricingCard';
 import { MembershipPricingHeader } from './MembershipPricingCard/MembershipPricingHeader';
 import { MembershipPricingSwitch } from './MembershipPricingCard/MembershipPricingSwitch';
 
-export const MembershipDetailsForm: FC = () => {
-  const membershipPlansList = useClientFormStore(state => state.onboardingData.membershipPlans);
+type MembershipDetailsFormProps = {
+  membershipPlans?: ClientFormState['onboardingData']['membershipPlans'];
+  updateMembershipDetail: (data: ClientFormState['membershipDetail']) => void;
+  nextStep: () => void;
+  state: ClientFormState['membershipDetail'];
+  formAction?: ReactNode;
+};
 
+export const MembershipDetailsForm: FC<MembershipDetailsFormProps> = ({
+  membershipPlans: membershipPlansList,
+  updateMembershipDetail,
+  nextStep,
+  state,
+  formAction,
+}) => {
   const { data: membershipPlansData, isLoading } = api.membershipPlans.list.useQuery(undefined, {
     staleTime: 1000 * 60, // 1 minute
-    enabled: !membershipPlansList.length,
+    enabled: !membershipPlansList?.length,
   });
 
   const membershipPlans = membershipPlansData || membershipPlansList;
 
-  const { nextStep } = useStepper();
-  const updateMembershipDetail = useClientFormStore(state => state.updateMembershipDetail);
-  const {
-    planId: selectedPlanId,
-    tenure: selectedTenure,
-    selectedPlan,
-  } = useClientMemberShipDetail();
+  const { tenure: selectedTenure, planId: selectedPlanId, selectedPlan } = state;
 
   const onChangeTenure = (tenure: CreateMembershipPlanSchema['tenure']) => {
-    updateMembershipDetail({ tenure, planId: '', selectedPlan: null });
+    updateMembershipDetail({ ...state, tenure });
+  };
+
+  const onChangePlan = (
+    selectedPlanValue: ClientFormState['onboardingData']['membershipPlans'][number]
+  ) => {
+    updateMembershipDetail({
+      ...state,
+      planId: selectedPlanValue.id,
+      selectedPlan: selectedPlanValue,
+    });
   };
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -70,9 +85,7 @@ export const MembershipDetailsForm: FC = () => {
                 key={plan.id}
                 {...plan}
                 selected={selectedPlanId === plan.id}
-                onSelect={() => {
-                  updateMembershipDetail({ planId: plan.id, selectedPlan: plan });
-                }}
+                onSelect={() => onChangePlan(plan)}
               />
             );
           })
@@ -88,7 +101,7 @@ export const MembershipDetailsForm: FC = () => {
           </Text>
         )}
       </section>
-      <StepperFormActions />
+      {formAction}
     </form>
   );
 };

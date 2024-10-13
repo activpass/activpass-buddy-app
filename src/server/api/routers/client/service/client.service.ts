@@ -1,8 +1,13 @@
 import { TRPCError } from '@trpc/server';
-import type mongoose from 'mongoose';
 
+import {
+  CLIENT_PAYMENT_FREQUENCY,
+  CLIENT_PAYMENT_METHOD,
+  CLIENT_PAYMENT_STATUS,
+} from '@/constants/client/add-form.constant';
 import { generateMongooseObjectId } from '@/server/api/helpers/common';
 import { clientRepository } from '@/server/api/routers/client/repository/client.repository';
+import { deleteFileFromImageKit } from '@/server/api/utils/imagekit';
 import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger';
 
@@ -12,17 +17,23 @@ import {
   type IMembershipPlanSchema,
   MembershipPlanModel,
 } from '../../membership-plan/model/membership-plan.model';
+import { membershipPlanRepository } from '../../membership-plan/repository/membership-plan.repository';
 import { organizationService } from '../../organization/service/organization.service';
 import { ClientModel, type IClientSchema } from '../model/client.model';
 import { onboardClientRepository } from '../repository/onboard-client.repository';
 import type {
   AnalyticsClientsArgs,
   CreateClientArgs,
+  CreateClientIncomeArgs,
+  CurrentMembershipPlanArgs,
+  DeleteAvatarArgs,
   GenerateOnboardingLinkArgs,
   GetClientByIdArgs,
   ListClientsArgs,
   SubmitOnboardingClientArgs,
+  UpdateAvatarArgs,
   UpdateClientArgs,
+  UpgradeMembershipPlanArgs,
   VerifyOnboardingTokenArgs,
 } from './client.service.types';
 
@@ -63,22 +74,53 @@ class ClientService {
     }
   };
 
+  private createClientIncome = async ({
+    plan,
+    orgId,
+    clientId,
+    paymentDetail,
+    docSave,
+  }: CreateClientIncomeArgs) => {
+    const paymentDetailInfo = {
+      paymentMethod: CLIENT_PAYMENT_METHOD.CASH.value,
+      paymentFrequency: CLIENT_PAYMENT_FREQUENCY.ONE_TIME.value,
+      paymentStatus: CLIENT_PAYMENT_STATUS.PAID.value,
+      ...paymentDetail,
+    };
+    const incomeDoc = await incomeRepository.create({
+      orgId,
+      clientId,
+      membershipPlanId: plan.id,
+      data: {
+        ...paymentDetailInfo,
+        tenure: plan.tenure,
+        amount: plan.totalAmount,
+        invoiceId: generateMongooseObjectId().toHexString(),
+      },
+      docSave,
+    });
+
+    return incomeDoc;
+  };
+
   create = async ({ input, orgId }: CreateClientArgs) => {
     try {
       const { paymentDetail, membershipDetail } = input;
 
-      const incomeDoc = await incomeRepository.create({
+      const planDoc = await MembershipPlanModel.findById(membershipDetail.planId);
+
+      if (!planDoc) {
+        throw new Error('Membership plan not found');
+      }
+
+      const incomeDoc = await this.createClientIncome({
+        plan: planDoc,
         orgId,
-        membershipPlanId: membershipDetail.planId,
-        data: {
-          ...paymentDetail,
-          tenure: membershipDetail.tenure,
-          invoiceId: generateMongooseObjectId().toHexString(),
-        },
+        paymentDetail,
         docSave: false,
       });
 
-      const client = await clientRepository.create({ data: input, orgId });
+      const client = await clientRepository.create({ data: input, orgId, incomeId: incomeDoc.id });
 
       incomeDoc.client = client.id;
       await incomeDoc.save();
@@ -105,59 +147,79 @@ class ClientService {
   list = async ({ orgId }: ListClientsArgs) => {
     try {
       // find a status of client with membership plan from income
-      const clients = await ClientModel.aggregate<{
-        _id: mongoose.Types.ObjectId;
-        avatar: IClientSchema['avatar'];
-        firstName: IClientSchema['firstName'];
-        lastName: IClientSchema['lastName'];
-        phoneNumber: IClientSchema['phoneNumber'];
-        membershipPlan: IMembershipPlanSchema;
-        income: IIncomeSchema;
-        organization: mongoose.Types.ObjectId;
-      }>([
+      // const clients = await ClientModel.aggregate<{
+      //   _id: mongoose.Types.ObjectId;
+      //   avatar: IClientSchema['avatar'];
+      //   firstName: IClientSchema['firstName'];
+      //   lastName: IClientSchema['lastName'];
+      //   phoneNumber: IClientSchema['phoneNumber'];
+      //   membershipPlan: IMembershipPlanSchema;
+      //   income: IIncomeSchema;
+      //   organization: mongoose.Types.ObjectId;
+      // }>([
+      //   {
+      //     $match: {
+      //       organization: generateMongooseObjectId(orgId),
+      //     },
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: 'incomes',
+      //       localField: '_id',
+      //       foreignField: 'client',
+      //       as: 'income',
+      //     },
+      //   },
+      //   {
+      //     $unwind: {
+      //       path: '$income',
+      //     },
+      //   },
+      //   {
+      //     $project: {
+      //       _id: 1,
+      //       firstName: 1,
+      //       lastName: 1,
+      //       avatar: 1,
+      //       phoneNumber: 1,
+      //       membershipPlan: 1,
+      //       income: 1,
+      //       organization: 1,
+      //     },
+      //   },
+      // ]);
+      // await MembershipPlanModel.populate(clients, { path: 'membershipPlan' });
+      // // TODO: TEMP solution, We need to find a better way to remove duplicate clients
+      // const removeDuplicateClients = clients.filter((client, index, self) => {
+      //   return index === self.findIndex(t => t._id.toHexString() === client._id.toHexString());
+      // });
+
+      const clients = await clientRepository.list({ orgId });
+      const populatedClients = await ClientModel.populate<{
+        membershipPlan: { name: string };
+        income: { paymentStatus: IIncomeSchema['paymentStatus'] };
+      }>(clients, [
         {
-          $match: {
-            organization: generateMongooseObjectId(orgId),
-          },
+          path: 'membershipPlan',
+          select: 'name',
         },
         {
-          $lookup: {
-            from: 'incomes',
-            localField: '_id',
-            foreignField: 'client',
-            as: 'income',
-          },
-        },
-        {
-          $unwind: {
-            path: '$income',
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            firstName: 1,
-            lastName: 1,
-            avatar: 1,
-            phoneNumber: 1,
-            membershipPlan: 1,
-            income: 1,
-            organization: 1,
-          },
+          path: 'income',
+          select: 'paymentStatus',
         },
       ]);
-      await MembershipPlanModel.populate(clients, { path: 'membershipPlan' });
-      return clients.map(client => {
+
+      return populatedClients.map(client => {
         return {
           id: client._id.toHexString(),
           firstName: client.firstName,
           lastName: client.lastName,
-          avatar: client.avatar,
+          avatar: client.avatar?.url || '',
           name: `${client.firstName} ${client.lastName}`.trim(),
           phoneNumber: client.phoneNumber,
-          membershipPlanName: client.membershipPlan?.name || 'N/A',
-          status: client.income.paymentStatus,
-          orgId: client.organization.toHexString(),
+          membershipPlanName: client.membershipPlan?.name || '',
+          status: client.income?.paymentStatus || '',
+          orgId: client.organization._id.toHexString(),
         };
       });
     } catch (error) {
@@ -213,6 +275,72 @@ class ClientService {
         id: onboardClient.id,
       },
     };
+  };
+
+  updateAvatar = async ({ input }: UpdateAvatarArgs) => {
+    return clientRepository.updateAvatar(input);
+  };
+
+  deleteAvatar = async ({ input }: DeleteAvatarArgs) => {
+    const doc = await clientRepository.deleteAvatar(input);
+    const fileId = doc.avatar?.fileId;
+    if (fileId) {
+      // delete file from imagekit
+      await deleteFileFromImageKit(fileId);
+    }
+    return {
+      data: {
+        id: doc.id,
+      },
+      message: 'Avatar deleted successfully',
+    };
+  };
+
+  upgradeMembershipPlan = async ({ input }: UpgradeMembershipPlanArgs) => {
+    const { clientId, membershipPlanId } = input;
+    const client = await clientRepository.getById(clientId);
+
+    if (client.membershipPlan.toHexString() === membershipPlanId) {
+      throw getTRPCError('Client already has the same membership plan', 'BAD_REQUEST');
+    }
+
+    const plan = await membershipPlanRepository.get({ id: membershipPlanId });
+
+    // create income record
+    const incomeDoc = await this.createClientIncome({
+      plan,
+      orgId: client.organization.toHexString(),
+      clientId: client.id,
+    });
+
+    // update client membership plan
+    client.membershipPlan = plan._id;
+    client.income = incomeDoc._id;
+    await client.save();
+
+    return {
+      message: 'Membership plan upgraded successfully',
+      data: {
+        id: client.id,
+      },
+    };
+  };
+
+  getCurrentMembershipPlan = async ({ clientId }: CurrentMembershipPlanArgs) => {
+    const client = await clientRepository.getById(clientId);
+    const plan = await incomeRepository.getCurrentMembershipPlanIncome({
+      clientId: client.id,
+      orgId: client.organization.toHexString(),
+      membershipPlanId: client.membershipPlan.toHexString(),
+    });
+
+    const populatedPlan = await plan.populate('membershipPlan');
+
+    return populatedPlan.toObject<
+      IIncomeSchema & { membershipPlan: IMembershipPlanSchema; client: string }
+    >({
+      flattenObjectIds: true,
+    });
   };
 }
 

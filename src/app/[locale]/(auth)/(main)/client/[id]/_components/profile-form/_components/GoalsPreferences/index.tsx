@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, toast } from '@paalan/react-ui';
 import { useParams } from 'next/navigation';
-import type { FC } from 'react';
+import { type FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/trpc/client';

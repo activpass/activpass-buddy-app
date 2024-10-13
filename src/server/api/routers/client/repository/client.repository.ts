@@ -5,9 +5,12 @@ import { generateClientCode, generateMongooseObjectId } from '@/server/api/helpe
 import {
   type AnalyticsClientParams,
   type CreateClientParams,
+  type DeleteAvatarParams,
   type ListClientParams,
+  type UpdateAvatarParams,
   type UpdateClientParams,
 } from '@/server/api/routers/client/repository/client.repository.types';
+import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger/logger';
 
 import { TimeLogModel } from '../../time-log/model/time-log.model';
@@ -50,7 +53,7 @@ class ClientRepository {
     }
   };
 
-  create = async ({ data, orgId, docSave = true }: CreateClientParams) => {
+  create = async ({ data, orgId, incomeId, docSave = true }: CreateClientParams) => {
     try {
       const { personalInformation, ...rest } = data;
 
@@ -69,6 +72,7 @@ class ClientRepository {
         clientCode: generateClientCode(),
         organization: generateMongooseObjectId(orgId),
         membershipPlan: generateMongooseObjectId(rest.membershipDetail.planId),
+        income: generateMongooseObjectId(incomeId),
         isDeleted: false,
       };
 
@@ -178,6 +182,44 @@ class ClientRepository {
       return result;
     } catch (error) {
       this.logger.error('Failed to get client analytics', error);
+      throw error;
+    }
+  };
+
+  updateAvatar = async ({ avatar, clientId }: UpdateAvatarParams) => {
+    try {
+      const updatedClient = await ClientModel.findByIdAndUpdate(
+        clientId,
+        {
+          avatar,
+        },
+        { new: true }
+      ).exec();
+      if (!updatedClient) {
+        throw getTRPCError('Client not found', 'NOT_FOUND');
+      }
+      return updatedClient;
+    } catch (error) {
+      this.logger.error('Failed to update client avatar', error);
+      throw error;
+    }
+  };
+
+  deleteAvatar = async ({ clientId }: DeleteAvatarParams) => {
+    try {
+      const updatedClient = await ClientModel.findByIdAndUpdate(
+        clientId,
+        {
+          avatar: null,
+        },
+        { new: false }
+      ).exec();
+      if (!updatedClient) {
+        throw getTRPCError('Client not found', 'NOT_FOUND');
+      }
+      return updatedClient;
+    } catch (error) {
+      this.logger.error('Failed to delete client avatar', error);
       throw error;
     }
   };

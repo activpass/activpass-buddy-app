@@ -23,7 +23,7 @@ export const MembershipPricingCard: FC<MembershipPricingCardProps> = ({
   name: planName,
   amount,
   discountPercentage,
-  discountedAmount,
+  discountAmount,
   description,
   features,
   selected,
@@ -75,9 +75,7 @@ export const MembershipPricingCard: FC<MembershipPricingCardProps> = ({
                 {currencyIntl.format(amount)}
               </h3>
               {discountApplied && (
-                <h3 className={cn('text-3xl font-bold')}>
-                  {currencyIntl.format(discountedAmount)}
-                </h3>
+                <h3 className={cn('text-3xl font-bold')}>{currencyIntl.format(discountAmount)}</h3>
               )}
             </div>
             <span className="mb-1 flex flex-col justify-end text-sm">

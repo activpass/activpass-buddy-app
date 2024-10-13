@@ -1,33 +1,27 @@
-import { DotsVerticalIcon, EyeOpenIcon } from '@paalan/react-icons';
+import { dateIntl } from '@paalan/react-shared/lib';
 import {
+  Button,
   type DataTableColumnDef,
   DataTableColumnHeader,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuRoot,
-  DropdownMenuTrigger,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetRoot,
   SheetTitle,
   SheetTrigger,
 } from '@paalan/react-ui';
 
-import { CLIENT_PAYMENT_STATUS, SUBSCRIPTION_PERIOD } from '@/constants/client/add-form.constant';
+import { SUBSCRIPTION_PERIOD } from '@/constants/client/add-form.constant';
+import { currencyIntl } from '@/utils/currency-intl';
 
+import { PaymentStatus } from '../../../../_components/PaymentStatus';
 import type { IncomesType } from '../../types';
 import { InvoiceTemplate } from '../InvoiceTemplate';
 
 export const invoiceColumns: DataTableColumnDef<IncomesType>[] = [
   {
-    id: 'clientName',
-    accessorKey: 'clientName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Client Name" />,
-    enableSorting: false,
-  },
-  {
-    id: 'membershipPlan.planName',
-    accessorKey: 'membershipPlan.planName',
+    id: 'membershipPlan.name',
+    accessorKey: 'membershipPlan.name',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Membership Plan" />,
     enableSorting: false,
   },
@@ -35,7 +29,7 @@ export const invoiceColumns: DataTableColumnDef<IncomesType>[] = [
     id: 'membershipPlan.amount',
     accessorKey: 'membershipPlan.amount',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
-    // cell: ({ row }) => <p>{currencyIntl.format(row.original?.membershipPlan?.amount)}</p>,
+    cell: ({ row }) => currencyIntl.format(row.original.amount),
     enableSorting: false,
   },
   {
@@ -48,57 +42,62 @@ export const invoiceColumns: DataTableColumnDef<IncomesType>[] = [
     enableSorting: false,
   },
   {
+    id: 'date',
+    accessorKey: 'date',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Start Date" />,
+    enableSorting: false,
+    cell: ({ row }) => {
+      if (!row.original.date) return 'N/A';
+      return dateIntl.format(row.original.date);
+    },
+  },
+  {
+    id: 'dueDate',
+    accessorKey: 'dueDate',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Due Date" />,
+    enableSorting: false,
+    cell: ({ row }) => {
+      if (!row.original.dueDate) return 'N/A';
+      return dateIntl.format(row.original.dueDate);
+    },
+  },
+  {
     id: 'paymentStatus',
     accessorKey: 'paymentStatus',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {
-      return (
-        <div className="flex items-center">
-          <div className="mr-2 size-2 rounded-full bg-green-500" />
-          <span className="text-green-500">
-            {CLIENT_PAYMENT_STATUS[row.original.paymentStatus].display}
-          </span>
-        </div>
-      );
+      return <PaymentStatus status={row.original.paymentStatus} />;
     },
     enableSorting: false,
   },
-  // {
-  //   id: 'dueDate',
-  //   accessorKey: 'dueDate',
-  //   header: ({ column }) => <DataTableColumnHeader column={column} title="Due Date" />,
-  //   enableSorting: false,
-  // },
+
   {
     id: 'action',
     accessorKey: 'action',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
     cell: ({ row }) => {
       return (
-        <DropdownMenuRoot>
-          <DropdownMenuTrigger asChild>
-            <DotsVerticalIcon />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right">
-            <SheetRoot>
-              <SheetTrigger asChild>
-                <DropdownMenuItem onSelect={e => e.preventDefault()}>
-                  <EyeOpenIcon className="mr-2 size-4" />
-                  View
-                </DropdownMenuItem>
-              </SheetTrigger>
-              <SheetContent
-                side="right"
-                className="h-full overflow-x-hidden overflow-y-scroll sm:max-w-2xl"
-              >
-                <SheetHeader>
-                  <SheetTitle>Invoice</SheetTitle>
-                </SheetHeader>
-                <InvoiceTemplate invoiceId={row.original.id} />
-              </SheetContent>
-            </SheetRoot>
-          </DropdownMenuContent>
-        </DropdownMenuRoot>
+        <SheetRoot>
+          <SheetTrigger asChild>
+            <Button variant="link" color="blue" px="0">
+              View Invoice
+            </Button>
+          </SheetTrigger>
+          <SheetContent
+            side="right"
+            className="h-full overflow-x-hidden overflow-y-scroll sm:max-w-2xl"
+          >
+            <SheetHeader>
+              <SheetTitle>Invoice</SheetTitle>
+            </SheetHeader>
+            <SheetDescription className="flex items-center gap-2 text-muted-foreground">
+              <span>Invoice Number: {row.original.id}</span>
+              <span>Issue Date: {dateIntl.format(row.original.date)}</span>
+              <span>Due Date: {dateIntl.format(row.original.dueDate)}</span>
+            </SheetDescription>
+            <InvoiceTemplate incomeId={row.original.id} />
+          </SheetContent>
+        </SheetRoot>
       );
     },
     enableSorting: false,

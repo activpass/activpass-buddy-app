@@ -1,16 +1,19 @@
 import { TRPCError } from '@trpc/server';
+import { startOfDay } from 'date-fns';
 
 import { Logger } from '@/server/logger/logger';
+import { getDueDate } from '@/utils/helpers';
 
+import type { IClientSchema } from '../../client/model/client.model';
 import type { IMembershipPlanSchema } from '../../membership-plan/model/membership-plan.model';
+import type { IOrganizationSchema } from '../../organization/model/organization.model';
 import { type IIncomeDocument, type IIncomeSchema, IncomeModel } from '../model/income.model';
 import {
   type CreateIncomeParams,
+  type GetCurrentMembershipPlanIncomeParams,
   type ListIncomesParams,
   type UpdateIncomeParams,
 } from './income.repository.types';
-import type { IClientSchema } from '../../client/model/client.model';
-import type { IOrganizationSchema } from '../../organization/model/organization.model';
 
 class IncomeRepository {
   private readonly logger = new Logger(IncomeRepository.name);
@@ -20,16 +23,14 @@ class IncomeRepository {
   };
 
   getPopulatedById = async (id: IIncomeSchema['id']) => {
-    const result = await IncomeModel.getPopulated(id, ['organization', 'membershipPlan', 'client']);
-
-    return result as unknown as Omit<
-      IIncomeDocument,
-      'membershipPlan' | 'client' | 'organization'
-    > & {
-      membershipPlan: IMembershipPlanSchema | null;
-      client: IClientSchema | null;
-      organization: IOrganizationSchema | null;
-    };
+    const result = await IncomeModel.getPopulated<
+      Omit<IIncomeSchema, 'membershipPlan' | 'client' | 'organization'> & {
+        membershipPlan: IMembershipPlanSchema | null;
+        client: IClientSchema | null;
+        organization: IOrganizationSchema | null;
+      }
+    >(id, ['organization', 'membershipPlan', 'client']);
+    return result;
   };
 
   create = async ({
@@ -40,8 +41,15 @@ class IncomeRepository {
     docSave = true,
   }: CreateIncomeParams) => {
     try {
+      const { tenure } = data;
+
+      const date = startOfDay(new Date());
+      const dueDate = getDueDate(tenure, date);
+
+      const newData = { ...data, dueDate: dueDate.toISOString(), date: date.toISOString() };
+
       const doc = new IncomeModel({
-        ...data,
+        ...newData,
         organization: orgId,
         client: data.client || clientId || null,
         membershipPlan: data.membershipPlan || membershipPlanId || null,
@@ -84,6 +92,27 @@ class IncomeRepository {
     return IncomeModel.list<
       Omit<IIncomeDocument, 'membershipPlan'> & { membershipPlan: IMembershipPlanSchema | null }
     >(filter, ['membershipPlan']);
+  };
+
+  getCurrentMembershipPlanIncome = async ({
+    orgId,
+    clientId,
+    membershipPlanId,
+  }: GetCurrentMembershipPlanIncomeParams) => {
+    const doc = await IncomeModel.findOne({
+      organization: orgId,
+      client: clientId,
+      membershipPlan: membershipPlanId,
+    })
+      .sort('-createdAt')
+      .exec();
+    if (!doc) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Income not found',
+      });
+    }
+    return doc;
   };
 }
 

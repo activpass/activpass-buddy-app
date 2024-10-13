@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { dateIntl } from '@paalan/react-shared/lib';
 import { Form, toast } from '@paalan/react-ui';
 import { useParams } from 'next/navigation';
 import { type FC } from 'react';
@@ -30,7 +31,12 @@ export const ClientInfo: FC<ClientInfoProps> = ({ data }) => {
 
   const form = useForm<ClientPersonalInformationSchema>({
     resolver: zodResolver(clientPersonalInformationWithoutAvatarSchema),
-    defaultValues: data,
+    defaultValues: {
+      ...data,
+      dob: dateIntl.formatDate(data.dob, {
+        dateFormat: 'yyyy-MM-dd',
+      }),
+    },
     mode: 'onChange',
   });
 
@@ -61,6 +67,7 @@ export const ClientInfo: FC<ClientInfoProps> = ({ data }) => {
       fields={formFields}
       onSubmit={onSubmit}
       submitText="Update Profile Info"
+      isSubmitting={updateProfile.isPending}
       hideResetButton
       className="grid grid-cols-1 gap-4 space-y-0 sm:grid-cols-2"
     />

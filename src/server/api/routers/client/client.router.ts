@@ -4,8 +4,12 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/
 
 import {
   createClientInputSchema,
+  deleteAvatarInputSchema,
+  getCurrentMembershipPlanInputSchema,
   submitOnboardingClientInputSchema,
+  updateAvatarInputSchema,
   updateClientInputSchema,
+  upgradeMembershipPlanInputSchema,
   verifyOnboardingTokenInputSchema,
 } from './client.input';
 import { clientService } from './service/client.service';
@@ -26,6 +30,16 @@ export const clientRouter = createTRPCRouter({
       orgId: ctx.session.user.orgId,
     });
   }),
+  updateAvatar: protectedProcedure.input(updateAvatarInputSchema).mutation(async ({ input }) => {
+    return clientService.updateAvatar({
+      input,
+    });
+  }),
+  deleteAvatar: protectedProcedure.input(deleteAvatarInputSchema).mutation(async ({ input }) => {
+    return clientService.deleteAvatar({
+      input,
+    });
+  }),
   list: protectedProcedure.query(async ({ ctx }) => {
     return clientService.list({
       orgId: ctx.session.user.orgId,
@@ -36,6 +50,20 @@ export const clientRouter = createTRPCRouter({
       orgId: ctx.session.user.orgId,
     });
   }),
+  upgradeMembershipPlan: protectedProcedure
+    .input(upgradeMembershipPlanInputSchema)
+    .mutation(async ({ input }) => {
+      return clientService.upgradeMembershipPlan({
+        input,
+      });
+    }),
+  getCurrentMembershipPlan: protectedProcedure
+    .input(getCurrentMembershipPlanInputSchema)
+    .query(({ input }) => {
+      return clientService.getCurrentMembershipPlan({
+        clientId: input.clientId,
+      });
+    }),
   generateOnboardingLink: protectedProcedure.mutation(async ({ ctx }) => {
     return clientService.generateOnboardingLink({
       orgId: ctx.session.user.orgId,

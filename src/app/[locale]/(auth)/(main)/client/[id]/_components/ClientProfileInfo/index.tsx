@@ -1,41 +1,89 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { TrashIcon, UploadIcon } from '@paalan/react-icons';
 import { dateIntl } from '@paalan/react-shared/lib';
-import { AvatarUpload, Button } from '@paalan/react-ui';
+import { AlertDialog, AvatarUpload, Button, HStack, toast } from '@paalan/react-ui';
+import { useEffect, useState } from 'react';
 import { FaWhatsapp } from 'react-icons/fa';
-import { TrashIcon } from '@paalan/react-icons';
-import { useForm } from 'react-hook-form';
+
+import { uploadToImagekit } from '@/lib/imagekit';
+import { api } from '@/trpc/client';
+import type { RouterOutputs } from '@/trpc/shared';
+import { avatarSchema } from '@/validations/client/add-form.validation';
 
 type ClientProfileInfoProps = {
-  clientData: React.ComponentPropsWithoutRef<typeof Object>['data'];
-};
-
-type FormValues = {
-  avatar: File | null;
+  clientData: RouterOutputs['clients']['get'];
 };
 
 export const ClientProfileInfo: React.FC<ClientProfileInfoProps> = ({ clientData }) => {
-  const form = useForm<FormValues>({
-    defaultValues: {
-      avatar: null,
+  const [avatarUrl, setAvatarUrl] = useState(clientData.avatar?.url || '');
+  const [previousAvatarUrl, setPreviousAvatarUrl] = useState(avatarUrl);
+  const isAvatarUrlChanged = avatarUrl ? avatarUrl !== previousAvatarUrl : false;
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openSaveDialog, setOpenSaveDialog] = useState(false);
+
+  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
+
+  const updateAvatarMutation = api.clients.updateAvatar.useMutation();
+  const deleteAvatarMutation = api.clients.deleteAvatar.useMutation({
+    onSuccess: () => {
+      setAvatarUrl('');
+      setOpenDeleteDialog(false);
+      toast.success('Avatar deleted successfully');
+    },
+    onError: error => {
+      toast.error(error.message);
     },
   });
 
-  const [avatarUrl, setAvatarUrl] = useState<string>('');
-
-  const avatar = form.watch('avatar');
-
   useEffect(() => {
-    const url = avatar ? URL.createObjectURL(avatar) : '/avatars/avatar-1.jpg';
-    setAvatarUrl(url);
-    return () => {
-      if (avatar) URL.revokeObjectURL(url);
-    };
-  }, [avatar]);
+    if (!clientData.avatar) return;
+    setAvatarUrl(clientData.avatar?.url || '');
+  }, [clientData.avatar]);
 
   const onAvatarChange = (file: File) => {
-    form.setValue('avatar', file || null);
+    const parse = avatarSchema.safeParse(file);
+    if (!parse.success) {
+      toast.error(parse.error.errors?.[0]?.message);
+    } else {
+      const url = URL.createObjectURL(file);
+      setAvatarUrl(url);
+      setPreviousAvatarUrl(avatarUrl);
+    }
+  };
+
+  const onDeleteAvatar = () => {
+    deleteAvatarMutation.mutate({
+      clientId: clientData.id,
+    });
+  };
+
+  const onChangeAvatar = async () => {
+    try {
+      setIsSavingAvatar(true);
+      const file = await fetch(avatarUrl).then(res => res.blob());
+      const response = await uploadToImagekit({
+        file,
+        fileName: `avatar_${clientData.fullName}`,
+      });
+
+      const newAvatarUrl = response.url;
+
+      await updateAvatarMutation.mutateAsync({
+        clientId: clientData.id,
+        avatar: response,
+      });
+      setAvatarUrl(newAvatarUrl);
+      setPreviousAvatarUrl(newAvatarUrl);
+      setOpenSaveDialog(false);
+      toast.success('Avatar updated successfully');
+    } catch (error) {
+      const err = error as Error;
+      toast.error(err.message);
+    } finally {
+      setIsSavingAvatar(false);
+    }
   };
 
   // const handleSendMessage = () => {
@@ -57,18 +105,63 @@ export const ClientProfileInfo: React.FC<ClientProfileInfoProps> = ({ clientData
             value: '',
           }}
         />
-        {avatarUrl && (
-          <Button
-            type="button"
-            variant="surface"
-            color="danger"
-            size="sm"
-            leftIcon={<TrashIcon boxSize="4" />}
-            onClick={() => form.setValue('avatar', null)}
-          >
-            Remove
-          </Button>
-        )}
+        <HStack>
+          {avatarUrl && (
+            <AlertDialog
+              open={openDeleteDialog}
+              trigger={
+                <Button
+                  type="button"
+                  variant="surface"
+                  color="danger"
+                  size="sm"
+                  leftIcon={<TrashIcon boxSize="4" />}
+                  onClick={() => setOpenDeleteDialog(true)}
+                >
+                  Delete
+                </Button>
+              }
+              header={{
+                title: 'Delete Avatar',
+                description: 'Are you sure you want to delete this avatar?',
+              }}
+              confirmButtonProps={{
+                variant: 'danger',
+                disabled: deleteAvatarMutation.isPending,
+              }}
+              cancelButtonText="No"
+              confirmButtonText={deleteAvatarMutation.isPending ? 'Deleting...' : 'Yes'}
+              onConfirm={onDeleteAvatar}
+            />
+          )}
+          {isAvatarUrlChanged && (
+            <AlertDialog
+              open={openSaveDialog}
+              trigger={
+                <Button
+                  type="button"
+                  variant="surface"
+                  color="primary"
+                  size="sm"
+                  leftIcon={<UploadIcon boxSize="4" />}
+                  onClick={() => setOpenSaveDialog(true)}
+                >
+                  Save
+                </Button>
+              }
+              header={{
+                title: 'Save Changes',
+                description: 'Are you sure you want to save changes?',
+              }}
+              confirmButtonProps={{
+                disabled: isSavingAvatar,
+              }}
+              cancelButtonText="No"
+              confirmButtonText={isSavingAvatar ? 'Saving...' : 'Yes'}
+              onConfirm={onChangeAvatar}
+            />
+          )}
+        </HStack>
       </div>
 
       <div className="flex flex-col items-center">
@@ -76,9 +169,13 @@ export const ClientProfileInfo: React.FC<ClientProfileInfoProps> = ({ clientData
         <div className="flex items-center justify-center text-xs text-gray-700 dark:text-gray-400">
           <h3 className="mr-2">{clientData?.clientCode}</h3>
           <span className="">|</span>
-          <p className="ml-2">{dateIntl.format(clientData?.createdAt)}</p>
+          <p className="ml-2">
+            {dateIntl.format(clientData?.createdAt, {
+              dateFormat: 'dd-MM-yyyy',
+            })}
+          </p>
         </div>
-        <Button color="green" className="mt-3">
+        <Button color="green" className="mt-3" disabled>
           Send Message
           <FaWhatsapp className="mr-2 size-5" />
         </Button>

@@ -17,8 +17,8 @@ importers:
         specifier: ^3.6.0
         version: 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@paalan/react-config':
-        specifier: ^1.4.1
-        version: 1.4.1(prettier@3.3.3)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
+        specifier: ^1.4.2
+        version: 1.4.2(prettier@3.3.3)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
       '@paalan/react-hooks':
         specifier: ^1.4.0
         version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -26,17 +26,17 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@paalan/react-providers':
-        specifier: ^1.4.0
-        version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.25.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        specifier: ^1.4.1
+        version: 1.4.1(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.25.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@paalan/react-shared':
-        specifier: ^1.4.5
-        version: 1.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
+        specifier: ^1.4.8
+        version: 1.4.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
       '@paalan/react-test-utils':
         specifier: ^1.4.1
         version: 1.4.1
       '@paalan/react-ui':
-        specifier: ^1.4.12
-        version: 1.4.12(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.4.13
+        version: 1.4.13(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sentry/nextjs':
         specifier: ^8.13.0
         version: 8.13.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.25.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.52.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.25.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.25.1)(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.5))(esbuild@0.20.2))
@@ -76,6 +76,9 @@ importers:
       glob:
         specifier: ^10.4.2
         version: 10.4.2
+      imagekit:
+        specifier: ^5.2.0
+        version: 5.2.0
       imagekitio-next:
         specifier: ^1.0.0
         version: 1.0.0(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3305,10 +3308,10 @@ packages:
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
 
-  '@paalan/react-config@1.4.1':
+  '@paalan/react-config@1.4.2':
     resolution:
       {
-        integrity: sha512-JLqhd4xY+V8Uj6C4pkJFj3as9bU4/UH9lwhEyRdl5yFcoyXNIeCSfoDyvy7UZJ6ZW3U4btnI3wYFFv7X1H6gyw==,
+        integrity: sha512-1uuxPD/UB/KvUBJ/nr3pFzPSrdjmMBnUWlL55PR4/8/sFwa/D+GG9cHhiYbw1jpDh+QEsA6X9q1jqL4UY57vHw==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -3334,10 +3337,10 @@ packages:
       react: '>=16.18.x'
       react-dom: '>=16.18.x'
 
-  '@paalan/react-providers@1.4.0':
+  '@paalan/react-providers@1.4.1':
     resolution:
       {
-        integrity: sha512-u5zJoNWo9f/nwXudJKek6ZPrKwYfx+NDgtBqvmUcCg/Koli79txDj+AWemTCzpiFT0Z6QzZ8DhDOXUoW4US7LA==,
+        integrity: sha512-Ikmb0mvevr3pQ8IsUlg6dsNaE/z3Oz/5cOuCpVkl0+6OQVEm3NMPsXHXW2146ioJRXsHzo1H8AxENJzI0aCx9Q==,
       }
     engines: { node: '>=18', pnpm: '>=9' }
     peerDependencies:
@@ -3345,10 +3348,10 @@ packages:
       react-dom: '>=16.18.x'
       react-router-dom: '>=6.x.x'
 
-  '@paalan/react-shared@1.4.5':
+  '@paalan/react-shared@1.4.8':
     resolution:
       {
-        integrity: sha512-95JNebkOFj93BZq9UCFs24D2r1Oex5VpK4lZZsCYcD9BsOiReHWLsWzDHZ2tDLMdymvX2wkDHvbOGMnPJFCyzw==,
+        integrity: sha512-sJHhCB1IGgD9C7SmfSJEnQd0W0whmyrGq/Nwk3D1E1v1MEtb6NcWwCmYVIWjopcLjE4/WxxQwAsV4VJ08j4JLg==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -3363,10 +3366,10 @@ packages:
       }
     engines: { node: '>=16.x.x' }
 
-  '@paalan/react-ui@1.4.12':
+  '@paalan/react-ui@1.4.13':
     resolution:
       {
-        integrity: sha512-ga2+PNxsXnLo9zVCiIgwnsvrgrukPggI9Yf1Bmyd9nVfFLqCtQMYyI2ssH7aIVDwoffQLg97zS0GLIy8sSQJ7Q==,
+        integrity: sha512-BZRBIlLz3VMkd692Jo5l/5q0JYmmDbbJXZr6Vn60B5BibnYy8XJ0SR5BLgmaPJaUJ6+VeTSVQVHqZTZd8SHL6Q==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -10822,6 +10825,12 @@ packages:
       }
     engines: { node: '>=10' }
 
+  hamming-distance@1.0.0:
+    resolution:
+      {
+        integrity: sha512-hYz2IIKtyuZGfOqCs7skNiFEATf+v9IUNSOaQSr6Ll4JOxxWhOvXvc3mIdCW82Z3xW+zUoto7N/ssD4bDxAWoA==,
+      }
+
   handlebars@4.7.8:
     resolution:
       {
@@ -11197,6 +11206,13 @@ packages:
         integrity: sha512-lTlLBrb+96eDy20zz3AIZtSs4nhozoa+kRcz3Yhl/TLAvciMmKXQe2kFOWM/j8KurvG5jLeDuMI6sCp+w7y2IA==,
       }
 
+  imagekit@5.2.0:
+    resolution:
+      {
+        integrity: sha512-gq3tJ/pdO/LyaDtNmROERm7DE6oVOI9u7UOBFnoNA0JAEKnQzGh31/LKlFgho2BYonVViw7mZMo2H0KLO68Rww==,
+      }
+    engines: { node: '>=12.0.0' }
+
   imagekitio-next@1.0.0:
     resolution:
       {
@@ -11308,6 +11324,15 @@ packages:
         integrity: sha512-X7rqawQBvfdjS10YU1y1YVreA3SsLrW9dX2CewP2EbBJM4ypVNLDkO5y04gejPwKIY9lR+7r9gn3rFPt/kmWFg==,
       }
     engines: { node: ^14.17.0 || ^16.13.0 || >=18.0.0 }
+
+  input-otp@1.2.4:
+    resolution:
+      {
+        integrity: sha512-md6rhmD+zmMnUh5crQNSQxq3keBRYvE3odbr4Qb9g2NWzQv9azi+t1a3X4TBTbh98fsGHgEEJlzbe1q860uGCA==,
+      }
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
 
   inquirer@9.3.6:
     resolution:
@@ -20959,7 +20984,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.25.1(@opentelemetry/api@1.9.0)
 
-  '@paalan/react-config@1.4.1(prettier@3.3.3)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
+  '@paalan/react-config@1.4.2(prettier@3.3.3)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
     dependencies:
       '@ianvs/prettier-plugin-sort-imports': 4.3.1(prettier@3.3.3)
       prettier-plugin-tailwindcss: 0.5.14(@ianvs/prettier-plugin-sort-imports@4.3.1(prettier@3.3.3))(prettier@3.3.3)
@@ -20996,7 +21021,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@paalan/react-providers@1.4.0(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.25.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+  '@paalan/react-providers@1.4.1(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.25.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@azure/msal-browser': 3.20.0
       '@azure/msal-react': 2.0.22(@azure/msal-browser@3.20.0)(react@18.3.1)
@@ -21007,7 +21032,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@paalan/react-shared@1.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
+  '@paalan/react-shared@1.4.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
     dependencies:
       axios: 1.7.2(debug@4.3.5)
       clsx: 2.1.1
@@ -21021,7 +21046,7 @@ snapshots:
 
   '@paalan/react-test-utils@1.4.1': {}
 
-  '@paalan/react-ui@1.4.12(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@paalan/react-ui@1.4.13(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@hookform/resolvers': 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@radix-ui/react-accordion': 1.2.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -21055,12 +21080,14 @@ snapshots:
       cmdk: 0.2.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       date-fns: 2.30.0
       date-fns-tz: 2.0.1(date-fns@2.30.0)
+      input-otp: 1.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       lucide-react: 0.417.0(react@18.3.1)
       react: 18.3.1
       react-day-picker: 8.10.1(date-fns@2.30.0)(react@18.3.1)
       react-dom: 18.3.1(react@18.3.1)
       react-error-boundary: 4.0.13(react@18.3.1)
       react-hook-form: 7.52.0(react@18.3.1)
+      react-icons: 5.3.0(react@18.3.1)
       recharts: 2.12.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       vaul: 0.9.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       zod: 3.23.8
@@ -26969,6 +26996,8 @@ snapshots:
     dependencies:
       duplexer: 0.1.2
 
+  hamming-distance@1.0.0: {}
+
   handlebars@4.7.8:
     dependencies:
       minimist: 1.2.8
@@ -27219,6 +27248,17 @@ snapshots:
 
   imagekit-javascript@3.0.2: {}
 
+  imagekit@5.2.0:
+    dependencies:
+      axios: 1.7.2(debug@4.3.5)
+      form-data: 4.0.0
+      hamming-distance: 1.0.0
+      lodash: 4.17.21
+      tslib: 2.6.3
+      uuid: 8.3.2
+    transitivePeerDependencies:
+      - debug
+
   imagekitio-next@1.0.0(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       imagekit-javascript: 3.0.2
@@ -27280,6 +27320,11 @@ snapshots:
   ini@4.1.1: {}
 
   ini@4.1.3: {}
+
+  input-otp@1.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   inquirer@9.3.6:
     dependencies:

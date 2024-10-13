@@ -4,8 +4,8 @@ import { Avatar, Button, type DataTableColumnDef, DataTableColumnHeader } from '
 import { LuUser2 } from 'react-icons/lu';
 
 import Link from '@/components/Link';
-import { CLIENT_PAYMENT_STATUS } from '@/constants/client/add-form.constant';
 
+import { PaymentStatus } from '../PaymentStatus';
 import type { ClientData } from './types';
 
 export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
@@ -17,7 +17,7 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
       return (
         <div className="flex items-center gap-2 pl-3">
           <Avatar
-            src={row.original.avatar || ''}
+            src={row.original.avatar}
             alt={row.getValue('name')}
             fallback={<LuUser2 className="size-6" />}
           />
@@ -46,6 +46,7 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Membership" />,
     enableSorting: false,
     cell: ({ row }) => {
+      if (!row.original.membershipPlanName) return 'N/A';
       return (
         <Button
           as={Link}
@@ -65,7 +66,7 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     enableSorting: false,
     cell: ({ row }) => {
-      return <span>{CLIENT_PAYMENT_STATUS[row.original.status].display}</span>;
+      return row.original.status ? <PaymentStatus status={row.original.status} /> : 'N/A';
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 
 import { uploadToImagekit } from '@/lib/imagekit';
 import { useRouter } from '@/lib/navigation';
+import type { SubmitOnboardingClientInputSchema } from '@/server/api/routers/client/client.input';
 import { api } from '@/trpc/client';
 import {
   type ConsentAndAgreementSchema,
@@ -70,12 +71,12 @@ export const ConsentAndAgreementsForm: FC = () => {
     try {
       setIsSubmitting(true);
       const { avatar } = clientFormState.personalInformation;
-      const requestBody = {
+      const requestBody: Omit<SubmitOnboardingClientInputSchema, 'orgId' | 'onboardClientId'> = {
         ...clientFormState,
         personalInformation: {
           ...clientFormState.personalInformation,
           dob: clientFormState.personalInformation.dob || new Date(),
-          avatar: '',
+          avatar: null,
         },
         consentAndAgreement: data,
       };
@@ -85,7 +86,7 @@ export const ConsentAndAgreementsForm: FC = () => {
           file: avatar,
           fileName: avatar.name,
         });
-        requestBody.personalInformation.avatar = response.url;
+        requestBody.personalInformation.avatar = response;
       }
 
       // If the client is being onboarded, we need to submit the client using the onboarding client mutation

@@ -1,5 +1,4 @@
-import { TRPCError } from '@trpc/server';
-
+import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger';
 
 import { incomeRepository } from '../repository/income.repository';
@@ -13,35 +12,23 @@ import type {
 class IncomeService {
   private readonly logger = new Logger(IncomeService.name);
 
-  getById = async ({ id }: GetIncomeByIdArgs) => {
+  getById = async ({ input }: GetIncomeByIdArgs) => {
     try {
-      if (!id) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Income ID is required',
-        });
-      }
-      const income = await incomeRepository.getById(id);
+      const income = await incomeRepository.getById(input.id);
       return income;
     } catch (error: unknown) {
       this.logger.error('Failed to get income by id', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to get income by id',
-      });
+      throw getTRPCError('Failed to get income by id');
     }
   };
 
-  getPopulatedById = async ({ id }: GetIncomeByIdArgs) => {
+  getPopulatedById = async ({ input }: GetIncomeByIdArgs) => {
     try {
-      const income = await incomeRepository.getPopulatedById(id);
+      const income = await incomeRepository.getPopulatedById(input.id);
       return income;
     } catch (error: unknown) {
       this.logger.error('Failed to get income by id', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to get income by id',
-      });
+      throw getTRPCError('Failed to get populated income by id');
     }
   };
 
@@ -51,10 +38,7 @@ class IncomeService {
       return income;
     } catch (error: unknown) {
       this.logger.error('Failed to create income', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to create income',
-      });
+      throw getTRPCError('Failed to create income');
     }
   };
 
@@ -65,27 +49,22 @@ class IncomeService {
       return income;
     } catch (error: unknown) {
       this.logger.error('Failed to update income', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to update income',
-      });
+      throw getTRPCError('Failed to update income');
     }
   };
 
   list = async ({ orgId, clientId }: ListIncomesArgs) => {
     try {
       const incomes = await incomeRepository.list({ orgId, clientId });
-      return incomes.map(income => {
+      const items = incomes.map(income => {
         return income.toObject({
           flattenObjectIds: true,
-        });
+        }) as typeof income;
       });
+      return items;
     } catch (error: unknown) {
       this.logger.error('Failed to list incomes', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to list incomes',
-      });
+      throw getTRPCError('Failed to list incomes');
     }
   };
 }
