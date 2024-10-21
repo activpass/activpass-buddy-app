@@ -22,6 +22,9 @@ const MembershipPage: FC<MembershipPageProps> = async ({ params }) => {
   const clientId = params.id;
   const clientData = await api.clients.get(clientId);
   const membershipIncomesPromise = api.incomes.list({ clientId });
+  const currentMembershipPlanPromise = api.clients.getCurrentMembershipPlan({
+    clientId,
+  });
 
   return (
     <>
@@ -43,7 +46,10 @@ const MembershipPage: FC<MembershipPageProps> = async ({ params }) => {
         </div>
         <Separator />
         <div>
-          <MembershipHeader clientId={clientId} />
+          <Suspense fallback={<Skeleton className="mb-6 h-28 w-full" />}>
+            <MembershipHeader currentMembershipPlanPromise={currentMembershipPlanPromise} />
+          </Suspense>
+
           <Suspense fallback={<Skeleton className="h-28 w-full" />}>
             <InvoiceTable membershipIncomesPromise={membershipIncomesPromise} />
           </Suspense>

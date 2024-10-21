@@ -19,9 +19,9 @@ type AttendancePageProps = {
   };
 };
 const AttendancePage: FC<AttendancePageProps> = async ({ params }) => {
-  const clientData = await api.clients.get(params.id);
-  const checkInTimeLogsList = await api.timeLogs.list({ clientId: params.id });
-  // console.log('Time Log :', checkInTimeLogsList);
+  const clientId = params.id;
+  const clientData = await api.clients.get(clientId);
+  const checkInTimeLogsList = await api.timeLogs.list({ clientId });
 
   return (
     <>
@@ -43,7 +43,7 @@ const AttendancePage: FC<AttendancePageProps> = async ({ params }) => {
         </div>
         <Separator />
         <div className="flex flex-col gap-5">
-          <AttendanceCalendar />
+          <AttendanceCalendar clientId={clientId} />
           <AttendanceTable data={checkInTimeLogsList} />
         </div>
       </div>

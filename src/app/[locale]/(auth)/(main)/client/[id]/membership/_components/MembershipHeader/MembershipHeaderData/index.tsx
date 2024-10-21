@@ -5,15 +5,12 @@ import type { RouterOutputs } from '@/trpc/shared';
 import { currencyIntl } from '@/utils/currency-intl';
 
 import { MembershipDetails } from '../../MembershipDetails';
+import { cn } from '@paalan/react-shared/lib';
 
 type MembershipHeaderDataProps = {
   currentMembershipPlan: RouterOutputs['clients']['getCurrentMembershipPlan'];
-  refetch: () => void;
 };
-export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({
-  currentMembershipPlan,
-  refetch,
-}) => {
+export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({ currentMembershipPlan }) => {
   const [showPriceCard, setShowPriceCard] = useState(false);
 
   const { dueDate, amount, tenure, membershipPlan, client } = currentMembershipPlan;
@@ -42,9 +39,10 @@ export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({
           </aside>
           <div className="flex flex-col items-start space-y-2 md:items-end md:space-y-6">
             <div
-              className={`flex items-center space-x-2 bg-white hover:bg-white dark:bg-gray-900 ${
+              className={cn(
+                'flex items-center space-x-2',
                 isActive ? 'text-green-500' : 'text-red-500'
-              }`}
+              )}
             >
               <div className={`size-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}`} />
               <span>{isActive ? 'Active' : 'Inactive'}</span>
@@ -68,7 +66,6 @@ export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({
             selectedTenure={tenure}
             selectedPlan={membershipPlan}
             clientId={client}
-            onRefetchMembership={refetch}
           />
         </Box>
       )}

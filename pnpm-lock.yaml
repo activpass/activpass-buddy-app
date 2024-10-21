@@ -29,14 +29,14 @@ importers:
         specifier: ^1.4.1
         version: 1.4.1(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.25.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@paalan/react-shared':
-        specifier: ^1.4.8
-        version: 1.4.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
+        specifier: ^1.4.11
+        version: 1.4.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))
       '@paalan/react-test-utils':
         specifier: ^1.4.1
         version: 1.4.1
       '@paalan/react-ui':
-        specifier: ^1.4.13
-        version: 1.4.13(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.4.14
+        version: 1.4.14(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sentry/nextjs':
         specifier: ^8.13.0
         version: 8.13.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.25.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.52.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.25.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.25.1)(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.5))(esbuild@0.20.2))
@@ -3348,10 +3348,10 @@ packages:
       react-dom: '>=16.18.x'
       react-router-dom: '>=6.x.x'
 
-  '@paalan/react-shared@1.4.8':
+  '@paalan/react-shared@1.4.11':
     resolution:
       {
-        integrity: sha512-sJHhCB1IGgD9C7SmfSJEnQd0W0whmyrGq/Nwk3D1E1v1MEtb6NcWwCmYVIWjopcLjE4/WxxQwAsV4VJ08j4JLg==,
+        integrity: sha512-Gep88DOSK5lT0xUUFwMVRQqmOYfHq8Ju3Cqc/3khYvufM7ZHXuU3SIcXjLgkQ0UcVNOgq6qtUrNMnemv+CSwCQ==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -3366,10 +3366,10 @@ packages:
       }
     engines: { node: '>=16.x.x' }
 
-  '@paalan/react-ui@1.4.13':
+  '@paalan/react-ui@1.4.14':
     resolution:
       {
-        integrity: sha512-BZRBIlLz3VMkd692Jo5l/5q0JYmmDbbJXZr6Vn60B5BibnYy8XJ0SR5BLgmaPJaUJ6+VeTSVQVHqZTZd8SHL6Q==,
+        integrity: sha512-q+v+bjaCZtdbnWIdmoOfu7vxUTR5SnWfH+L+tkWTaAT2f84gHTKeSLmi0ZD/r9hlVee4a7/TnRSJds4wGBrw0w==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -21032,7 +21032,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@paalan/react-shared@1.4.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
+  '@paalan/react-shared@1.4.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.5))(@types/node@20.14.9)(typescript@5.5.4)))':
     dependencies:
       axios: 1.7.2(debug@4.3.5)
       clsx: 2.1.1
@@ -21046,7 +21046,7 @@ snapshots:
 
   '@paalan/react-test-utils@1.4.1': {}
 
-  '@paalan/react-ui@1.4.13(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@paalan/react-ui@1.4.14(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@hookform/resolvers': 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@radix-ui/react-accordion': 1.2.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

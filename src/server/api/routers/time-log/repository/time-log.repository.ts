@@ -6,6 +6,7 @@ import { Logger } from '@/server/logger/logger';
 import { type ITimeLogSchema, TimeLogModel } from '../model/time-log.model';
 import {
   type CreateTimeLogParams,
+  type GetTimeLogWithDateRangeParams,
   type ListTimeLogsParams,
   type UpdateCheckInTimeLogParams,
   type UpdateCheckOutTimeLogParams,
@@ -104,6 +105,37 @@ class TimeLogRepository {
       this.logger.error('Failed to find and update timeLog', error);
       throw error;
     }
+  };
+
+  getTimeLogWithDateRange = async ({
+    orgId,
+    clientId,
+    startDate,
+    endDate,
+  }: GetTimeLogWithDateRangeParams) => {
+    const filter: Record<string, string> = {
+      organization: orgId,
+    };
+
+    if (clientId) {
+      filter.client = clientId;
+    }
+
+    const docs = await TimeLogModel.find(
+      {
+        ...filter,
+        checkIn: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      },
+      {
+        checkIn: 1,
+        checkOut: 1,
+      }
+    );
+
+    return docs;
   };
 }
 

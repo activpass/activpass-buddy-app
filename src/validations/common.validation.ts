@@ -23,3 +23,10 @@ export const imageKitImageSchema = z.object({
   url: z.string(),
 });
 export type ImageKitImageSchema = z.infer<typeof imageKitImageSchema>;
+
+export const otpPinFormSchema = z.object({
+  pin: z.string().min(4, {
+    message: 'Please enter 4 digit pin',
+  }),
+});
+export type OtpPinFormSchema = z.infer<typeof otpPinFormSchema>;

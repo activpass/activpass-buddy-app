@@ -1,4 +1,8 @@
-import type { CreateTimeLogInputSchema, UpdateTimeLogInputSchema } from '../time-log.input';
+import type {
+  CreateTimeLogInputSchema,
+  GetTimeLogByClientIdWithDateRangeInputSchema,
+  UpdateTimeLogInputSchema,
+} from '../time-log.input';
 
 export type GetTimeLogByIdArgs = {
   id: string;
@@ -16,4 +20,9 @@ export type UpdateTimeLogArgs = {
 export type ListTimeLogsArgs = {
   orgId: string;
   clientId?: string;
+};
+
+export type GetByClientIdWithDateRangeArgs = {
+  orgId: string;
+  input: GetTimeLogByClientIdWithDateRangeInputSchema;
 };
