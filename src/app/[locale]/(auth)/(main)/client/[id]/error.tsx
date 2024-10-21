@@ -1,7 +1,7 @@
 'use client';
 
-import type { FC } from 'react';
 import { ErrorInternalServerResponse } from '@paalan/react-ui';
+import type { FC } from 'react';
 
 type ErrorPageProps = {
   error: Error;
