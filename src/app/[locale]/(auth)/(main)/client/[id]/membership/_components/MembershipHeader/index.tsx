@@ -1,10 +1,11 @@
 'use client';
 
 import { Text } from '@paalan/react-ui';
-import { use, type FC } from 'react';
+import { type FC, use } from 'react';
+
+import type { RouterOutputs } from '@/trpc/shared';
 
 import { MembershipHeaderData } from './MembershipHeaderData';
-import type { RouterOutputs } from '@/trpc/shared';
 
 type MembershipHeaderProps = {
   currentMembershipPlanPromise: Promise<RouterOutputs['clients']['getCurrentMembershipPlan']>;

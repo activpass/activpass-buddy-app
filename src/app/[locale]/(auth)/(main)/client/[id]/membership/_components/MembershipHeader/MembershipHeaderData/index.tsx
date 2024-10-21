@@ -1,3 +1,4 @@
+import { cn } from '@paalan/react-shared/lib';
 import { Box, Button, Card, Heading, Text } from '@paalan/react-ui';
 import { type FC, useState } from 'react';
 
@@ -5,7 +6,6 @@ import type { RouterOutputs } from '@/trpc/shared';
 import { currencyIntl } from '@/utils/currency-intl';
 
 import { MembershipDetails } from '../../MembershipDetails';
-import { cn } from '@paalan/react-shared/lib';
 
 type MembershipHeaderDataProps = {
   currentMembershipPlan: RouterOutputs['clients']['getCurrentMembershipPlan'];
