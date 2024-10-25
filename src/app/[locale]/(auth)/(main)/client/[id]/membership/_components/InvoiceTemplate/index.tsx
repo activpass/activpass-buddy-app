@@ -2,79 +2,35 @@
 
 import { dateIntl } from '@paalan/react-shared/lib';
 import { Center, Loading } from '@paalan/react-ui';
-import html2canvas from 'html2canvas-pro';
-import JsPDF from 'jspdf';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import Image from 'next/image';
 import { type FC, useRef } from 'react';
 import { FiDownload } from 'react-icons/fi';
 import { ImPrinter } from 'react-icons/im';
+import { useReactToPrint } from 'react-to-print';
 
 import { api } from '@/trpc/client';
 import { currencyIntl } from '@/utils/currency-intl';
+
+import { InvoicePDF } from './InvoicePDF';
+import type { InvoiceData } from './types';
 
 type InvoiceTemplateProps = {
   incomeId: string;
 };
 
 export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
   const {
     data: incomeItem,
     isLoading,
     error: apiError,
   } = api.incomes.getPopulatedById.useQuery({ id: incomeId });
 
-  const contentRef = useRef<HTMLDivElement | null>(null);
-
-  const downloadPDF = () => {
-    const input = contentRef.current;
-
-    if (!input) return;
-    html2canvas(input)
-      .then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new JsPDF('p', 'mm', 'a4');
-        const width = pdf.internal.pageSize.getWidth();
-        const height = pdf.internal.pageSize.getHeight();
-        pdf.addImage(imgData, 'PNG', 0, 0, width, height);
-        pdf.save('invoice.pdf');
-      })
-      .catch(canvasError => canvasError);
-  };
-
-  const printInvoice = () => {
-    const input = contentRef.current;
-
-    if (!input) return;
-
-    html2canvas(input)
-      .then(canvas => {
-        const imageData = canvas.toDataURL('image/png');
-        const printWindow = window.open('', '_blank');
-
-        if (printWindow) {
-          printWindow.document.write(`
-          <html>
-            <head>
-              <title>Print Invoice</title>
-              <style>
-                body { margin: 0; padding: 0; }
-                img { width: 100%; height: auto; }
-              </style>
-            </head>
-            <body>
-              <img src="${imageData}" />
-            </body>
-          </html>
-        `);
-          printWindow.document.close();
-          setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-          }, 500);
-        }
-      })
-      .catch(canvasError => canvasError);
-  };
+  const printFn = useReactToPrint({
+    contentRef,
+  });
 
   if (isLoading) {
     return (
@@ -89,21 +45,20 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
 
   const { organization, client, membershipPlan } = incomeItem;
 
-  const invoiceData = {
+  const invoiceData: InvoiceData = {
     id: '1',
-    invoiceNumber: incomeItem.invoiceId,
+    invoiceNumber: incomeItem.invoiceId || 'Unknown Invoice',
     issueDate: dateIntl.format(incomeItem.date),
     dueDate: dateIntl.format(incomeItem.dueDate),
-    gymName: organization?.name,
+    gymName: organization?.name || 'Unknown Gym',
     gymAddress: '123 Fitness Street, Healthyville, HV 12345',
     gymEmail: 'billing@fitlifegym.com',
     gymPhone: '(555) 123-4567',
-    clientName: client?.fullName,
-    clientAddress: client?.address,
-    clientEmail: client?.email,
+    clientName: client?.fullName || 'Unknown Client',
+    clientAddress: client?.address || 'N/A',
+    clientEmail: client?.email || 'N/A',
     membershipPlan: {
       planName: membershipPlan?.name ?? 'Unknown Plan',
-      quantity: 1,
       unitPrice: membershipPlan?.amount ?? 0,
     },
     subtotal: membershipPlan?.amount ?? 0,
@@ -117,12 +72,24 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
     <div className="">
       <div className="flex justify-end gap-3">
         <div className="border">
-          <ImPrinter onClick={printInvoice} className="cursor-pointer p-2 text-4xl text-blue-500" />
+          <ImPrinter
+            onClick={e => {
+              e.preventDefault();
+              printFn();
+            }}
+            className="cursor-pointer p-2 text-4xl text-blue-500"
+          />
         </div>
         <div className="border">
-          <FiDownload onClick={downloadPDF} className="cursor-pointer p-2 text-4xl text-blue-500" />
+          <PDFDownloadLink
+            document={<InvoicePDF invoiceData={invoiceData} tax={tax} total={total} />}
+            fileName={`Membership-Invoice-${invoiceData.invoiceNumber}.pdf`}
+          >
+            <FiDownload className="cursor-pointer p-2 text-4xl text-blue-500" />
+          </PDFDownloadLink>
         </div>
       </div>
+
       <div className="p-5" ref={contentRef}>
         {/* Watermark */}
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-5">

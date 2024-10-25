@@ -2,7 +2,6 @@ import { dateIntl } from '@paalan/react-shared/lib';
 import { Box, Button, Card, Heading, Text } from '@paalan/react-ui';
 import { type FC, useState } from 'react';
 
-import { SUBSCRIPTION_PERIOD } from '@/constants/client/add-form.constant';
 import type { RouterOutputs } from '@/trpc/shared';
 import { currencyIntl } from '@/utils/currency-intl';
 
@@ -29,8 +28,6 @@ export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({
     setShowPriceCard(true);
   };
 
-  // console.log('membershipPlan data :', membershipPlan);
-
   return (
     <>
       <Card className="mb-6">
@@ -41,18 +38,24 @@ export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({
             <Text fontSize="sm" className="mb-3 text-muted-foreground">
               Plan details or any other relevant information about your plans can go here.
             </Text>
-            <Text fontSize="sm" className="text-muted-foreground">
-              Plan Name: <span>{membershipPlan.name}</span>
-            </Text>
-            {/* <Text fontSize="sm" className="text-muted-foreground">
-              Payment Method: <span>{membershipPlan.paymentMethod}</span>
-            </Text> */}
-            <Text fontSize="sm" className="text-muted-foreground">
-              Payment Cycle: <span>{SUBSCRIPTION_PERIOD[tenure].display}</span>
-            </Text>
-            <Text fontSize="sm" className="text-muted-foreground">
-              Renewal Date: <span>{dateIntl.format(dueDate)}</span>
-            </Text>
+            <div className="flex flex-col gap-1">
+              <Text fontSize="sm">
+                <span className="font-semibold text-gray-900 dark:text-white">Plan Name:</span>{' '}
+                <span className="">{membershipPlan.name}</span>
+              </Text>
+              {/* <Text fontSize="sm" className="text-muted-foreground">
+                Payment Method: <span>{membershipPlan.paymentMethod}</span>
+              </Text> */}
+              {/* <Text fontSize="sm" className="">
+                <span className="font-semibold">Payment Cycle:</span>{' '}
+                <span className="">{SUBSCRIPTION_PERIOD[tenure].display}</span>
+              </Text> */}
+              <Text fontSize="sm">
+                <span className="font-semibold text-gray-900 dark:text-white">Renewal Date:</span>{' '}
+                <span className="">{dateIntl.format(dueDate)}</span>
+              </Text>
+            </div>
+
             <Button className="mt-4" onClick={handleUpgradeClick}>
               Upgrade to a New Plan
             </Button>

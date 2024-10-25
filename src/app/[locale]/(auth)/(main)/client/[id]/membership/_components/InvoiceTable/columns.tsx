@@ -90,10 +90,8 @@ export const invoiceColumns: DataTableColumnDef<IncomesType>[] = [
             <SheetHeader>
               <SheetTitle>Invoice</SheetTitle>
             </SheetHeader>
-            <SheetDescription className="flex items-center gap-2 text-muted-foreground">
-              <span>Invoice Number: {row.original.id}</span>
-              <span>Issue Date: {dateIntl.format(row.original.date)}</span>
-              <span>Due Date: {dateIntl.format(row.original.dueDate)}</span>
+            <SheetDescription className="mb-2 text-muted-foreground">
+              Your gym membership invoice, including plan and payment information.
             </SheetDescription>
             <InvoiceTemplate incomeId={row.original.id} />
           </SheetContent>

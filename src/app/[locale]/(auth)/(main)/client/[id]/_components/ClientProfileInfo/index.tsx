@@ -2,7 +2,7 @@
 
 import { TrashIcon, UploadIcon } from '@paalan/react-icons';
 import { dateIntl } from '@paalan/react-shared/lib';
-import { AlertDialog, AvatarUpload, Button, HStack, toast } from '@paalan/react-ui';
+import { AlertDialog, Button, HStack, toast } from '@paalan/react-ui';
 import { useEffect, useState } from 'react';
 import { FaWhatsapp } from 'react-icons/fa';
 
@@ -10,7 +10,7 @@ import { uploadToImagekit } from '@/lib/imagekit';
 import { api } from '@/trpc/client';
 import type { RouterOutputs } from '@/trpc/shared';
 import { avatarSchema } from '@/validations/client/add-form.validation';
-
+import { AvatarUpload } from '../AvatarUpload';
 type ClientProfileInfoProps = {
   clientData: RouterOutputs['clients']['get'];
 };
@@ -98,12 +98,17 @@ export const ClientProfileInfo: React.FC<ClientProfileInfoProps> = ({ clientData
   return (
     <div className="flex flex-col gap-6 p-5 dark:bg-gray-800">
       <div className="group relative flex flex-col items-center gap-4 self-center">
-        <AvatarUpload
+        {/* <AvatarUpload
           src={avatarUrl}
           onAvatarChange={onAvatarChange}
           inputProps={{
             value: '',
           }}
+        /> */}
+        <AvatarUpload
+          avatarUrl={avatarUrl}
+          onAvatarChange={onAvatarChange}
+          onDeleteAvatar={() => setOpenDeleteDialog(true)}
         />
         <HStack>
           {avatarUrl && (
@@ -115,6 +120,7 @@ export const ClientProfileInfo: React.FC<ClientProfileInfoProps> = ({ clientData
                   variant="surface"
                   color="danger"
                   size="sm"
+                  className="hidden"
                   leftIcon={<TrashIcon boxSize="4" />}
                   onClick={() => setOpenDeleteDialog(true)}
                 >
@@ -130,10 +136,12 @@ export const ClientProfileInfo: React.FC<ClientProfileInfoProps> = ({ clientData
                 disabled: deleteAvatarMutation.isPending,
               }}
               cancelButtonText="No"
+              onCancel={() => setOpenDeleteDialog(false)}
               confirmButtonText={deleteAvatarMutation.isPending ? 'Deleting...' : 'Yes'}
               onConfirm={onDeleteAvatar}
             />
           )}
+
           {isAvatarUrlChanged && (
             <AlertDialog
               open={openSaveDialog}
@@ -157,6 +165,10 @@ export const ClientProfileInfo: React.FC<ClientProfileInfoProps> = ({ clientData
                 disabled: isSavingAvatar,
               }}
               cancelButtonText="No"
+              onCancel={() => {
+                setAvatarUrl(previousAvatarUrl);
+                setOpenSaveDialog(false);
+              }}
               confirmButtonText={isSavingAvatar ? 'Saving...' : 'Yes'}
               onConfirm={onChangeAvatar}
             />
