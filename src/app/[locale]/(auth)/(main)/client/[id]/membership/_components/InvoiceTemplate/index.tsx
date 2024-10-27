@@ -1,18 +1,18 @@
 'use client';
 
 import { dateIntl } from '@paalan/react-shared/lib';
-import { Center, Loading } from '@paalan/react-ui';
-import { PDFDownloadLink } from '@react-pdf/renderer';
+import { Center, Loading, toast } from '@paalan/react-ui';
+import html2canvas from 'html2canvas-pro';
+import JsPDF from 'jspdf';
 import Image from 'next/image';
 import { type FC, useRef } from 'react';
 import { FiDownload } from 'react-icons/fi';
 import { ImPrinter } from 'react-icons/im';
-import { useReactToPrint } from 'react-to-print';
 
+// import { useReactToPrint } from 'react-to-print';
 import { api } from '@/trpc/client';
 import { currencyIntl } from '@/utils/currency-intl';
 
-import { InvoicePDF } from './InvoicePDF';
 import type { InvoiceData } from './types';
 
 type InvoiceTemplateProps = {
@@ -28,9 +28,9 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
     error: apiError,
   } = api.incomes.getPopulatedById.useQuery({ id: incomeId });
 
-  const printFn = useReactToPrint({
-    contentRef,
-  });
+  // const printFn = useReactToPrint({
+  //   contentRef,
+  // });
 
   if (isLoading) {
     return (
@@ -44,6 +44,61 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
   if (!incomeItem) return <p>No invoice data found.</p>;
 
   const { organization, client, membershipPlan } = incomeItem;
+
+  const downloadPDF = async () => {
+    const input = contentRef.current;
+
+    if (!input) return;
+    try {
+      const canvas = await html2canvas(input);
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new JsPDF('p', 'mm', 'a4');
+      const width = pdf.internal.pageSize.getWidth();
+      const height = pdf.internal.pageSize.getHeight();
+      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+      pdf.save(`membership-invoice-${incomeItem.invoiceId}.pdf`);
+    } catch (error) {
+      toast.error('Failed to download PDF');
+    }
+  };
+
+  const printInvoice = async () => {
+    const input = contentRef.current;
+
+    if (!input) return;
+
+    try {
+      const canvas = await html2canvas(input);
+      const imgData = canvas.toDataURL('image/png');
+
+      const printWindow = window.open('', '_blank');
+
+      if (printWindow) {
+        printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Invoice</title>
+            <style>
+              body { margin: 0; padding: 0; }
+              img { width: 100%; height: auto; }
+            </style>
+          </head>
+          <body>
+            <img src="${imgData}" />
+          </body>
+        </html>
+      `);
+        printWindow.document.close();
+        setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+        }, 500);
+      }
+    } catch (error) {
+      toast.error('Failed to print PDF');
+    }
+  };
 
   const invoiceData: InvoiceData = {
     id: '1',
@@ -72,21 +127,16 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
     <div className="">
       <div className="flex justify-end gap-3">
         <div className="border">
-          <ImPrinter
-            onClick={e => {
-              e.preventDefault();
-              printFn();
-            }}
-            className="cursor-pointer p-2 text-4xl text-blue-500"
-          />
+          <ImPrinter onClick={printInvoice} className="cursor-pointer p-2 text-4xl text-blue-500" />
         </div>
         <div className="border">
-          <PDFDownloadLink
+          {/* <PDFDownloadLink
             document={<InvoicePDF invoiceData={invoiceData} tax={tax} total={total} />}
             fileName={`Membership-Invoice-${invoiceData.invoiceNumber}.pdf`}
           >
             <FiDownload className="cursor-pointer p-2 text-4xl text-blue-500" />
-          </PDFDownloadLink>
+          </PDFDownloadLink> */}
+          <FiDownload onClick={downloadPDF} className="cursor-pointer p-2 text-4xl text-blue-500" />
         </div>
       </div>
 

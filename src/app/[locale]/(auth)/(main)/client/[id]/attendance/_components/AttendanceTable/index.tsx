@@ -1,16 +1,17 @@
 'use client';
 
 import { DataTable, Heading, Stack } from '@paalan/react-ui';
-import type { FC } from 'react';
+import { type FC, use } from 'react';
 
 import type { TimeLogListType } from '../../types';
 import { attendanceColumns } from './columns';
 
 type AttendanceTableProps = {
-  data: TimeLogListType[];
+  dataPromise: Promise<TimeLogListType[]>;
 };
 
-export const AttendanceTable: FC<AttendanceTableProps> = ({ data }) => {
+export const AttendanceTable: FC<AttendanceTableProps> = ({ dataPromise }) => {
+  const data = use(dataPromise);
   return (
     <Stack mt="4">
       <Heading as="h5">TimeLog Entries</Heading>

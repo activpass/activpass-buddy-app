@@ -46,7 +46,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
         </div>
 
         {/* Delete button */}
-        {onDeleteAvatar && (
+        {onDeleteAvatar && avatarUrl && (
           <div className="absolute bottom-0 right-0 flex items-center justify-center">
             <div className="flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-red-500 hover:bg-red-600">
               <IconButton

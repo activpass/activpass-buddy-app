@@ -10,7 +10,9 @@ import { uploadToImagekit } from '@/lib/imagekit';
 import { api } from '@/trpc/client';
 import type { RouterOutputs } from '@/trpc/shared';
 import { avatarSchema } from '@/validations/client/add-form.validation';
+
 import { AvatarUpload } from '../AvatarUpload';
+
 type ClientProfileInfoProps = {
   clientData: RouterOutputs['clients']['get'];
 };
@@ -97,7 +99,7 @@ export const ClientProfileInfo: React.FC<ClientProfileInfoProps> = ({ clientData
 
   return (
     <div className="flex flex-col gap-6 p-5 dark:bg-gray-800">
-      <div className="group relative flex flex-col items-center gap-4 self-center">
+      <div className="group relative flex flex-col items-center self-center">
         {/* <AvatarUpload
           src={avatarUrl}
           onAvatarChange={onAvatarChange}
@@ -154,7 +156,7 @@ export const ClientProfileInfo: React.FC<ClientProfileInfoProps> = ({ clientData
                   leftIcon={<UploadIcon boxSize="4" />}
                   onClick={() => setOpenSaveDialog(true)}
                 >
-                  Save
+                  Upload
                 </Button>
               }
               header={{
