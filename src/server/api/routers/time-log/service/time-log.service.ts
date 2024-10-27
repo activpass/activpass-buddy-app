@@ -6,9 +6,13 @@ import { timeLogRepository } from '../repository/time-log.repository';
 import type {
   CreateTimeLogArgs,
   GetTimeLogByIdArgs,
+  GetByClientIdWithDateRangeArgs,
   ListTimeLogsArgs,
   UpdateTimeLogArgs,
 } from './time-log.service.types';
+import { getTRPCError } from '@/server/api/utils/trpc-error';
+import { dateIntl } from '@paalan/react-shared/lib';
+import { differenceInMinutes } from 'date-fns';
 
 class TimeLogService {
   private readonly logger = new Logger(TimeLogService.name);
@@ -23,12 +27,9 @@ class TimeLogService {
       }
       const timeLog = await timeLogRepository.getById(id);
       return timeLog;
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error('Failed to get timeLog by id', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to get timeLog by id',
-      });
+      throw getTRPCError(error);
     }
   };
 
@@ -36,12 +37,9 @@ class TimeLogService {
     try {
       const timeLog = await timeLogRepository.create({ data: input, orgId });
       return timeLog;
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error('Failed to create timeLog', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to create timeLog',
-      });
+      throw getTRPCError(error);
     }
   };
 
@@ -50,12 +48,9 @@ class TimeLogService {
     try {
       const timeLog = await timeLogRepository.update({ id, data });
       return timeLog;
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error('Failed to update timeLog', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to update timeLog',
-      });
+      throw getTRPCError(error);
     }
   };
 
@@ -67,12 +62,29 @@ class TimeLogService {
           flattenObjectIds: true,
         });
       });
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error('Failed to list timeLogs', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to list timeLogs',
-      });
+      throw getTRPCError(error);
+    }
+  };
+
+  getByClientIdWithDateRange = async ({ orgId, input }: GetByClientIdWithDateRangeArgs) => {
+    try {
+      const timeLogs = await timeLogRepository.getTimeLogWithDateRange({ orgId, ...input });
+      return timeLogs.reduce((acc: Record<string, { duration: number }>, timeLog) => {
+        const date = dateIntl.format(timeLog.checkIn, { dateFormat: 'yyyy-MM-dd' });
+        acc[date] = {
+          duration: timeLog.checkOut
+            ? differenceInMinutes(timeLog.checkOut, timeLog.checkIn, {
+                roundingMethod: 'ceil',
+              })
+            : 0,
+        };
+        return acc;
+      }, {});
+    } catch (error) {
+      this.logger.error('Failed to get calendar timeLogs by clientId', error);
+      throw getTRPCError(error);
     }
   };
 }

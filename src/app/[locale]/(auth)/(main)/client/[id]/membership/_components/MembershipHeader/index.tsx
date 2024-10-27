@@ -1,37 +1,22 @@
 'use client';
 
-import { ErrorInternalResponse, Skeleton, Text } from '@paalan/react-ui';
-import { type FC } from 'react';
+import { Text } from '@paalan/react-ui';
+import { type FC, use } from 'react';
 
-import { api } from '@/trpc/client';
+import type { RouterOutputs } from '@/trpc/shared';
 
 import { MembershipHeaderData } from './MembershipHeaderData';
 
 type MembershipHeaderProps = {
-  clientId: string;
+  currentMembershipPlanPromise: Promise<RouterOutputs['clients']['getCurrentMembershipPlan']>;
 };
 
-export const MembershipHeader: FC<MembershipHeaderProps> = ({ clientId }) => {
-  const {
-    data: currentMembershipPlan,
-    isLoading,
-    error,
-    refetch,
-  } = api.clients.getCurrentMembershipPlan.useQuery({
-    clientId,
-  });
-
-  if (error) {
-    return <ErrorInternalResponse error={new Error(error.message)} />;
-  }
-
-  if (isLoading) {
-    return <Skeleton className="mb-6 h-28 w-full" />;
-  }
+export const MembershipHeader: FC<MembershipHeaderProps> = ({ currentMembershipPlanPromise }) => {
+  const currentMembershipPlan = use(currentMembershipPlanPromise);
 
   if (!currentMembershipPlan) {
     return <Text className="text-muted-foreground">No membership plan found</Text>;
   }
 
-  return <MembershipHeaderData currentMembershipPlan={currentMembershipPlan} refetch={refetch} />;
+  return <MembershipHeaderData currentMembershipPlan={currentMembershipPlan} />;
 };

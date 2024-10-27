@@ -5,6 +5,7 @@ import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { timeLogService } from './service/time-log.service';
 import {
   createTimeLogInputSchema,
+  getTimeLogByClientIdWithDateRangeInputSchema,
   listTimeLogInputSchema,
   updateTimeLogInputSchema,
 } from './time-log.input';
@@ -22,4 +23,9 @@ export const timeLogRouter = createTRPCRouter({
   list: protectedProcedure.input(listTimeLogInputSchema).query(async ({ input, ctx }) => {
     return timeLogService.list({ orgId: ctx.session.user.orgId, clientId: input.clientId });
   }),
+  getByClientIdWithDateRange: protectedProcedure
+    .input(getTimeLogByClientIdWithDateRangeInputSchema)
+    .query(async ({ input, ctx }) => {
+      return timeLogService.getByClientIdWithDateRange({ orgId: ctx.session.user.orgId, input });
+    }),
 });

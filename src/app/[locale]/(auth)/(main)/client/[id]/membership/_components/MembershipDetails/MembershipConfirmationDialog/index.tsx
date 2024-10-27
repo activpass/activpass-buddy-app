@@ -14,7 +14,6 @@ type MembershipConfirmationDialogProps = {
   selectedPlan: NonNullable<MembershipDetailState['selectedPlan']>;
   clientId: string;
   onCloseMembershipCard: () => void;
-  onRefetchMembership: () => void;
 };
 export const MembershipConfirmationDialog: FC<MembershipConfirmationDialogProps> = ({
   open,
@@ -22,7 +21,6 @@ export const MembershipConfirmationDialog: FC<MembershipConfirmationDialogProps>
   selectedPlan,
   clientId,
   onCloseMembershipCard,
-  onRefetchMembership,
 }) => {
   const router = useRouter();
   const { tenure, name, amount, discountPercentage, discountAmount, totalAmount } = selectedPlan;
@@ -31,7 +29,6 @@ export const MembershipConfirmationDialog: FC<MembershipConfirmationDialogProps>
     onSuccess: () => {
       onOpenChange(false);
       onCloseMembershipCard();
-      onRefetchMembership();
       router.refresh();
       toast.success('Membership plan upgraded successfully');
     },

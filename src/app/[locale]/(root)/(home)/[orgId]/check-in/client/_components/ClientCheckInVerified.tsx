@@ -12,15 +12,12 @@ import { type FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/trpc/client';
-import {
-  type CheckInVerifyFormSchema,
-  checkInVerifyFormSchema,
-} from '@/validations/check-in/form.validation';
+import { type OtpPinFormSchema, otpPinFormSchema } from '@/validations/common.validation';
 
 import { ClientCheckInVerifiedSuccess } from './ClientCheckInVerifiedSuccess';
 import type { ClientCheckInResult } from './types';
 
-const fields: FormFieldItem<CheckInVerifyFormSchema>[] = [
+const fields: FormFieldItem<OtpPinFormSchema>[] = [
   {
     type: 'custom',
     name: 'pin',
@@ -48,8 +45,8 @@ export const ClientCheckInVerified: FC<ClientCheckInVerifiedProps> = ({
   clientResult,
   resetClientResult,
 }) => {
-  const form = useForm<CheckInVerifyFormSchema>({
-    resolver: zodResolver(checkInVerifyFormSchema),
+  const form = useForm<OtpPinFormSchema>({
+    resolver: zodResolver(otpPinFormSchema),
     defaultValues: {
       pin: '',
     },
@@ -66,7 +63,7 @@ export const ClientCheckInVerified: FC<ClientCheckInVerifiedProps> = ({
     },
   });
 
-  const onCheckIn = (data: CheckInVerifyFormSchema) => {
+  const onCheckIn = (data: OtpPinFormSchema) => {
     const { orgId, phoneNumber } = clientResult;
     clientCheckInVerifyMutation.mutate({ orgId, phoneNumber, pin: +data.pin });
   };
@@ -98,7 +95,7 @@ export const ClientCheckInVerified: FC<ClientCheckInVerifiedProps> = ({
         </span>
       </div>
       <div className="mt-6">
-        <Form<CheckInVerifyFormSchema>
+        <Form<OtpPinFormSchema>
           form={form}
           fields={fields}
           onSubmit={onCheckIn}

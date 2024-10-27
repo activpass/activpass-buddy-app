@@ -10,13 +10,11 @@ type MembershipDetailsProps = {
   selectedPlan: MembershipDetailState['selectedPlan'];
   clientId: string;
   onCloseMembershipCard: () => void;
-  onRefetchMembership: () => void;
 };
 export const MembershipDetails: FC<MembershipDetailsProps> = ({
   selectedPlan,
   selectedTenure,
   onCloseMembershipCard,
-  onRefetchMembership,
   clientId,
 }) => {
   const [membershipDetail, setMembershipDetail] = useState<MembershipDetailState>({
@@ -42,7 +40,6 @@ export const MembershipDetails: FC<MembershipDetailsProps> = ({
           selectedPlan={membershipDetail.selectedPlan}
           clientId={clientId}
           onCloseMembershipCard={onCloseMembershipCard}
-          onRefetchMembership={onRefetchMembership}
         />
       )}
     </>
