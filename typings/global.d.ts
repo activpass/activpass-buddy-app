@@ -14,3 +14,8 @@ declare module globalThis {
   // eslint-disable-next-line vars-on-top, no-var
   var upstashRedis: InstanceType<(typeof import('@upstash/redis'))['Redis']> | null;
 }
+
+declare module '*.ttf' {
+  const src: string;
+  export default src;
+}

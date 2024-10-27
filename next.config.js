@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 import createJiti from 'jiti';
+import withFonts from 'next-fonts';
 import withNextIntl from 'next-intl/plugin';
 
 import { BASE_PATH, ENABLE_STATIC_EXPORT } from './src/next-helpers/next.constants.js';
@@ -14,7 +15,6 @@ import {
   SENTRY_EXTENSIONS,
   SENTRY_TUNNEL,
 } from './src/next-helpers/sentry.constants.js';
-
 const jiti = createJiti(fileURLToPath(import.meta.url));
 
 jiti('./src/env');
@@ -101,20 +101,17 @@ const nextConfig = {
 
     return config;
   },
+  transpilePackages: ['@react-pdf/renderer'],
   experimental: {
     // A list of packages that Next.js should automatically evaluate and optimise the imports for.
     // @see https://vercel.com/blog/how-we-optimized-package-imports-in-next-js
-    // optimizePackageImports: [
-    //   '@radix-ui/react-avatar',
-    //   '@radix-ui/react-select',
-    //   '@radix-ui/react-toast',
-    //   'tailwindcss',
-    // ],
+    // optimizePackageImports: ['tailwindcss'],
     // Removes the warning regarding the WebPack Build Worker
     //   webpackBuildWorker: false,
     staleTimes: {
       dynamic: 0,
     },
+    // serverComponentsExternalPackages: ['@react-pdf/renderer'],
   },
 };
 
@@ -151,8 +148,11 @@ const sentryConfig = {
   automaticVercelMonitors: true,
 };
 
+// Next.js Configuration with `next-fonts` enabled
+const nextWithFonts = withFonts(nextConfig);
+
 // Next.js Configuration with `next.intl` enabled
-const nextWithIntl = withNextIntlConfig(nextConfig);
+const nextWithIntl = withNextIntlConfig(nextWithFonts);
 
 // Next.js Configuration with `next.intl` and `bundle-analyzer` enabled
 const nextIntlWithBundleAnalyzer = bundleAnalyzer(nextWithIntl);

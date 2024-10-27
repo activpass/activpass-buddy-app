@@ -1,23 +1,45 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { currencyIntl } from '@paalan/react-shared/lib';
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document, Font, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import type { FC } from 'react';
 
 import type { InvoiceData } from '../types';
+import NotoSans from './NotoSans_Condensed-Medium.ttf';
 
 type Props = {
   invoiceData: InvoiceData;
   tax: number;
   total: number;
+  logoUrl: string;
 };
+
+Font.register({
+  family: 'NotoSans',
+  src: NotoSans,
+});
 
 const styles = StyleSheet.create({
   page: {
-    padding: 20,
-    fontSize: 12,
-    fontFamily: 'Helvetica',
-    position: 'relative',
-    backgroundColor: 'blue',
+    fontSize: 14,
+    paddingTop: 20,
+    paddingLeft: 40,
+    paddingRight: 40,
+    lineHeight: 1.5,
+    flexDirection: 'column',
   },
+  spaceBetween: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    color: '#3E3E3E',
+  },
+
+  titleContainer: { flexDirection: 'row', marginTop: 24 },
+
+  logo: { width: 120 },
+
+  reportTitle: { fontSize: 16, textAlign: 'center' },
   watermark: {
     position: 'absolute',
     top: '40%',
@@ -34,10 +56,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   header: {
-    // marginBottom: 20,
+    marginBottom: 20,
   },
   section: {
-    // marginBottom: 10,
+    flex: 1,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    fontFamily: 'NotoSans',
   },
   table: {
     width: 'auto',
@@ -63,13 +90,17 @@ const styles = StyleSheet.create({
   },
 });
 
-export const InvoicePDF: FC<Props> = ({ invoiceData, tax, total }) => (
+export const InvoicePDF: FC<Props> = ({ invoiceData, tax, total, logoUrl }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      <Text style={styles.watermark}>{invoiceData.gymName}</Text>
-      <View style={styles.overallHeader}>
-        <View style={styles.header}>
-          {/* <Image src="/placeholder.svg" style={{ width: 96, height: 96 }} /> */}
+      {/* <Text style={styles.watermark}>{invoiceData.gymName}</Text> */}
+      <View style={styles.titleContainer}>
+        <View style={styles.spaceBetween}>
+          <Image style={styles.logo} src={logoUrl} />
+          <Text style={styles.reportTitle}>{invoiceData.gymName}</Text>
+        </View>
+      </View>
+      {/* <View style={styles.overallHeader}>
           <Text>{invoiceData.gymName}</Text>
           <Text>{invoiceData.gymAddress}</Text>
           <Text>{invoiceData.gymEmail}</Text>
@@ -98,13 +129,18 @@ export const InvoicePDF: FC<Props> = ({ invoiceData, tax, total }) => (
           </View>
         </View>
       </View>
+      */}
       <View style={styles.section}>
-        <Text>Total: {currencyIntl.format(invoiceData.subtotal)}</Text>
-        <Text>Tax (18%): {currencyIntl.format(tax)}</Text>
-        <Text style={styles.total}>Total: {currencyIntl.format(total)}</Text>
+        <View>
+          <Text>Total: {currencyIntl.format(invoiceData.subtotal)}</Text>
+          <Text>Tax (18%): {currencyIntl.format(tax)}</Text>
+          <Text style={styles.total}>Total: {currencyIntl.format(total)}</Text>
+        </View>
       </View>
-      <Text>Thank you for your business!</Text>
-      <Text>Please make payment by the due date to {invoiceData.gymName}.</Text>
+      <View>
+        <Text>Thank you for your business!</Text>
+        <Text>Please make payment by the due date to {invoiceData.gymName}.</Text>
+      </View>
     </Page>
   </Document>
 );
