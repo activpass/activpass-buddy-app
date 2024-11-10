@@ -7,10 +7,10 @@ import { LuPackage2 } from 'react-icons/lu';
 import { TbRefresh } from 'react-icons/tb';
 
 import { BreadcrumbLink } from '@/components/BreadcrumbLink';
+import { useRouter } from '@/lib/navigation';
 import { useBreadcrumb } from '@/providers/BreadcrumbProvider';
 
 import { CheckInTokenBox } from './CheckInTokenBox';
-import { useRouter } from '@/lib/navigation';
 
 export const WithBreadcrumb: FC = () => {
   const { items } = useBreadcrumb();

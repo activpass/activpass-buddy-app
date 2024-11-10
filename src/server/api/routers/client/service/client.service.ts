@@ -30,6 +30,7 @@ import type {
   GenerateOnboardingLinkArgs,
   GetClientByIdArgs,
   ListClientsArgs,
+  RenewMembershipPlanArgs,
   SubmitOnboardingClientArgs,
   UpdateAvatarArgs,
   UpdateClientArgs,
@@ -320,6 +321,39 @@ class ClientService {
 
     return {
       message: 'Membership plan upgraded successfully',
+      data: {
+        id: client.id,
+      },
+    };
+  };
+
+  renewMembershipPlan = async ({ input }: RenewMembershipPlanArgs) => {
+    const { clientId, membershipPlanId } = input;
+    const client = await clientRepository.getById(clientId);
+
+    if (!client) {
+      throw getTRPCError('Client not found', 'NOT_FOUND');
+    }
+
+    const plan = await membershipPlanRepository.get({ id: membershipPlanId });
+    if (!plan) {
+      throw getTRPCError(`No MembershipPlan found with id '${membershipPlanId}'`, 'NOT_FOUND');
+    }
+
+    // create income record for the renewal
+    const incomeDoc = await this.createClientIncome({
+      plan,
+      orgId: client.organization.toHexString(),
+      clientId: client.id,
+    });
+
+    // update client membership plan with renewal information
+    client.membershipPlan = plan._id;
+    client.income = incomeDoc._id;
+    await client.save();
+
+    return {
+      message: 'Membership plan renewed successfully',
       data: {
         id: client.id,
       },

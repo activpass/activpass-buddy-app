@@ -78,6 +78,8 @@ export const upgradeMembershipPlanInputSchema = z.object({
   }),
 });
 export type UpgradeMembershipPlanInputSchema = z.infer<typeof upgradeMembershipPlanInputSchema>;
+export const renewMembershipPlanInputSchema = upgradeMembershipPlanInputSchema;
+export type RenewMembershipPlanInputSchema = z.infer<typeof renewMembershipPlanInputSchema>;
 
 export const getCurrentMembershipPlanInputSchema = z.object({
   clientId: z.string().min(1, {

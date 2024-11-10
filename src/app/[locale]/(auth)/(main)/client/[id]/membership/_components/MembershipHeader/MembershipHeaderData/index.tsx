@@ -6,22 +6,35 @@ import type { RouterOutputs } from '@/trpc/shared';
 import { currencyIntl } from '@/utils/currency-intl';
 
 import { MembershipDetails } from '../../MembershipDetails';
+import { RenewMembershipConfirmationDialog } from '../../RenewMembershipConfirmationDialog';
 
 type MembershipHeaderDataProps = {
   currentMembershipPlan: RouterOutputs['clients']['getCurrentMembershipPlan'];
 };
+
 export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({ currentMembershipPlan }) => {
   const [showPriceCard, setShowPriceCard] = useState(false);
+  const [isRenewDialogOpen, setIsRenewDialogOpen] = useState(false);
 
   const { dueDate, amount, tenure, membershipPlan, client } = currentMembershipPlan;
-  const isActive = dueDate ? new Date(dueDate) > new Date() : false;
 
   const remainingDays = dueDate
     ? Math.ceil((dueDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24))
     : 0;
+  const isActive = remainingDays > 0;
 
   const handleUpgradeClick = () => {
     setShowPriceCard(true);
+  };
+
+  const handleRenewClick = () => {
+    setIsRenewDialogOpen(true);
+  };
+
+  const getRemainingDaysColor = () => {
+    if (remainingDays <= 0) return 'text-red-500';
+    if (remainingDays <= 3) return 'text-yellow-500';
+    return 'text-muted-foreground';
   };
 
   return (
@@ -37,24 +50,28 @@ export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({ currentMem
             <div className="flex flex-col gap-1">
               <Text fontSize="sm">
                 <span className="font-semibold text-gray-900 dark:text-white">Plan Name:</span>{' '}
-                <span className="">{membershipPlan.name}</span>
+                <span>{membershipPlan.name}</span>
               </Text>
-              {/* <Text fontSize="sm" className="text-muted-foreground">
-                Payment Method: <span>{membershipPlan.paymentMethod}</span>
-              </Text> */}
-              {/* <Text fontSize="sm" className="">
-                <span className="font-semibold">Payment Cycle:</span>{' '}
-                <span className="">{SUBSCRIPTION_PERIOD[tenure].display}</span>
-              </Text> */}
               <Text fontSize="sm">
                 <span className="font-semibold text-gray-900 dark:text-white">Renewal Date:</span>{' '}
-                <span className="">{dateIntl.format(dueDate)}</span>
+                <span>{dateIntl.format(dueDate)}</span>
               </Text>
             </div>
 
             <Button className="mt-4" onClick={handleUpgradeClick}>
               Upgrade to a New Plan
             </Button>
+
+            {!isActive && (
+              <Button
+                className="ml-5 mt-2"
+                color="blue"
+                variant="outline"
+                onClick={handleRenewClick}
+              >
+                Renew Your Plan
+              </Button>
+            )}
           </aside>
 
           {/* Plan Status and Amount Section */}
@@ -73,11 +90,9 @@ export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({ currentMem
               {currencyIntl.format(amount)}
             </Heading>
 
-            {isActive && (
-              <Text fontSize="sm" className="text-muted-foreground">
-                {remainingDays > 0 ? `${remainingDays} days remaining` : 'Expired'}
-              </Text>
-            )}
+            <Text fontSize="sm" className={getRemainingDaysColor()}>
+              {remainingDays > 0 ? `${remainingDays} days remaining` : 'Plan Expired'}
+            </Text>
           </div>
         </div>
       </Card>
@@ -93,6 +108,14 @@ export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({ currentMem
           />
         </Box>
       )}
+
+      {/* Renew plan function */}
+      <RenewMembershipConfirmationDialog
+        open={isRenewDialogOpen}
+        onOpenChange={setIsRenewDialogOpen}
+        currentPlan={currentMembershipPlan}
+        clientId={client}
+      />
     </>
   );
 };

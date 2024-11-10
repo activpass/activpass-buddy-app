@@ -6,6 +6,7 @@ import {
   createClientInputSchema,
   deleteAvatarInputSchema,
   getCurrentMembershipPlanInputSchema,
+  renewMembershipPlanInputSchema,
   submitOnboardingClientInputSchema,
   updateAvatarInputSchema,
   updateClientInputSchema,
@@ -56,6 +57,11 @@ export const clientRouter = createTRPCRouter({
       return clientService.upgradeMembershipPlan({
         input,
       });
+    }),
+  renewMembershipPlan: protectedProcedure
+    .input(renewMembershipPlanInputSchema)
+    .mutation(async ({ input }) => {
+      return clientService.renewMembershipPlan({ input });
     }),
   getCurrentMembershipPlan: protectedProcedure
     .input(getCurrentMembershipPlanInputSchema)
