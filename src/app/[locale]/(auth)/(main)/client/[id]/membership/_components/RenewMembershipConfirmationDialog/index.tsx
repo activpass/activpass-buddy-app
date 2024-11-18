@@ -1,7 +1,6 @@
-import { Button, Dialog, HStack, Separator, Strong, toast } from '@paalan/react-ui';
+import { Button, Dialog, HStack, toast } from '@paalan/react-ui';
 import type { FC } from 'react';
 
-import { MEMBERSHIP_TENURE_DISPLAY_ITEM } from '@/constants/client/membership';
 import { useRouter } from '@/lib/navigation';
 import { api } from '@/trpc/client';
 import type { RouterOutputs } from '@/trpc/shared';
@@ -21,8 +20,9 @@ export const RenewMembershipConfirmationDialog: FC<RenewMembershipConfirmationDi
   clientId,
 }) => {
   const router = useRouter();
-  const { tenure, amount, membershipPlan } = currentPlan;
-  const { name, discountPercentage, discountAmount, totalAmount } = membershipPlan;
+  const { membershipPlan } = currentPlan;
+  const { name: planName, totalAmount } = membershipPlan;
+
   const renewMembershipPlanMutation = api.clients.renewMembershipPlan.useMutation({
     onSuccess: () => {
       onOpenChange(false);
@@ -47,7 +47,9 @@ export const RenewMembershipConfirmationDialog: FC<RenewMembershipConfirmationDi
       onOpenChange={onOpenChange}
       header={{
         title: 'Renew Membership',
-        description: 'Are you sure you want to renew this plan?',
+        description: `You're about to confirm the renewal of your ${planName} plan with a total amount of ${currencyIntl.format(totalAmount)}. 
+        This renewal will update your membership period from 11-11-2024 to 11-02-2025.
+        Please confirm to proceed.`,
       }}
       footer={{
         content: (
@@ -61,33 +63,6 @@ export const RenewMembershipConfirmationDialog: FC<RenewMembershipConfirmationDi
           </HStack>
         ),
       }}
-    >
-      <div className="space-y-4">
-        <div className="flex justify-between gap-2">
-          <div className="text-lg">
-            Plan Name: <Strong className="word-break">{name}</Strong>
-          </div>
-          <div className="text-lg">
-            Tenure: <Strong>{MEMBERSHIP_TENURE_DISPLAY_ITEM[tenure]}</Strong>
-          </div>
-        </div>
-        <Separator />
-        <div className="flex justify-between">
-          <div>Subtotal</div>
-          <div>{currencyIntl.format(amount)}</div>
-        </div>
-        {!!discountPercentage && (
-          <div className="flex justify-between">
-            <div>Discount ({discountPercentage}%)</div>
-            <div>{currencyIntl.format(discountAmount)}</div>
-          </div>
-        )}
-        <Separator />
-        <div className="flex justify-between">
-          <div>Total</div>
-          <div>{currencyIntl.format(totalAmount)}</div>
-        </div>
-      </div>
-    </Dialog>
+    />
   );
 };

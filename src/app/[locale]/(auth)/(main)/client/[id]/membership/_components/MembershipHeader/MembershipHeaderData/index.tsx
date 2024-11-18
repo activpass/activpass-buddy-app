@@ -1,5 +1,6 @@
 import { cn, dateIntl } from '@paalan/react-shared/lib';
 import { Box, Button, Card, Heading, Text } from '@paalan/react-ui';
+import { startOfDay } from 'date-fns';
 import { type FC, useState } from 'react';
 
 import type { RouterOutputs } from '@/trpc/shared';
@@ -14,24 +15,25 @@ type MembershipHeaderDataProps = {
 
 export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({ currentMembershipPlan }) => {
   const [showPriceCard, setShowPriceCard] = useState(false);
-  const [isRenewDialogOpen, setIsRenewDialogOpen] = useState(false);
+  const [isOpenRenewalDialog, setIsOpenRenewalDialog] = useState(false);
+
+  // const dueDate = startOfDay(new Date());
+  // dueDate.setDate(dueDate.getDate() + 1);
 
   const { dueDate, amount, tenure, membershipPlan, client } = currentMembershipPlan;
-
   const remainingDays = dueDate
-    ? Math.ceil((dueDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24))
+    ? Math.ceil(
+        (startOfDay(dueDate).getTime() - startOfDay(new Date()).getTime()) / (1000 * 3600 * 24)
+      )
     : 0;
+
   const isActive = remainingDays > 0;
+  const showRenewalButton = remainingDays <= 3;
 
-  const handleUpgradeClick = () => {
-    setShowPriceCard(true);
-  };
+  const handleUpgradeClick = () => setShowPriceCard(true);
+  const handleRenewClick = () => setIsOpenRenewalDialog(true);
 
-  const handleRenewClick = () => {
-    setIsRenewDialogOpen(true);
-  };
-
-  const getRemainingDaysColor = () => {
+  const getTextColorClass = () => {
     if (remainingDays <= 0) return 'text-red-500';
     if (remainingDays <= 3) return 'text-yellow-500';
     return 'text-muted-foreground';
@@ -62,7 +64,7 @@ export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({ currentMem
               Upgrade to a New Plan
             </Button>
 
-            {!isActive && (
+            {showRenewalButton && (
               <Button
                 className="ml-5 mt-2"
                 color="blue"
@@ -90,7 +92,7 @@ export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({ currentMem
               {currencyIntl.format(amount)}
             </Heading>
 
-            <Text fontSize="sm" className={getRemainingDaysColor()}>
+            <Text fontSize="sm" className={getTextColorClass()}>
               {remainingDays > 0 ? `${remainingDays} days remaining` : 'Plan Expired'}
             </Text>
           </div>
@@ -111,8 +113,8 @@ export const MembershipHeaderData: FC<MembershipHeaderDataProps> = ({ currentMem
 
       {/* Renew plan function */}
       <RenewMembershipConfirmationDialog
-        open={isRenewDialogOpen}
-        onOpenChange={setIsRenewDialogOpen}
+        open={isOpenRenewalDialog}
+        onOpenChange={setIsOpenRenewalDialog}
         currentPlan={currentMembershipPlan}
         clientId={client}
       />

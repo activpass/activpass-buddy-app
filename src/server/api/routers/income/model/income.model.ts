@@ -12,6 +12,7 @@ import {
   CLIENT_PAYMENT_STATUS,
 } from '@/constants/client/add-form.constant';
 import { CLIENT_MEMBERSHIP_TENURE } from '@/constants/client/membership.constant';
+import { INCOME_TYPE } from '@/constants/income/income.constans';
 
 // Virtuals are not included in the schema type
 export interface IIncomeVirtuals {
@@ -86,6 +87,11 @@ const IncomeSchema = new mongoose.Schema(
       enum: Object.keys(CLIENT_MEMBERSHIP_TENURE),
     },
     notes: { type: String },
+    isRenewal: { type: Boolean },
+    type: {
+      type: String,
+      enum: Object.keys(INCOME_TYPE),
+    },
   },
   schemaOptions
 );
