@@ -12,6 +12,8 @@ import {
   MembershipPlanModel,
 } from '../../membership-plan/model/membership-plan.model';
 import { organizationService } from '../../organization/service/organization.service';
+import { updateMembershipPlan } from '../helper/client.helper';
+import { createClientIncome } from '../helper/createClientIncome.helper';
 import { ClientModel, type IClientSchema } from '../model/client.model';
 import { onboardClientRepository } from '../repository/onboard-client.repository';
 import type {
@@ -29,8 +31,6 @@ import type {
   UpgradeMembershipPlanArgs,
   VerifyOnboardingTokenArgs,
 } from './client.service.types';
-import { createClientIncome } from '../helper/createClientIncome.helper';
-import { updateMembershipPlan } from '../helper/client.helper';
 
 class ClientService {
   private readonly logger = new Logger(ClientService.name);
@@ -263,7 +263,7 @@ class ClientService {
   };
 
   upgradeMembershipPlan = async ({ input }: UpgradeMembershipPlanArgs) => {
-    return await updateMembershipPlan({
+    return updateMembershipPlan({
       clientId: input.clientId,
       membershipPlanId: input.membershipPlanId,
       isUpgrade: true,
@@ -271,7 +271,7 @@ class ClientService {
   };
 
   renewMembershipPlan = async ({ input }: RenewMembershipPlanArgs) => {
-    return await updateMembershipPlan({
+    return updateMembershipPlan({
       clientId: input.clientId,
       membershipPlanId: input.membershipPlanId,
       isUpgrade: false,

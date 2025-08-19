@@ -1,6 +1,7 @@
 import { getTRPCError } from '@/server/api/utils/trpc-error';
-import { clientRepository } from '../repository/client.repository';
+
 import { membershipPlanRepository } from '../../membership-plan/repository/membership-plan.repository';
+import { clientRepository } from '../repository/client.repository';
 import { createClientIncome } from './createClientIncome.helper';
 
 export async function updateMembershipPlan({
