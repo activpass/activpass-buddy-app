@@ -1,17 +1,30 @@
+'use client';
+
 import { AddIcon } from '@paalan/react-icons';
-import { Button, DataTable } from '@paalan/react-ui';
+import { Button, DataTable, ErrorInternalResponse, SkeletonContainer } from '@paalan/react-ui';
 
 import Link from '@/components/Link';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc/client';
 
 import { CLIENT_TABLE_COLUMNS } from './columns';
 
-export const ClientTable = async () => {
-  const clients = await api.clients.list();
+export const ClientTable = () => {
+  const { data: clients, error, isLoading } = api.clients.list.useQuery();
+
+  if (isLoading) {
+    return <SkeletonContainer count={5} className="h-8" containerClassName="mt-7" isFullWidth />;
+  }
+
+  if (error) {
+    return (
+      <ErrorInternalResponse heading="Failed to load clients" subHeading={error.message} showIcon />
+    );
+  }
+
   return (
     <div className="space-y-4">
       <DataTable
-        rows={clients}
+        rows={clients || []}
         columns={CLIENT_TABLE_COLUMNS}
         noResultsMessage="No client results found."
         search={{

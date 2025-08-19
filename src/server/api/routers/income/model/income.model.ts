@@ -3,6 +3,7 @@ import mongoose, {
   type HydratedDocument,
   type InferSchemaType,
   type Model,
+  type PopulateOption,
 } from 'mongoose';
 
 import {
@@ -11,6 +12,7 @@ import {
   CLIENT_PAYMENT_STATUS,
 } from '@/constants/client/add-form.constant';
 import { CLIENT_MEMBERSHIP_TENURE } from '@/constants/client/membership.constant';
+import { INCOME_TYPE } from '@/constants/income/income.constans';
 
 // Virtuals are not included in the schema type
 export interface IIncomeVirtuals {
@@ -32,7 +34,14 @@ export interface IIncomeDocument extends HydratedDocument<IIncomeSchema, IIncome
 // Here, You have to explicity mention the type of statics.
 export interface IIncomeModel extends Model<IIncomeSchema, {}, IIncomeSchemaMethods> {
   get(id: string | mongoose.Schema.Types.ObjectId): Promise<IIncomeDocument>;
-  list(filter?: FilterQuery<IIncomeSchema>): Promise<IIncomeDocument[]>;
+  getPopulated<TData = IIncomeDocument>(
+    id: string | mongoose.Schema.Types.ObjectId,
+    populatedOption: PopulateOption['populate']
+  ): Promise<TData>;
+  list<TData = IIncomeDocument>(
+    filter?: FilterQuery<IIncomeSchema>,
+    populatedOption?: PopulateOption['populate']
+  ): Promise<TData[]>;
 }
 
 const schemaOptions = {
@@ -55,6 +64,7 @@ const IncomeSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'MembershipPlan',
     },
+    amount: { type: Number, required: true },
     paymentMethod: {
       type: String,
       enum: Object.keys(CLIENT_PAYMENT_METHOD),
@@ -76,25 +86,45 @@ const IncomeSchema = new mongoose.Schema(
       type: String,
       enum: Object.keys(CLIENT_MEMBERSHIP_TENURE),
     },
-    amount: { type: Number },
     notes: { type: String },
+    isRenewal: { type: Boolean },
+    type: {
+      type: String,
+      enum: Object.keys(INCOME_TYPE),
+    },
   },
   schemaOptions
 );
 
 IncomeSchema.static('get', async function get(id: string) {
-  const org = await this.findById(id).exec();
-  if (!org) {
+  const income = await this.findById(id).exec();
+  if (!income) {
     throw new Error(`No Income found with id '${id}'.`);
   }
-  return org;
+  return income;
 });
 
-IncomeSchema.static('list', async function list(options) {
+IncomeSchema.static(
+  'getPopulated',
+  async function getPopulated(
+    id: string | mongoose.Schema.Types.ObjectId,
+    populatedOption: PopulateOption['populate']
+  ) {
+    const income = await this.findById(id).populate(populatedOption).exec();
+    if (!income) {
+      throw new Error(`No Income found with id '${id}'.`);
+    }
+    return income;
+  }
+);
+
+IncomeSchema.static('list', async function list(options, populatedOption) {
   const newOptions = options || {};
   const orgs = await this.find({
     ...newOptions,
-  }).sort({ createdAt: -1 });
+  })
+    .populate(populatedOption)
+    .sort({ createdAt: -1 });
   return orgs;
 });
 

@@ -21,7 +21,11 @@ class MembershipPlanRepository {
   };
 
   get = async ({ id }: GetMembershipPlanParams) => {
-    return (await MembershipPlanModel.get(id)).toObject();
+    return MembershipPlanModel.get(id);
+  };
+
+  findByOrganizationId = async (orgId: string) => {
+    return MembershipPlanModel.list({ organization: orgId });
   };
 
   create = async ({ data, orgId }: CreateMembershipPlanParams) => {

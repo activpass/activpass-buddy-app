@@ -1,13 +1,16 @@
 import { TRPCError } from '@trpc/server';
 import mongoose from 'mongoose';
 
-import { generateClientCode } from '@/server/api/helpers/common';
+import { generateClientCode, generateMongooseObjectId } from '@/server/api/helpers/common';
 import {
   type AnalyticsClientParams,
   type CreateClientParams,
+  type DeleteAvatarParams,
   type ListClientParams,
+  type UpdateAvatarParams,
   type UpdateClientParams,
 } from '@/server/api/routers/client/repository/client.repository.types';
+import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger/logger';
 
 import { TimeLogModel } from '../../time-log/model/time-log.model';
@@ -41,7 +44,7 @@ class ClientRepository {
       if (client) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `Client with phoneNumber "${phoneNumber}" already exist.`,
+          message: `Client with phoneNumber "${phoneNumber}" or email "${email}" already exist.`,
         });
       }
     } catch (error) {
@@ -50,24 +53,26 @@ class ClientRepository {
     }
   };
 
-  create = async ({ data, orgId, docSave = true }: CreateClientParams) => {
+  create = async ({ data, orgId, incomeId, docSave = true }: CreateClientParams) => {
     try {
-      const { clientInformation, ...rest } = data;
+      const { personalInformation, ...rest } = data;
 
-      await this.isClientExists(clientInformation.email, clientInformation.phoneNumber);
+      await this.isClientExists(personalInformation.email, personalInformation.phoneNumber);
 
       const goalsAndPreference: IClientSchema['goalsAndPreference'] = {
         ...rest.goalsAndPreference,
         additionalServices: rest.goalsAndPreference.additionalServices || [],
       };
       const dataBody: Omit<IClientSchema, keyof IClientVirtuals> = {
-        ...clientInformation,
-        clientCode: generateClientCode(),
-        organization: new mongoose.Types.ObjectId(orgId),
-        membershipPlan: new mongoose.Types.ObjectId(rest.membershipDetail.planId),
+        ...personalInformation,
+        emergencyContact: rest.emergencyContact,
         healthAndFitness: rest.healthAndFitness,
         goalsAndPreference,
         consentAndAgreement: rest.consentAndAgreement,
+        clientCode: generateClientCode(),
+        organization: generateMongooseObjectId(orgId),
+        membershipPlan: generateMongooseObjectId(rest.membershipDetail.planId),
+        income: generateMongooseObjectId(incomeId),
         isDeleted: false,
       };
 
@@ -84,7 +89,12 @@ class ClientRepository {
 
   update = async ({ id, data }: UpdateClientParams) => {
     try {
-      const updatedClient = await ClientModel.findByIdAndUpdate(id, data, { new: true }).exec();
+      const { personalInformation, ...restData } = data;
+      const updatedClient = await ClientModel.findByIdAndUpdate(
+        id,
+        { ...personalInformation, ...restData },
+        { new: true }
+      ).exec();
       if (!updatedClient) {
         throw new TRPCError({
           code: 'NOT_FOUND',
@@ -172,6 +182,44 @@ class ClientRepository {
       return result;
     } catch (error) {
       this.logger.error('Failed to get client analytics', error);
+      throw error;
+    }
+  };
+
+  updateAvatar = async ({ avatar, clientId }: UpdateAvatarParams) => {
+    try {
+      const updatedClient = await ClientModel.findByIdAndUpdate(
+        clientId,
+        {
+          avatar,
+        },
+        { new: true }
+      ).exec();
+      if (!updatedClient) {
+        throw getTRPCError('Client not found', 'NOT_FOUND');
+      }
+      return updatedClient;
+    } catch (error) {
+      this.logger.error('Failed to update client avatar', error);
+      throw error;
+    }
+  };
+
+  deleteAvatar = async ({ clientId }: DeleteAvatarParams) => {
+    try {
+      const updatedClient = await ClientModel.findByIdAndUpdate(
+        clientId,
+        {
+          avatar: null,
+        },
+        { new: false }
+      ).exec();
+      if (!updatedClient) {
+        throw getTRPCError('Client not found', 'NOT_FOUND');
+      }
+      return updatedClient;
+    } catch (error) {
+      this.logger.error('Failed to delete client avatar', error);
       throw error;
     }
   };

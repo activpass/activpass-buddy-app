@@ -1,3 +1,4 @@
+import type { CLIENT_MEMBERSHIP_TENURE } from '@/constants/client/membership.constant';
 import siteConfig from '@/next-helpers/site.config';
 
 export const getBaseUrl = () => {
@@ -35,4 +36,37 @@ export const getOptionsFromDisplayConstant = (
     value: obj[key]?.value || key,
     label: obj[key]?.display || '',
   }));
+};
+
+/**
+ * Retrieves the keys of an object.
+ * @param obj - The object from which to retrieve the keys.
+ * @returns An array of keys from the object.
+ */
+export const getObjectKeys = <T extends Record<string, unknown>>(obj: T) => {
+  return Object.keys(obj) as Array<keyof T>;
+};
+
+/**
+ * Calculates the due date based on the given start date and membership plan tenure.
+ *
+ * @param {Date} startDate - The start date from which the due date is calculated.
+ * @param {MembershipPlan["tenure"]} tenure - The tenure of the membership plan.
+ *        It can be "MONTHLY", "QUARTERLY", "HALF_YEARLY", or "YEARLY".
+ */
+export const getDueDate = (
+  tenure: keyof typeof CLIENT_MEMBERSHIP_TENURE | undefined,
+  startDate: Date = new Date()
+) => {
+  const dueDate = new Date(startDate);
+  if (tenure === 'MONTHLY') {
+    dueDate.setMonth(dueDate.getMonth() + 1); // Next month
+  } else if (tenure === 'YEARLY') {
+    dueDate.setFullYear(dueDate.getFullYear() + 1); // Next year
+  } else if (tenure === 'QUARTERLY') {
+    dueDate.setMonth(dueDate.getMonth() + 3); // Next quarter
+  } else if (tenure === 'HALF_YEARLY') {
+    dueDate.setMonth(dueDate.getMonth() + 6); // Next half year
+  }
+  return dueDate;
 };

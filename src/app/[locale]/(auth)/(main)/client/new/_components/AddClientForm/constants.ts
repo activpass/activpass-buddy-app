@@ -5,7 +5,7 @@ import { ClientInformationForm } from './stepper-forms/ClientInformationForm';
 import { ConsentAndAgreementsForm } from './stepper-forms/ConsentAndAgreementsForm';
 import { GoalsAndPreferencesForm } from './stepper-forms/GoalsAndPreferencesForm';
 import { HealthAndFitnessForm } from './stepper-forms/HealthAndFitnessForm';
-import { MembershipDetailsForm } from './stepper-forms/MembershipDetailsForm';
+import { MembershipDetailsStepperForm } from './stepper-forms/MembershipDetailsStepperForm';
 import { PaymentDetailsForm } from './stepper-forms/PaymentDetailsForm';
 
 export const ADD_CLIENT_STEP_ID = {
@@ -24,7 +24,7 @@ export const ADD_CLIENT_STEPPER_COMPONENT: Record<
   [ADD_CLIENT_STEP_ID.CLIENT_INFORMATION]: ClientInformationForm,
   [ADD_CLIENT_STEP_ID.HEALTH_AND_FITNESS]: HealthAndFitnessForm,
   [ADD_CLIENT_STEP_ID.GOALS_AND_PREFERENCES]: GoalsAndPreferencesForm,
-  [ADD_CLIENT_STEP_ID.MEMBERSHIP_DETAILS]: MembershipDetailsForm,
+  [ADD_CLIENT_STEP_ID.MEMBERSHIP_DETAILS]: MembershipDetailsStepperForm,
   [ADD_CLIENT_STEP_ID.PAYMENT_DETAILS]: PaymentDetailsForm,
   [ADD_CLIENT_STEP_ID.CONSENT_AND_AGREEMENTS]: ConsentAndAgreementsForm,
 };

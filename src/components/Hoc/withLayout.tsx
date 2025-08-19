@@ -1,14 +1,16 @@
 import type { FC, PropsWithChildren } from 'react';
 
 import { AuthLayout } from '@/layouts/AuthLayout';
-import { FeedbackLayout } from '@/layouts/FeedbackLayout';
+import { CenteredLayout } from '@/layouts/CenteredLayout';
+import { HomeLayout } from '@/layouts/HomeLayout';
 import { RootLayout } from '@/layouts/RootLayout';
 import type { Layouts } from '@/types';
 
 const layouts = {
   auth: AuthLayout,
   root: RootLayout,
-  feedback: FeedbackLayout,
+  home: HomeLayout,
+  centered: CenteredLayout,
 } satisfies Record<Layouts, FC>;
 
 type WithLayoutProps<L = Layouts> = PropsWithChildren<{ layout: L }>;

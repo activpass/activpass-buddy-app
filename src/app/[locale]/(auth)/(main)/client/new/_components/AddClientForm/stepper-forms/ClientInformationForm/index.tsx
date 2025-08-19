@@ -7,11 +7,12 @@ import {
   FormFieldItems,
   Grid,
   Heading,
+  toast,
   useStepper,
   VStack,
 } from '@paalan/react-ui';
 import { startOfDay } from 'date-fns';
-import { type FC, useEffect, useState } from 'react';
+import { type FC, useEffect, useLayoutEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import {
@@ -19,22 +20,25 @@ import {
   clientInformationSchema,
 } from '@/validations/client/add-form.validation';
 
-import { useClientFormStore, useClientInformation } from '../../store';
+import { useClientFormStore, useEmergencyContact, usePersonalInformation } from '../../store';
 import { StepperFormActions } from '../StepperFormActions';
 import { getEmergencyContactFields, getPersonalInfoFields } from './fields';
 
 export const ClientInformationForm: FC = () => {
   const { nextStep } = useStepper();
-  const setClientInformation = useClientFormStore(state => state.setClientInformation);
-  const clientInFormation = useClientInformation();
+  const setPersonalInformation = useClientFormStore(state => state.setPersonalInformation);
+  const setEmergencyContact = useClientFormStore(state => state.setEmergencyContact);
+  const clientPersonalInformation = usePersonalInformation();
+  const clientEmergencyContact = useEmergencyContact();
+
   const form = useForm<ClientInformationSchema>({
     resolver: zodResolver(clientInformationSchema),
     defaultValues: {
-      ...clientInFormation,
-      phoneNumber: clientInFormation.phoneNumber || undefined,
+      ...clientPersonalInformation,
+      phoneNumber: clientPersonalInformation.phoneNumber || undefined,
       emergencyContact: {
-        ...clientInFormation.emergencyContact,
-        phoneNumber: clientInFormation.phoneNumber || undefined,
+        ...clientEmergencyContact,
+        phoneNumber: clientEmergencyContact.phoneNumber || undefined,
       },
     },
   });
@@ -49,15 +53,33 @@ export const ClientInformationForm: FC = () => {
     return () => URL.revokeObjectURL(url);
   }, [avatar]);
 
+  useLayoutEffect(() => {
+    if (form.formState.errors.avatar) {
+      setAvatarUrl('');
+      toast.error(form.formState.errors.avatar.message);
+    }
+  }, [form.formState.errors.avatar]);
+
   const onAvatarChange = (file: File) => {
-    form.setValue('avatar', file);
+    form.setValue('avatar', file, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
-  const onSubmit = (data: ClientInformationSchema) => {
-    setClientInformation({
+  const onRemoveAvatar = () => {
+    form.setValue('avatar', null, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  const onSubmit = ({ emergencyContact, ...data }: ClientInformationSchema) => {
+    setPersonalInformation({
       ...data,
       dob: startOfDay(new Date(data.dob)),
     });
+    setEmergencyContact(emergencyContact);
     nextStep();
   };
 
@@ -72,7 +94,7 @@ export const ClientInformationForm: FC = () => {
       <VStack gap="12">
         <div>
           <Heading as="h4">Personal Information</Heading>
-          <div className="mt-5 flex flex-col items-center justify-center gap-4 sm:float-left sm:mr-10">
+          <div className="mt-5 flex max-w-min flex-col items-center justify-center gap-4 sm:float-left sm:mr-10">
             <AvatarUpload
               src={avatarUrl}
               onAvatarChange={onAvatarChange}
@@ -83,11 +105,10 @@ export const ClientInformationForm: FC = () => {
             {avatarUrl && (
               <Button
                 type="button"
-                variant="surface"
-                color="danger"
+                variant="outline"
                 size="sm"
                 leftIcon={<TrashIcon boxSize="4" />}
-                onClick={() => form.setValue('avatar', null)}
+                onClick={onRemoveAvatar}
               >
                 Remove
               </Button>

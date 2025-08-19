@@ -26,3 +26,10 @@ export type UpdateCheckOutTimeLogParams = {
   clientId: string;
   data: Pick<CreateTimeLogInputSchema, 'checkOut'>;
 };
+
+export type GetTimeLogWithDateRangeParams = {
+  orgId: string;
+  startDate: Date;
+  endDate: Date;
+  clientId?: string;
+};

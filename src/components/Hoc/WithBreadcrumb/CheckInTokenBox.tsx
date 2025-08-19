@@ -9,6 +9,7 @@ import { api } from '@/trpc/client';
 export const CheckInTokenBox: FC = () => {
   const { data, isLoading } = api.checkIn.generateToken.useQuery(undefined, {
     refetchInterval: 60 * 1000, // 1 minute
+    refetchOnWindowFocus: false,
   });
 
   const tokens = useMemo(() => {

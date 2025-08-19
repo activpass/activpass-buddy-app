@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 
 import { uploadToImagekit } from '@/lib/imagekit';
 import { useRouter } from '@/lib/navigation';
+import type { SubmitOnboardingClientInputSchema } from '@/server/api/routers/client/client.input';
 import { api } from '@/trpc/client';
 import {
   type ConsentAndAgreementSchema,
@@ -49,9 +50,11 @@ const fields: FormFieldItem<ConsentAndAgreementSchema>[] = [
 ];
 
 export const ConsentAndAgreementsForm: FC = () => {
+  const { onboardClientId, organization } = useClientFormStore(state => state.onboardingData);
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitOnboardClientMutation = api.clients.submitOnboardingClient.useMutation();
   const clientCreateMutation = api.clients.create.useMutation();
 
   const clientFormState = useClientFormState();
@@ -67,13 +70,13 @@ export const ConsentAndAgreementsForm: FC = () => {
     setConsentAndAgreement(data);
     try {
       setIsSubmitting(true);
-      const { avatar } = clientFormState.clientInformation;
-      const requestBody = {
+      const { avatar } = clientFormState.personalInformation;
+      const requestBody: Omit<SubmitOnboardingClientInputSchema, 'orgId' | 'onboardClientId'> = {
         ...clientFormState,
-        clientInformation: {
-          ...clientFormState.clientInformation,
-          dob: clientFormState.clientInformation.dob || new Date(),
-          avatar: '',
+        personalInformation: {
+          ...clientFormState.personalInformation,
+          dob: clientFormState.personalInformation.dob || new Date(),
+          avatar: null,
         },
         consentAndAgreement: data,
       };
@@ -83,12 +86,30 @@ export const ConsentAndAgreementsForm: FC = () => {
           file: avatar,
           fileName: avatar.name,
         });
-        requestBody.clientInformation.avatar = response.url;
+        requestBody.personalInformation.avatar = response;
       }
 
-      await clientCreateMutation.mutateAsync(requestBody);
-      router.push('/client');
-      toast.success('Client added successfully');
+      // If the client is being onboarded, we need to submit the client using the onboarding client mutation
+      if (onboardClientId) {
+        // If the organization is not found, throw an error
+        if (!organization) {
+          throw new Error('Organization not found');
+        }
+
+        await submitOnboardClientMutation.mutateAsync({
+          ...requestBody,
+          orgId: organization.id,
+          onboardClientId,
+        });
+
+        router.push(
+          `/onboarding-client/success?organizationName=${organization.name}&organizationType=${organization.type}`
+        );
+      } else {
+        await clientCreateMutation.mutateAsync(requestBody);
+        router.push('/client');
+        toast.success('Client added successfully');
+      }
     } catch (error) {
       const err = error as Error;
       toast.error(err.message);

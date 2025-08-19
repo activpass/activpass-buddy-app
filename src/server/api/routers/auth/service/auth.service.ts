@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server';
+import type { Session } from 'next-auth';
 
 import { TimeInSeconds } from '@/server/api/enums/time-in-seconds.enum';
 import { getHashToken } from '@/server/api/helpers/common';
@@ -252,6 +253,21 @@ class AuthService {
         includeSensitiveInfo: true,
       }),
       sessionToken: finalSessionToken,
+    };
+  };
+
+  validateNextAuthSessionToken = async (session: Session) => {
+    if (!session.user) {
+      throw new Error('Session User not found');
+    }
+
+    const userId = session.user.id as string;
+
+    return {
+      userInfo: await userRepository.getById(userId, {
+        includeSensitiveInfo: true,
+      }),
+      sessionToken: session.accessToken || '',
     };
   };
 
