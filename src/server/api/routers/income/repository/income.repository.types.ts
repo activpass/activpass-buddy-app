@@ -18,3 +18,9 @@ export type ListIncomesParams = {
   orgId: string;
   clientId?: string;
 };
+
+export type GetCurrentMembershipPlanIncomeParams = {
+  orgId: string;
+  clientId: string;
+  membershipPlanId: string;
+};

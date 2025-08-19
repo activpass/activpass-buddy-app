@@ -1,7 +1,9 @@
 import { TRPCError } from '@trpc/server';
 
+import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger';
 
+import type { IMembershipPlanSchema } from '../model/membership-plan.model';
 import { membershipPlanRepository } from '../repository/membership-plan.repository';
 import type {
   CreateMembershipPlanArgs,
@@ -23,13 +25,12 @@ class MembershipPlanService {
         });
       }
       const membershipPlan = await membershipPlanRepository.get({ id });
-      return membershipPlan;
-    } catch (error: unknown) {
+      return membershipPlan.toObject({
+        flattenObjectIds: true,
+      }) as IMembershipPlanSchema;
+    } catch (error) {
       this.logger.error('Failed to get membershipPlan by id', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to get membershipPlan by id',
-      });
+      throw getTRPCError('Failed to get membershipPlan by id');
     }
   };
 
@@ -37,11 +38,8 @@ class MembershipPlanService {
     try {
       const membershipPlan = await membershipPlanRepository.create({ data: input, orgId });
       return membershipPlan;
-    } catch (error: unknown) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to create membershipPlan',
-      });
+    } catch (error) {
+      throw getTRPCError('Failed to create membershipPlan');
     }
   };
 
@@ -52,10 +50,7 @@ class MembershipPlanService {
       return membershipPlan;
     } catch (error: unknown) {
       this.logger.error('Failed to update membershipPlan', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to update membershipPlan',
-      });
+      throw getTRPCError('Failed to update membershipPlan');
     }
   };
 
@@ -69,10 +64,7 @@ class MembershipPlanService {
       });
     } catch (error: unknown) {
       this.logger.error('Failed to list membershipPlans', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to list membershipPlans',
-      });
+      throw getTRPCError('Failed to list membershipPlans');
     }
   };
 

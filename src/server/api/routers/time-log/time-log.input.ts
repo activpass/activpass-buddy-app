@@ -16,3 +16,13 @@ export type UpdateTimeLogInputSchema = z.infer<typeof updateTimeLogInputSchema>;
 export const listTimeLogInputSchema = z.object({
   clientId: z.string().optional(),
 });
+export type ListTimeLogInputSchema = z.infer<typeof listTimeLogInputSchema>;
+
+export const getTimeLogByClientIdWithDateRangeInputSchema = z.object({
+  clientId: z.string(),
+  startDate: z.date(),
+  endDate: z.date(),
+});
+export type GetTimeLogByClientIdWithDateRangeInputSchema = z.infer<
+  typeof getTimeLogByClientIdWithDateRangeInputSchema
+>;

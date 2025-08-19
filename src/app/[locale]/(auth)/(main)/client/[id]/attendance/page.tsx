@@ -1,8 +1,12 @@
-import { Heading, Separator, Text } from '@paalan/react-ui';
+import { Heading, Separator, Skeleton, Text } from '@paalan/react-ui';
 import type { Metadata } from 'next';
-import type { FC } from 'react';
+import { type FC, Suspense } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+import { api } from '@/trpc/server';
+
+import { AttendanceCalendar } from './_components/AttendanceCalendar';
+import { AttendanceTable } from './_components/AttendanceTable';
 
 export const metadata: Metadata = {
   title: 'Client Profile - Attendance',
@@ -14,13 +18,17 @@ type AttendancePageProps = {
     id: string;
   };
 };
-const AttendancePage: FC<AttendancePageProps> = ({ params }) => {
+const AttendancePage: FC<AttendancePageProps> = async ({ params }) => {
+  const clientId = params.id;
+  const clientData = await api.clients.get(clientId);
+  const checkInTimeLogsList = api.timeLogs.list({ clientId });
+
   return (
     <>
       <SetBreadcrumbItems
         items={[
           { label: 'Client', href: '/client' },
-          { label: params.id, href: `/client/${params.id}` },
+          { label: clientData.fullName, href: `/client/${params.id}` },
           {
             label: 'Attendance',
           },
@@ -34,8 +42,11 @@ const AttendancePage: FC<AttendancePageProps> = ({ params }) => {
           </Text>
         </div>
         <Separator />
-        <div>
-          <Text>attendance page content</Text>
+        <div className="flex flex-col gap-5">
+          <AttendanceCalendar clientId={clientId} />
+          <Suspense fallback={<Skeleton className="h-28 w-full" />}>
+            <AttendanceTable dataPromise={checkInTimeLogsList} />
+          </Suspense>
         </div>
       </div>
     </>

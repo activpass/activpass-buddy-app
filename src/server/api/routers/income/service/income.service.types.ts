@@ -1,7 +1,11 @@
-import type { CreateIncomeInputSchema, UpdateIncomeInputSchema } from '../income.input';
+import type {
+  CreateIncomeInputSchema,
+  GetByIdInputSchema,
+  UpdateIncomeInputSchema,
+} from '../income.input';
 
 export type GetIncomeByIdArgs = {
-  id: string;
+  input: GetByIdInputSchema;
 };
 
 export type CreateIncomeArgs = {

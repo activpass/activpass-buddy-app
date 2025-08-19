@@ -1,7 +1,12 @@
+import type { IMembershipPlanSchema } from '../../membership-plan/model/membership-plan.model';
 import type {
   CreateClientInputSchema,
+  DeleteAvatarInputSchema,
+  RenewMembershipPlanInputSchema,
   SubmitOnboardingClientInputSchema,
+  UpdateAvatarInputSchema,
   UpdateClientInputSchema,
+  UpgradeMembershipPlanInputSchema,
 } from '../client.input';
 
 export type GetClientByIdArgs = {
@@ -37,4 +42,32 @@ export type VerifyOnboardingTokenArgs = {
 
 export type SubmitOnboardingClientArgs = {
   input: SubmitOnboardingClientInputSchema;
+};
+
+export type UpdateAvatarArgs = {
+  input: UpdateAvatarInputSchema;
+};
+
+export type DeleteAvatarArgs = {
+  input: DeleteAvatarInputSchema;
+};
+
+export type UpgradeMembershipPlanArgs = {
+  input: UpgradeMembershipPlanInputSchema;
+};
+
+export type RenewMembershipPlanArgs = {
+  input: RenewMembershipPlanInputSchema;
+};
+
+export type CreateClientIncomeArgs = {
+  plan: IMembershipPlanSchema;
+  orgId: string;
+  clientId?: string;
+  paymentDetail?: CreateClientInputSchema['paymentDetail'];
+  docSave?: boolean;
+};
+
+export type CurrentMembershipPlanArgs = {
+  clientId: string;
 };

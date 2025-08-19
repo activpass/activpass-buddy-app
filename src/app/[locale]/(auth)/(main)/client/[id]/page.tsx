@@ -3,6 +3,9 @@ import type { Metadata } from 'next';
 import type { FC } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+import { api } from '@/trpc/server';
+
+import { ProfileForm } from './_components/profile-form';
 
 export const metadata: Metadata = {
   title: 'Client Profile',
@@ -14,10 +17,13 @@ type ClientProfilePageProps = {
     id: string;
   };
 };
-const ClientProfilePage: FC<ClientProfilePageProps> = ({ params }) => {
+const ClientProfilePage: FC<ClientProfilePageProps> = async ({ params }) => {
+  const clientData = await api.clients.get(params.id);
   return (
     <>
-      <SetBreadcrumbItems items={[{ label: 'Client', href: '/client' }, { label: params.id }]} />
+      <SetBreadcrumbItems
+        items={[{ label: 'Client', href: '/client' }, { label: clientData.fullName }]}
+      />
       <div className="space-y-6">
         <div>
           <Heading as="h3">Profile</Heading>
@@ -26,6 +32,7 @@ const ClientProfilePage: FC<ClientProfilePageProps> = ({ params }) => {
           </Text>
         </div>
         <Separator />
+        <ProfileForm clientData={clientData} />
       </div>
     </>
   );

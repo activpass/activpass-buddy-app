@@ -1,8 +1,12 @@
-import { Heading, Separator, Text } from '@paalan/react-ui';
+import { Heading, Separator, Skeleton, Text } from '@paalan/react-ui';
 import type { Metadata } from 'next';
-import type { FC } from 'react';
+import { type FC, Suspense } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+import { api } from '@/trpc/server';
+
+import { InvoiceTable } from './_components/InvoiceTable';
+import { MembershipHeader } from './_components/MembershipHeader';
 
 export const metadata: Metadata = {
   title: 'Client Profile - Membership',
@@ -14,13 +18,20 @@ type MembershipPageProps = {
     id: string;
   };
 };
-const MembershipPage: FC<MembershipPageProps> = ({ params }) => {
+const MembershipPage: FC<MembershipPageProps> = async ({ params }) => {
+  const clientId = params.id;
+  const clientData = await api.clients.get(clientId);
+  const membershipIncomesPromise = api.incomes.list({ clientId });
+  const currentMembershipPlanPromise = api.clients.getCurrentMembershipPlan({
+    clientId,
+  });
+
   return (
     <>
       <SetBreadcrumbItems
         items={[
           { label: 'Client', href: '/client' },
-          { label: params.id, href: `/client/${params.id}` },
+          { label: clientData.fullName, href: `/client/${params.id}` },
           {
             label: 'Membership',
           },
@@ -35,7 +46,13 @@ const MembershipPage: FC<MembershipPageProps> = ({ params }) => {
         </div>
         <Separator />
         <div>
-          <Text>membership page content</Text>
+          <Suspense fallback={<Skeleton className="mb-6 h-28 w-full" />}>
+            <MembershipHeader currentMembershipPlanPromise={currentMembershipPlanPromise} />
+          </Suspense>
+
+          <Suspense fallback={<Skeleton className="h-28 w-full" />}>
+            <InvoiceTable membershipIncomesPromise={membershipIncomesPromise} />
+          </Suspense>
         </div>
       </div>
     </>

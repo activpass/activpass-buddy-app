@@ -92,7 +92,7 @@ export const PaymentDetailsForm: FC = () => {
                 &nbsp;&nbsp;
               </>
             )}
-            <strong>{currencyIntl.format(selectedPlan.discountedAmount)}</strong>
+            <strong>{currencyIntl.format(selectedPlan.discountAmount)}</strong>
           </Heading>
           {!!selectedPlan.discountPercentage && (
             <Heading as="h5">

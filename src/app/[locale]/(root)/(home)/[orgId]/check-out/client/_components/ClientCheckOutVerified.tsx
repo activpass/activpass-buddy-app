@@ -1,11 +1,41 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { dateIntl } from '@paalan/react-shared/lib';
-import { Button, Label, NumberInput, toast } from '@paalan/react-ui';
+import {
+  Form,
+  type FormFieldItem,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  toast,
+} from '@paalan/react-ui';
 import { type FC, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 import { api } from '@/trpc/client';
+import { type OtpPinFormSchema, otpPinFormSchema } from '@/validations/common.validation';
 
 import { ClientCheckOutVerifiedSuccess } from './ClientCheckOutVerifiedSuccess';
 import type { ClientCheckOutResult } from './types';
+
+const fields: FormFieldItem<OtpPinFormSchema>[] = [
+  {
+    type: 'custom',
+    name: 'pin',
+    label: 'Enter 4 digit check out pin:',
+    render: ({ field }) => {
+      return (
+        <InputOTP maxLength={4} {...field}>
+          <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+            <InputOTPSlot index={3} />
+          </InputOTPGroup>
+        </InputOTP>
+      );
+    },
+  },
+];
 
 type ClientCheckOutVerifiedProps = {
   clientResult: ClientCheckOutResult;
@@ -15,8 +45,12 @@ export const ClientCheckOutVerified: FC<ClientCheckOutVerifiedProps> = ({
   clientResult,
   resetClientResult,
 }) => {
-  const [pin, setPin] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const form = useForm<OtpPinFormSchema>({
+    resolver: zodResolver(otpPinFormSchema),
+    defaultValues: {
+      pin: '',
+    },
+  });
   const [successfullyVerified, setSuccessfullyVerified] = useState(false);
 
   const clientCheckOutVerifyMutation = api.checkIn.clientCheckOutVerify.useMutation({
@@ -29,23 +63,9 @@ export const ClientCheckOutVerified: FC<ClientCheckOutVerifiedProps> = ({
     },
   });
 
-  const onValueChange = (value: number) => {
-    const strValue = value.toString();
-    if (strValue.length > 4) {
-      setPin(strValue.slice(0, 4));
-    } else {
-      setPin(strValue === '0' ? '' : strValue);
-    }
-    setErrorMessage('');
-  };
-
-  const onCheckOut = () => {
-    if (pin.length < 4) {
-      setErrorMessage('Please enter 4 digit pin');
-      return;
-    }
+  const onCheckOut = (data: OtpPinFormSchema) => {
     const { orgId, phoneNumber } = clientResult;
-    clientCheckOutVerifyMutation.mutate({ orgId, phoneNumber, pin: +pin });
+    clientCheckOutVerifyMutation.mutate({ orgId, phoneNumber, pin: +data.pin });
   };
 
   if (successfullyVerified) {
@@ -75,28 +95,15 @@ export const ClientCheckOutVerified: FC<ClientCheckOutVerifiedProps> = ({
         </span>
       </div>
       <div className="mt-6">
-        <Label htmlFor="pin" className="pb-2 text-base font-semibold" required>
-          Enter 4 digit check in pin:
-        </Label>
-        <NumberInput
-          value={pin}
-          id="pin"
-          onValueChange={onValueChange}
-          isInvalid={!!errorMessage}
-          errorMessage={errorMessage}
-          zeroAsEmptyString
-          placeholder="Enter 4 digit pin"
-          required
-          onKeyDown={e => {
-            if (e.key === 'Enter') {
-              onCheckOut();
-            }
-          }}
+        <Form<OtpPinFormSchema>
+          form={form}
+          fields={fields}
+          onSubmit={onCheckOut}
+          isSubmitting={clientCheckOutVerifyMutation.isPending}
+          hideResetButton
+          submitText="Check Out"
         />
       </div>
-      <Button onClick={onCheckOut} mt="2" isLoading={clientCheckOutVerifyMutation.isPending}>
-        Check Out
-      </Button>
     </div>
   );
 };
