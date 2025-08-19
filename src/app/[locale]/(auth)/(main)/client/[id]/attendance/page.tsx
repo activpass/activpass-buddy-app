@@ -1,6 +1,6 @@
-import { Heading, Separator, Text } from '@paalan/react-ui';
+import { Heading, Separator, Skeleton, Text } from '@paalan/react-ui';
 import type { Metadata } from 'next';
-import type { FC } from 'react';
+import { type FC, Suspense } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 import { api } from '@/trpc/server';
@@ -21,7 +21,7 @@ type AttendancePageProps = {
 const AttendancePage: FC<AttendancePageProps> = async ({ params }) => {
   const clientId = params.id;
   const clientData = await api.clients.get(clientId);
-  const checkInTimeLogsList = await api.timeLogs.list({ clientId });
+  const checkInTimeLogsList = api.timeLogs.list({ clientId });
 
   return (
     <>
@@ -44,7 +44,9 @@ const AttendancePage: FC<AttendancePageProps> = async ({ params }) => {
         <Separator />
         <div className="flex flex-col gap-5">
           <AttendanceCalendar clientId={clientId} />
-          <AttendanceTable data={checkInTimeLogsList} />
+          <Suspense fallback={<Skeleton className="h-28 w-full" />}>
+            <AttendanceTable dataPromise={checkInTimeLogsList} />
+          </Suspense>
         </div>
       </div>
     </>

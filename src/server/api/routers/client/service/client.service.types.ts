@@ -2,6 +2,7 @@ import type { IMembershipPlanSchema } from '../../membership-plan/model/membersh
 import type {
   CreateClientInputSchema,
   DeleteAvatarInputSchema,
+  RenewMembershipPlanInputSchema,
   SubmitOnboardingClientInputSchema,
   UpdateAvatarInputSchema,
   UpdateClientInputSchema,
@@ -53,6 +54,10 @@ export type DeleteAvatarArgs = {
 
 export type UpgradeMembershipPlanArgs = {
   input: UpgradeMembershipPlanInputSchema;
+};
+
+export type RenewMembershipPlanArgs = {
+  input: RenewMembershipPlanInputSchema;
 };
 
 export type CreateClientIncomeArgs = {

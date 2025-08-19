@@ -1,11 +1,5 @@
 import { TRPCError } from '@trpc/server';
 
-import {
-  CLIENT_PAYMENT_FREQUENCY,
-  CLIENT_PAYMENT_METHOD,
-  CLIENT_PAYMENT_STATUS,
-} from '@/constants/client/add-form.constant';
-import { generateMongooseObjectId } from '@/server/api/helpers/common';
 import { clientRepository } from '@/server/api/routers/client/repository/client.repository';
 import { deleteFileFromImageKit } from '@/server/api/utils/imagekit';
 import { getTRPCError } from '@/server/api/utils/trpc-error';
@@ -17,25 +11,26 @@ import {
   type IMembershipPlanSchema,
   MembershipPlanModel,
 } from '../../membership-plan/model/membership-plan.model';
-import { membershipPlanRepository } from '../../membership-plan/repository/membership-plan.repository';
 import { organizationService } from '../../organization/service/organization.service';
 import { ClientModel, type IClientSchema } from '../model/client.model';
 import { onboardClientRepository } from '../repository/onboard-client.repository';
 import type {
   AnalyticsClientsArgs,
   CreateClientArgs,
-  CreateClientIncomeArgs,
   CurrentMembershipPlanArgs,
   DeleteAvatarArgs,
   GenerateOnboardingLinkArgs,
   GetClientByIdArgs,
   ListClientsArgs,
+  RenewMembershipPlanArgs,
   SubmitOnboardingClientArgs,
   UpdateAvatarArgs,
   UpdateClientArgs,
   UpgradeMembershipPlanArgs,
   VerifyOnboardingTokenArgs,
 } from './client.service.types';
+import { createClientIncome } from '../helper/createClientIncome.helper';
+import { updateMembershipPlan } from '../helper/client.helper';
 
 class ClientService {
   private readonly logger = new Logger(ClientService.name);
@@ -74,35 +69,6 @@ class ClientService {
     }
   };
 
-  private createClientIncome = async ({
-    plan,
-    orgId,
-    clientId,
-    paymentDetail,
-    docSave,
-  }: CreateClientIncomeArgs) => {
-    const paymentDetailInfo = {
-      paymentMethod: CLIENT_PAYMENT_METHOD.CASH.value,
-      paymentFrequency: CLIENT_PAYMENT_FREQUENCY.ONE_TIME.value,
-      paymentStatus: CLIENT_PAYMENT_STATUS.PAID.value,
-      ...paymentDetail,
-    };
-    const incomeDoc = await incomeRepository.create({
-      orgId,
-      clientId,
-      membershipPlanId: plan.id,
-      data: {
-        ...paymentDetailInfo,
-        tenure: plan.tenure,
-        amount: plan.totalAmount,
-        invoiceId: generateMongooseObjectId().toHexString(),
-      },
-      docSave,
-    });
-
-    return incomeDoc;
-  };
-
   create = async ({ input, orgId }: CreateClientArgs) => {
     try {
       const { paymentDetail, membershipDetail } = input;
@@ -113,7 +79,7 @@ class ClientService {
         throw new Error('Membership plan not found');
       }
 
-      const incomeDoc = await this.createClientIncome({
+      const incomeDoc = await createClientIncome({
         plan: planDoc,
         orgId,
         paymentDetail,
@@ -297,33 +263,19 @@ class ClientService {
   };
 
   upgradeMembershipPlan = async ({ input }: UpgradeMembershipPlanArgs) => {
-    const { clientId, membershipPlanId } = input;
-    const client = await clientRepository.getById(clientId);
-
-    if (client.membershipPlan.toHexString() === membershipPlanId) {
-      throw getTRPCError('Client already has the same membership plan', 'BAD_REQUEST');
-    }
-
-    const plan = await membershipPlanRepository.get({ id: membershipPlanId });
-
-    // create income record
-    const incomeDoc = await this.createClientIncome({
-      plan,
-      orgId: client.organization.toHexString(),
-      clientId: client.id,
+    return await updateMembershipPlan({
+      clientId: input.clientId,
+      membershipPlanId: input.membershipPlanId,
+      isUpgrade: true,
     });
+  };
 
-    // update client membership plan
-    client.membershipPlan = plan._id;
-    client.income = incomeDoc._id;
-    await client.save();
-
-    return {
-      message: 'Membership plan upgraded successfully',
-      data: {
-        id: client.id,
-      },
-    };
+  renewMembershipPlan = async ({ input }: RenewMembershipPlanArgs) => {
+    return await updateMembershipPlan({
+      clientId: input.clientId,
+      membershipPlanId: input.membershipPlanId,
+      isUpgrade: false,
+    });
   };
 
   getCurrentMembershipPlan = async ({ clientId }: CurrentMembershipPlanArgs) => {
