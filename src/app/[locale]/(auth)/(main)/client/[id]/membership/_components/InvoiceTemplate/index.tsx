@@ -2,37 +2,90 @@
 
 import { dateIntl } from '@paalan/react-shared/lib';
 import { Center, Loading, toast } from '@paalan/react-ui';
-import html2canvas from 'html2canvas-pro';
-import JsPDF from 'jspdf';
+import { PDFViewer, usePDF } from '@react-pdf/renderer';
 import Image from 'next/image';
-import { type FC, useRef } from 'react';
+import { type FC, useEffect, useState } from 'react';
 import { FiDownload } from 'react-icons/fi';
 import { ImPrinter } from 'react-icons/im';
 
-// import { useReactToPrint } from 'react-to-print';
 import { api } from '@/trpc/client';
+import { convertImageToBase64 } from '@/utils/client';
 import { currencyIntl } from '@/utils/currency-intl';
+import { getBaseUrl } from '@/utils/helpers';
 
+import { InvoicePDF } from './InvoicePDF';
 import type { InvoiceData } from './types';
 
+type PDFInvoiceProps = {
+  invoiceData: InvoiceData;
+  tax: number;
+  total: number;
+  logoUrl: string;
+};
+const PDFInvoice: FC<PDFInvoiceProps> = props => {
+  const [instance] = usePDF({
+    document: <InvoicePDF {...props} />,
+  });
+
+  if (instance.loading) {
+    return (
+      <Center className="h-3/4 p-8">
+        <Loading className="size-8" content="Generating Invoice..." />
+      </Center>
+    );
+  }
+
+  if (instance.error) {
+    return <p>Error generating PDF.</p>;
+  }
+
+  return (
+    <>
+      <div className="flex justify-end gap-3">
+        <div className="border">
+          <a href={instance.url || undefined} target="_blank">
+            <ImPrinter className="cursor-pointer p-2 text-4xl text-blue-500" />
+            <span className="sr-only">Print</span>
+          </a>
+        </div>
+        <div className="border">
+          <a
+            href={instance.url || undefined}
+            download={`membership-invoice-${props.invoiceData.invoiceNumber}.pdf`}
+          >
+            <FiDownload className="cursor-pointer p-2 text-4xl text-blue-500" />
+            <span className="sr-only">Download</span>
+          </a>
+        </div>
+      </div>
+      <PDFViewer className="h-128 w-full" showToolbar={false}>
+        <InvoicePDF {...props} />
+      </PDFViewer>
+    </>
+  );
+};
 type InvoiceTemplateProps = {
   incomeId: string;
 };
 
 export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
-  const contentRef = useRef<HTMLDivElement | null>(null);
-
   const {
     data: incomeItem,
     isLoading,
     error: apiError,
   } = api.incomes.getPopulatedById.useQuery({ id: incomeId });
 
-  // const printFn = useReactToPrint({
-  //   contentRef,
-  // });
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
-  if (isLoading) {
+  useEffect(() => {
+    convertImageToBase64(`${getBaseUrl()}/logos/png/activpass-buddy-logo-black-blue.png`)
+      .then(url => setLogoUrl(url))
+      .catch(err => {
+        toast.error(err.message);
+      });
+  }, []);
+
+  if (isLoading || !logoUrl) {
     return (
       <Center className="h-3/4 p-8">
         <Loading className="size-8" content="Loading invoice data..." />
@@ -44,61 +97,6 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
   if (!incomeItem) return <p>No invoice data found.</p>;
 
   const { organization, client, membershipPlan } = incomeItem;
-
-  const downloadPDF = async () => {
-    const input = contentRef.current;
-
-    if (!input) return;
-    try {
-      const canvas = await html2canvas(input);
-      const imgData = canvas.toDataURL('image/png');
-
-      const pdf = new JsPDF('p', 'mm', 'a4');
-      const width = pdf.internal.pageSize.getWidth();
-      const height = pdf.internal.pageSize.getHeight();
-      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
-      pdf.save(`membership-invoice-${incomeItem.invoiceId}.pdf`);
-    } catch (error) {
-      toast.error('Failed to download PDF');
-    }
-  };
-
-  const printInvoice = async () => {
-    const input = contentRef.current;
-
-    if (!input) return;
-
-    try {
-      const canvas = await html2canvas(input);
-      const imgData = canvas.toDataURL('image/png');
-
-      const printWindow = window.open('', '_blank');
-
-      if (printWindow) {
-        printWindow.document.write(`
-        <html>
-          <head>
-            <title>Print Invoice</title>
-            <style>
-              body { margin: 0; padding: 0; }
-              img { width: 100%; height: auto; }
-            </style>
-          </head>
-          <body>
-            <img src="${imgData}" />
-          </body>
-        </html>
-      `);
-        printWindow.document.close();
-        setTimeout(() => {
-          printWindow.print();
-          printWindow.close();
-        }, 500);
-      }
-    } catch (error) {
-      toast.error('Failed to print PDF');
-    }
-  };
 
   const invoiceData: InvoiceData = {
     id: '1',
@@ -125,22 +123,8 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
 
   return (
     <div className="">
-      <div className="flex justify-end gap-3">
-        <div className="border">
-          <ImPrinter onClick={printInvoice} className="cursor-pointer p-2 text-4xl text-blue-500" />
-        </div>
-        <div className="border">
-          {/* <PDFDownloadLink
-            document={<InvoicePDF invoiceData={invoiceData} tax={tax} total={total} />}
-            fileName={`Membership-Invoice-${invoiceData.invoiceNumber}.pdf`}
-          >
-            <FiDownload className="cursor-pointer p-2 text-4xl text-blue-500" />
-          </PDFDownloadLink> */}
-          <FiDownload onClick={downloadPDF} className="cursor-pointer p-2 text-4xl text-blue-500" />
-        </div>
-      </div>
-
-      <div className="p-5" ref={contentRef}>
+      <PDFInvoice invoiceData={invoiceData} tax={tax} total={total} logoUrl={logoUrl} />
+      <div className="hidden p-5">
         {/* Watermark */}
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-5">
           <span className="-rotate-45 whitespace-nowrap text-8xl font-bold">

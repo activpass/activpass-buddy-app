@@ -103,6 +103,9 @@ importers:
       next-auth:
         specifier: ^5.0.0-beta.20
         version: 5.0.0-beta.20(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+      next-fonts:
+        specifier: ^1.5.1
+        version: 1.5.1(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2))
       next-intl:
         specifier: ^3.15.3
         version: 3.15.3(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
@@ -142,9 +145,6 @@ importers:
       react-icons:
         specifier: ^5.3.0
         version: 5.3.0(react@18.3.1)
-      react-to-print:
-        specifier: ^3.0.2
-        version: 3.0.2(react@18.3.1)
       recharts:
         specifier: ^2.12.7
         version: 2.12.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -10325,6 +10325,15 @@ packages:
       }
     engines: { node: '>=18' }
 
+  file-loader@6.2.0:
+    resolution:
+      {
+        integrity: sha512-qo3glqyTa61Ytg4u73GultjHGjdRyig3tG6lPtyX/jOEJvHif9uB0/OCI2Kif6ctF3caQTW2G5gym21oAsI4pw==,
+      }
+    engines: { node: '>= 10.13.0' }
+    peerDependencies:
+      webpack: ^4.0.0 || ^5.0.0
+
   file-system-cache@2.3.0:
     resolution:
       {
@@ -13904,6 +13913,14 @@ packages:
       nodemailer:
         optional: true
 
+  next-fonts@1.5.1:
+    resolution:
+      {
+        integrity: sha512-pgEJ40xO1oRhM6RqhQJ9CzuZOFp6Zq+aAD/V1P9sq/wdepvLzhFxDm3lCZNoE7+78NSuMKgT6b1qeXSsqWuUMQ==,
+      }
+    peerDependencies:
+      webpack: ^4.0.0 || ^5.0.0
+
   next-intl@3.15.3:
     resolution:
       {
@@ -16152,14 +16169,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  react-to-print@3.0.2:
-    resolution:
-      {
-        integrity: sha512-FS/Z4LLq0bgWaxd7obygFQ8yRFdKW74iE8fIVjFFsPJWIXmuL8CIO+4me1Hj44lrlxQ00gscSNb3BRM8olbwXg==,
-      }
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ~19
 
   react-transition-group@4.4.5:
     resolution:
@@ -18472,6 +18481,19 @@ packages:
         integrity: sha512-n2huDr9h9yzd6exQVnH/jU5mr+Pfx08LRXXZhkLLetAMESRj+anQsTAh940iMrIetKAmry9coFuZQ2jY8/p3WA==,
       }
     engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
+
+  url-loader@4.1.1:
+    resolution:
+      {
+        integrity: sha512-3BTV812+AVHHOJQO8O5MkWgZ5aosP7GnROJwvzLS9hWDj00lZ6Z0wNak423Lp9PBZN05N+Jk/N5Si8jRAlGyWA==,
+      }
+    engines: { node: '>= 10.13.0' }
+    peerDependencies:
+      file-loader: '*'
+      webpack: ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      file-loader:
+        optional: true
 
   url-parse@1.5.10:
     resolution:
@@ -27071,6 +27093,12 @@ snapshots:
     dependencies:
       flat-cache: 5.0.0
 
+  file-loader@6.2.0(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2)):
+    dependencies:
+      loader-utils: 2.0.4
+      schema-utils: 3.3.0
+      webpack: 5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2)
+
   file-system-cache@2.3.0:
     dependencies:
       fs-extra: 11.1.1
@@ -29592,6 +29620,12 @@ snapshots:
       next: 14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
 
+  next-fonts@1.5.1(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2)):
+    dependencies:
+      file-loader: 6.2.0(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2))
+      url-loader: 4.1.1(file-loader@6.2.0(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2)))(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2))
+      webpack: 5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2)
+
   next-intl@3.15.3(next@14.2.4(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1):
     dependencies:
       '@formatjs/intl-localematcher': 0.2.32
@@ -30833,10 +30867,6 @@ snapshots:
       tslib: 2.6.3
     optionalDependencies:
       '@types/react': 18.3.3
-
-  react-to-print@3.0.2(react@18.3.1):
-    dependencies:
-      react: 18.3.1
 
   react-transition-group@4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -32436,6 +32466,15 @@ snapshots:
   url-join@4.0.1: {}
 
   url-join@5.0.0: {}
+
+  url-loader@4.1.1(file-loader@6.2.0(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2)))(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2)):
+    dependencies:
+      loader-utils: 2.0.4
+      mime-types: 2.1.35
+      schema-utils: 3.3.0
+      webpack: 5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2)
+    optionalDependencies:
+      file-loader: 6.2.0(webpack@5.92.1(@swc/core@1.6.6(@swc/helpers@0.5.13))(esbuild@0.20.2))
 
   url-parse@1.5.10:
     dependencies:
