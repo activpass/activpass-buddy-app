@@ -19,6 +19,9 @@ export const redis = (() => {
       },
     };
   }
+
+  logger.info('Connecting to Redis at', env.REDIS_URL);
+
   const instance = new Redis(env.REDIS_URL, options);
 
   // instance.on('connect', () => {
