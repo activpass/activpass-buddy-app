@@ -14,12 +14,12 @@ export const upstashRedis = (() => {
     // For development, return null, Currently, Upstash is not available in development
     if (process.env.NODE_ENV !== 'production') return null;
     if (cached) return cached;
-    if (!env.UPSTASH_REDIS_REST_URL || !env.UPSTASH_REDIS_REST_TOKEN) {
-      throw new Error('UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set');
+    if (!env.KV_REST_API_URL || !env.KV_REST_API_TOKEN) {
+      throw new Error('KV_REST_API_URL and KV_REST_API_TOKEN must be set');
     }
     const instance = new Redis({
-      url: env.UPSTASH_REDIS_REST_URL,
-      token: env.UPSTASH_REDIS_REST_TOKEN,
+      url: env.KV_REST_API_URL,
+      token: env.KV_REST_API_TOKEN,
     });
 
     cached = instance;
