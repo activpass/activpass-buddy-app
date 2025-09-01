@@ -14,15 +14,22 @@ type CheckOutEmployeePageProps = {
 const CheckOutEmployeePage: FC<CheckOutEmployeePageProps> = async ({ searchParams }) => {
   const { orgId = '' } = searchParams;
   const organization = await api.organizations.get(orgId);
+  const logoUrl = organization?.logo?.url;
+
   return (
     <Card className="lg:min-w-128">
       <CardHeader className="text-center">
-        <Image
-          src="/logos/png/activpass-buddy-logo-white-blue.png"
-          alt="organization logo"
-          width={100}
-          height={100}
-        />
+        {logoUrl && (
+          <div className="mb-5 flex justify-center">
+            <Image
+              className="h-14 w-48"
+              src={logoUrl}
+              alt="organization logo"
+              width={300}
+              height={60}
+            />
+          </div>
+        )}
         <CardTitle className="text-2xl">
           Check out - <span className="text-primary">Employee</span>
         </CardTitle>

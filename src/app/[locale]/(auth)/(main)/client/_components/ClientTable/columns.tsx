@@ -38,7 +38,7 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
   {
     id: 'membershipPlanName',
     accessorKey: 'membershipPlanName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Plan" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Current Plan" />,
     enableSorting: false,
     cell: ({ row }) => {
       if (!row.original.membershipPlanName) return 'N/A';

@@ -84,7 +84,7 @@ export const SignInForm: FC<SignInFormProps> = _props => {
             <FormItem>
               <FormLabel htmlFor="email">Email</FormLabel>
               <FormControl>
-                <Input id="email" placeholder="Enter your email" {...field} />
+                <Input id="email" placeholder="Enter your email" {...field} autoFocus />
               </FormControl>
               <FormMessage />
             </FormItem>

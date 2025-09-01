@@ -15,7 +15,6 @@ import {
   DropdownMenuTrigger,
   Flex,
   IconButton,
-  Separator,
   SheetContent,
   SheetRoot,
   SheetTrigger,
@@ -30,8 +29,6 @@ import ActiveLink from '@/components/Common/ActiveLink';
 import ThemeToggle from '@/components/Common/ThemeToggle';
 import Link from '@/components/Link';
 import { Logo } from '@/components/Logo';
-
-import { CheckInTokenBox } from './CheckInTokenBox';
 
 type NavItemProps = {
   href: string;
@@ -102,8 +99,6 @@ export const WithHeader: FC = () => {
         </SheetContent>
       </SheetRoot>
       <Flex alignItems="center" className="ml-auto" gap="2">
-        <CheckInTokenBox />
-        <Separator orientation="vertical" className="h-6" />
         <Flex alignItems="center" className="gap-4 md:ml-auto md:gap-2 lg:gap-4">
           <ThemeToggle />
           <DropdownMenuRoot>
@@ -134,35 +129,40 @@ export const WithHeader: FC = () => {
               <DropdownMenuItem className="cursor-pointer" asChild>
                 <Link href="/dashboard/settings">Settings</Link>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>QR Check-in</DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuItem>
-                        <Link href={`/check-in/client?orgId=${orgId}`}>Client</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Link href={`/check-in/employee?orgId=${orgId}`}>Employee</Link>
-                      </DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>QR Check-out</DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuItem>
-                        <Link href={`/check-out/client?orgId=${orgId}`}>Client</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Link href={`/check-out/employee?orgId=${orgId}`}>Employee</Link>
-                      </DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
-              </DropdownMenuGroup>
+              {orgId && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>QR Check-in</DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                          <DropdownMenuItem>
+                            <Link href={`/check-in/client?orgId=${orgId}`}>Client</Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Link href={`/check-in/employee?orgId=${orgId}`}>Employee</Link>
+                          </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>QR Check-out</DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                          <DropdownMenuItem>
+                            <Link href={`/check-out/client?orgId=${orgId}`}>Client</Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Link href={`/check-out/employee?orgId=${orgId}`}>Employee</Link>
+                          </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                  </DropdownMenuGroup>
+                </>
+              )}
+
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer" asChild>
                 <SignOutButton />

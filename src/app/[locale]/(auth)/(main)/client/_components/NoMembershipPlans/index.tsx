@@ -10,7 +10,7 @@ export const NoMembershipPlans: React.FC = () => {
         <p className="text-sm text-muted-foreground">
           You can add a membership plan to start tracking your clients.
         </p>
-        <Link href="/client/membership">
+        <Link href="/membership">
           <Button className="mt-4">Add Membership Plan</Button>
         </Link>
       </div>

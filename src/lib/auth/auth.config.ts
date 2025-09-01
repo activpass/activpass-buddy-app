@@ -12,10 +12,11 @@ const returnResponse = (user: IUserData) => {
     id: user.id,
     email: user.email,
     name: user.fullName,
-    avatarUrl: user.avatar?.url || undefined,
+    avatarUrl: user.avatar?.url,
     orgId: user.orgId,
   };
 };
+
 export const authConfig = {
   ...authBaseConfig,
   providers: [
@@ -28,7 +29,8 @@ export const authConfig = {
 
         if (loginToken) {
           const user = await UserModel.authenticateWithLoginToken(loginToken);
-          return returnResponse(user);
+          const userObj = user.toClientObject();
+          return returnResponse(userObj);
         }
 
         const { email, password } = await signInValidationSchema.parseAsync(credentials);

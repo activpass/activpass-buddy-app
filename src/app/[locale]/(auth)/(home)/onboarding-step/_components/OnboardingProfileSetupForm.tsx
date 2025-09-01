@@ -15,6 +15,16 @@ type OnboardingProfileSetupFormProps = {
 const getFormFields = (): FormFieldItem<OnboardingProfileSetupSchema>[] => [
   {
     type: 'input',
+    name: 'email',
+    label: 'Email',
+    placeholder: 'Enter your email',
+    required: true,
+    inputType: 'email',
+    disabled: true,
+    description: 'Email cannot be changed.',
+  },
+  {
+    type: 'input',
     name: 'firstName',
     label: 'First Name',
     placeholder: 'Enter your first name',
@@ -27,16 +37,6 @@ const getFormFields = (): FormFieldItem<OnboardingProfileSetupSchema>[] => [
     label: 'Last Name',
     placeholder: 'Enter your last name',
     required: true,
-  },
-  {
-    type: 'input',
-    name: 'email',
-    label: 'Email',
-    placeholder: 'Enter your email',
-    required: true,
-    inputType: 'email',
-    disabled: true,
-    description: 'Email cannot be changed.',
   },
   {
     type: 'number',
@@ -68,7 +68,7 @@ export const OnboardingProfileSetupForm: FC<OnboardingProfileSetupFormProps> = (
   const formFields = getFormFields();
 
   return (
-    <Card className="relative border-b border-border shadow-lg">
+    <Card className="relative min-h-[532px] border-b border-border shadow-lg">
       <CardContent className="p-6">
         <VStack gap="8">
           {/* Header */}

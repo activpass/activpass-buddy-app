@@ -91,7 +91,7 @@ export const MembershipDetailsForm: FC<MembershipDetailsFormProps> = ({
             No plans available at the moment for{' '}
             <Strong>{CLIENT_MEMBERSHIP_TENURE[selectedTenure].display}</Strong>. Please create a
             plan in{' '}
-            <Link href="/client/membership" className="text-link underline">
+            <Link href="/membership" className="text-link underline">
               Membership
             </Link>{' '}
             section.

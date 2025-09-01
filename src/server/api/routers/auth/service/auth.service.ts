@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server';
 import type { Session } from 'next-auth';
 
 import { TimeInSeconds } from '@/server/api/enums/time-in-seconds.enum';
-import { getHashToken } from '@/server/api/helpers/common';
+import { generateMongooseObjectId, getHashToken } from '@/server/api/helpers/common';
 import { type IUserData, UserModel } from '@/server/api/routers/user/model/user.model';
 import { userRepository } from '@/server/api/routers/user/repository/user.repository';
 import { createSecureCookie, deleteCookie } from '@/server/api/utils/cookie-management';
@@ -430,6 +430,9 @@ class AuthService {
       organizationDoc.users.push(user.id);
       // Save organization and user
       await organizationDoc.save();
+
+      // Link user with organization and save user
+      user.organization = generateMongooseObjectId(organizationDoc.id);
       await user.save();
 
       return {

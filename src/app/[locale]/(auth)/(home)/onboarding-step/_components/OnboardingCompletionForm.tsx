@@ -68,7 +68,7 @@ export const OnboardingCompletionForm: FC<OnboardingCompletionFormProps> = ({ lo
   };
 
   return (
-    <Card className="relative border-b border-border shadow-lg">
+    <Card className="relative min-h-[450px] border-b border-border shadow-lg">
       <CardContent className="px-6 py-8">
         <div className="flex flex-col items-center text-center">
           {/* Success Icon */}
@@ -124,7 +124,7 @@ export const OnboardingCompletionForm: FC<OnboardingCompletionFormProps> = ({ lo
           </div>
 
           {/* Dashboard Button */}
-          <div className="mb-16">
+          <div className="mb-10">
             <Button
               variant="solid"
               isLoading={isLoading || isPending}

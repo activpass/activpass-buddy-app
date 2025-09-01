@@ -75,7 +75,7 @@ export const OnboardingFacilitySetupForm: FC<OnboardingFacilitySetupFormProps> =
   const formFields = getFormFields();
 
   return (
-    <Card className="relative border-b border-border shadow-lg">
+    <Card className="relative min-h-[532px] border-b border-border shadow-lg">
       <CardContent className="p-6">
         <VStack gap="8">
           {/* Header */}

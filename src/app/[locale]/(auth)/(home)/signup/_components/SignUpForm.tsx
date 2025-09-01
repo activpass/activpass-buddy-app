@@ -21,7 +21,7 @@ const fields: FormFieldItem<SignUpValidationSchemaType>[] = [
     inputType: 'email',
     placeholder: 'Enter your email',
     required: true,
-    formItemClassName: 'col-span-2',
+    inputProps: { autoFocus: true },
   },
   {
     name: 'password',
@@ -29,7 +29,6 @@ const fields: FormFieldItem<SignUpValidationSchemaType>[] = [
     type: 'input',
     inputType: 'password',
     placeholder: 'Enter your password',
-    formItemClassName: 'col-span-2',
     required: true,
   },
   {
@@ -38,7 +37,6 @@ const fields: FormFieldItem<SignUpValidationSchemaType>[] = [
     type: 'input',
     inputType: 'password',
     placeholder: 'Enter your password again',
-    formItemClassName: 'col-span-2',
     required: true,
   },
 ];
@@ -50,12 +48,9 @@ export const SignUpForm: FC = () => {
 
   const signUpMutation = api.auth.signUp.useMutation({
     onSuccess: user => {
-      toast.success(
-        'Account was created successfully, please wait while we redirect you to the next step.',
-        {
-          duration: 6000,
-        }
-      );
+      toast.success('Account was created successfully.', {
+        duration: 6000,
+      });
       startTransition(() => {
         router.push(`/onboarding-step?userId=${user.id}`);
       });
@@ -86,10 +81,8 @@ export const SignUpForm: FC = () => {
       isSubmitting={isPending || signUpMutation.isPending}
       onSubmit={onSubmitHandle}
       hideResetButton
-      submitText="Sign Up"
-      actionClassName="col-span-2"
+      submitText="Register"
       submitClassName="w-full"
-      className="grid grid-cols-2 gap-4 space-y-0"
     />
   );
 };

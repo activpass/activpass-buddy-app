@@ -29,7 +29,7 @@ export const CheckInTokenBox: FC = () => {
   if (!data) return null;
 
   return (
-    <Flex gap="2" alignItems="center" mr="3">
+    <Flex gap="2" alignItems="center">
       {tokens.map(token => (
         <Flex
           key={token.id}
