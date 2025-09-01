@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, type FormFieldItem, useToast } from '@paalan/react-ui';
-import type { FC } from 'react';
+import { type FC, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { UserProviderEnum } from '@/enums/user.enum';
@@ -14,39 +14,6 @@ import {
 } from '@/validations/auth.validation';
 
 const fields: FormFieldItem<SignUpValidationSchemaType>[] = [
-  {
-    name: 'organization.name',
-    label: 'Organization name',
-    type: 'input',
-    placeholder: 'Enter your organization name',
-    required: true,
-  },
-  {
-    name: 'organization.type',
-    label: 'Organization Type',
-    type: 'select',
-    placeholder: 'Select organization type',
-    options: [
-      { label: 'Gym', value: 'gym' },
-      { label: 'Studio', value: 'studio' },
-      { label: 'Club', value: 'club' },
-    ],
-    required: true,
-  },
-  {
-    name: 'firstName',
-    label: 'First name',
-    type: 'input',
-    placeholder: 'Enter your first name',
-    required: true,
-  },
-  {
-    name: 'lastName',
-    label: 'Last name',
-    type: 'input',
-    placeholder: 'Enter your last name',
-    required: true,
-  },
   {
     name: 'email',
     label: 'Email',
@@ -79,43 +46,47 @@ const fields: FormFieldItem<SignUpValidationSchemaType>[] = [
 export const SignUpForm: FC = () => {
   const toast = useToast();
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  const signUpMutation = api.auth.signUp.useMutation();
+  const signUpMutation = api.auth.signUp.useMutation({
+    onSuccess: user => {
+      toast.success(
+        'Account was created successfully, please wait while we redirect you to the next step.',
+        {
+          duration: 6000,
+        }
+      );
+      startTransition(() => {
+        router.push(`/onboarding-step?userId=${user.id}`);
+      });
+    },
+    onError: error => {
+      toast.error(error.message);
+    },
+  });
 
   const form = useForm<SignUpValidationSchemaType>({
     resolver: zodResolver(signUpValidationSchema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
       email: '',
       password: '',
       confirmPassword: '',
       provider: UserProviderEnum.email,
-      organization: {
-        name: '',
-        type: 'gym',
-      },
     },
   });
 
   const onSubmitHandle = async (values: SignUpValidationSchemaType) => {
-    try {
-      await signUpMutation.mutateAsync(values);
-      toast.success('Account created successfully');
-      router.push('/signin');
-    } catch (error) {
-      const errorMessage = (error as Error).message;
-      toast.error(errorMessage);
-    }
+    signUpMutation.mutate(values);
   };
 
   return (
     <Form<SignUpValidationSchemaType>
       fields={fields}
       form={form}
+      isSubmitting={isPending || signUpMutation.isPending}
       onSubmit={onSubmitHandle}
       hideResetButton
-      submitText="Create an account"
+      submitText="Sign Up"
       actionClassName="col-span-2"
       submitClassName="w-full"
       className="grid grid-cols-2 gap-4 space-y-0"

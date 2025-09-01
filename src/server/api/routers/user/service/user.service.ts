@@ -3,7 +3,12 @@ import { TRPCError } from '@trpc/server';
 import { userRepository } from '@/server/api/routers/user/repository/user.repository';
 import { Logger } from '@/server/logger';
 
-import type { CreateUserArgs, GetUserByIdArgs, UpdateUserArgs } from './user.service.types';
+import type {
+  CreateUserArgs,
+  GetOnboardingUserArgs,
+  GetUserByIdArgs,
+  UpdateUserArgs,
+} from './user.service.types';
 
 class UserService {
   private readonly logger = new Logger(UserService.name);
@@ -52,6 +57,17 @@ class UserService {
         message: 'Failed to update user',
       });
     }
+  };
+
+  getOnboardingUser = async ({ userId }: GetOnboardingUserArgs) => {
+    const user = await userRepository.getByIdOrThrow(userId, {
+      bypassCache: true,
+    });
+    return {
+      id: user.id,
+      email: user.email,
+      isOnboardingComplete: user.isOnboardingComplete,
+    };
   };
 }
 

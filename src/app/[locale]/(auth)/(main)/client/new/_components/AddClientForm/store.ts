@@ -10,7 +10,7 @@ import {
 } from '@/validations/client/add-form.validation';
 import { createMembershipPlanSchema } from '@/validations/client/membership.validation';
 
-import type { MembershipPlan } from '../../../membership/types';
+import type { MembershipPlan } from '../../../../membership/types';
 
 export type ClientFormState = Omit<ClientFormSchema, 'personalInformation' | 'membershipDetail'> & {
   personalInformation: Omit<ClientFormSchema['personalInformation'], 'dob'> & {

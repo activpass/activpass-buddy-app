@@ -1,28 +1,40 @@
 import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
-import { UserModel } from '@/server/api/routers/user/model/user.model';
+import { type IUserData, UserModel } from '@/server/api/routers/user/model/user.model';
 import { mongodbConnect } from '@/server/database/mongodb';
 import { signInValidationSchema } from '@/validations/auth.validation';
 
 import { authBaseConfig } from './auth.base.config';
 
+const returnResponse = (user: IUserData) => {
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.fullName,
+    avatarUrl: user.avatar?.url || undefined,
+    orgId: user.orgId,
+  };
+};
 export const authConfig = {
   ...authBaseConfig,
   providers: [
     ...authBaseConfig.providers,
     Credentials({
-      credentials: { email: {}, password: {} },
+      credentials: { email: {}, password: {}, loginToken: {} },
       authorize: async credentials => {
-        const { email, password } = await signInValidationSchema.parseAsync(credentials);
         await mongodbConnect();
+        const loginToken = credentials?.loginToken as string;
+
+        if (loginToken) {
+          const user = await UserModel.authenticateWithLoginToken(loginToken);
+          return returnResponse(user);
+        }
+
+        const { email, password } = await signInValidationSchema.parseAsync(credentials);
         const user = await UserModel.authenticate(email, password);
         const userObj = user.toClientObject();
-        return {
-          id: userObj.id,
-          email: userObj.email,
-          name: userObj.fullName,
-        };
+        return returnResponse(userObj);
       },
     }),
   ],

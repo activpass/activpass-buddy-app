@@ -5,8 +5,14 @@ import { differenceInMinutes } from 'date-fns';
 import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger';
 
+import { checkInRepository } from '../../check-in/repository/check-in.repository';
+import { clientRepository } from '../../client/repository/client.repository';
 import { timeLogRepository } from '../repository/time-log.repository';
 import type {
+  ClientCheckInArgs,
+  ClientCheckInVerifyArgs,
+  ClientCheckOutArgs,
+  ClientCheckOutVerifyArgs,
   CreateTimeLogArgs,
   GetByClientIdWithDateRangeArgs,
   GetTimeLogByIdArgs,
@@ -86,6 +92,112 @@ class TimeLogService {
       this.logger.error('Failed to get calendar timeLogs by clientId', error);
       throw getTRPCError(error);
     }
+  };
+
+  clientCheckIn = async ({ input }: ClientCheckInArgs) => {
+    const { phoneNumber, orgId } = input;
+    const clientDoc = await clientRepository.findByPhoneNumber(phoneNumber);
+
+    if (clientDoc.organization.toString() !== orgId) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Client does not belong to this organization',
+      });
+    }
+
+    return {
+      name: clientDoc.fullName,
+      phoneNumber: clientDoc.phoneNumber,
+      email: clientDoc.email,
+      dob: clientDoc.dob,
+      orgId: clientDoc.organization.toHexString(),
+    };
+  };
+
+  clientCheckInVerify = async ({ input }: ClientCheckInVerifyArgs) => {
+    const { phoneNumber, orgId, pin } = input;
+    const clientDoc = await clientRepository.findByPhoneNumber(phoneNumber);
+
+    if (clientDoc.organization.toString() !== orgId) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Client does not belong to this organization',
+      });
+    }
+
+    const checkInDoc = await checkInRepository.getByOrgId({
+      orgId,
+    });
+
+    if (checkInDoc.pin !== pin) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Invalid pin',
+      });
+    }
+
+    const dateNow = new Date();
+
+    await timeLogRepository.updateCheckIn({
+      orgId,
+      data: {
+        clientId: clientDoc.id,
+        checkIn: dateNow,
+      },
+    });
+
+    await clientRepository.update(clientDoc.id, {
+      checkInDate: dateNow,
+      checkOutDate: undefined,
+    });
+
+    return {
+      success: true,
+    };
+  };
+
+  clientCheckOut = async ({ input }: ClientCheckOutArgs) => {
+    return this.clientCheckIn({ input });
+  };
+
+  clientCheckOutVerify = async ({ input }: ClientCheckOutVerifyArgs) => {
+    const { phoneNumber, orgId, pin } = input;
+    const clientDoc = await clientRepository.findByPhoneNumber(phoneNumber);
+
+    if (clientDoc.organization.toString() !== orgId) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Client does not belong to this organization',
+      });
+    }
+
+    const checkInDoc = await checkInRepository.getByOrgId({
+      orgId,
+    });
+
+    if (checkInDoc.pin !== pin) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Invalid pin',
+      });
+    }
+
+    const dateNow = new Date();
+    await timeLogRepository.updateCheckOut({
+      orgId,
+      clientId: clientDoc.id,
+      data: {
+        checkOut: dateNow,
+      },
+    });
+
+    await clientRepository.update(clientDoc.id, {
+      checkOutDate: dateNow,
+    });
+
+    return {
+      success: true,
+    };
   };
 }
 

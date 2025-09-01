@@ -10,8 +10,6 @@ import { BreadcrumbLink } from '@/components/BreadcrumbLink';
 import { useRouter } from '@/lib/navigation';
 import { useBreadcrumb } from '@/providers/BreadcrumbProvider';
 
-import { CheckInTokenBox } from './CheckInTokenBox';
-
 export const WithBreadcrumb: FC = () => {
   const { items } = useBreadcrumb();
   const router = useRouter();
@@ -22,7 +20,6 @@ export const WithBreadcrumb: FC = () => {
     <Paper className="flex items-center gap-2 p-4 text-sm md:px-6">
       <Breadcrumb items={items} Link={BreadcrumbLink} />
       <HStack className="ml-auto" gap="4">
-        <CheckInTokenBox />
         <Button variant="outline" size="sm">
           Feedback
         </Button>

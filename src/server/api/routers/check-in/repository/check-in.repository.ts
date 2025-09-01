@@ -5,7 +5,6 @@ import { Logger } from '@/server/logger/logger';
 
 import { CheckInModel, type ICheckInSchema } from '../model/check-in.model';
 import {
-  type CreateCheckInParams,
   type GenerateTokenCheckInParams,
   type GetByOrgIdParams,
   type ListCheckInsParams,
@@ -17,20 +16,6 @@ class CheckInRepository {
 
   getById = async (id: ICheckInSchema['id']) => {
     return CheckInModel.get(id);
-  };
-
-  create = async ({ data, orgId }: CreateCheckInParams) => {
-    try {
-      const doc = new CheckInModel({
-        ...data,
-        organization: orgId,
-      });
-      await doc.save();
-      return doc;
-    } catch (error) {
-      this.logger.error('Failed to create checkIn', error);
-      throw error;
-    }
   };
 
   update = async ({ id, data }: UpdateCheckInParams) => {
@@ -85,6 +70,17 @@ class CheckInRepository {
 
   getByOrgId = async ({ orgId }: GetByOrgIdParams) => {
     const doc = await CheckInModel.findOne({ organization: orgId });
+    if (!doc) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'CheckIn not found',
+      });
+    }
+    return doc;
+  };
+
+  getByClientId = async (clientId: string) => {
+    const doc = await CheckInModel.findOne({ client: clientId });
     if (!doc) {
       throw new TRPCError({
         code: 'NOT_FOUND',

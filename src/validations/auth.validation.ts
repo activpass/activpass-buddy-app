@@ -15,22 +15,8 @@ export const signInValidationSchema = z.object({
 export type SignInValidationSchemaType = z.infer<typeof signInValidationSchema>;
 
 export const baseSignUpValidationSchema = signInValidationSchema.extend({
-  firstName: z
-    .string({ required_error: 'First name is required' })
-    .min(1, { message: 'First name is required' }),
-  lastName: z
-    .string({ required_error: 'Last name is required' })
-    .min(1, { message: 'Last name is required' }),
   confirmPassword: z.string({ required_error: 'Password confirmation is required' }),
   provider: userProviderSchema,
-  organization: z.object({
-    name: z
-      .string({ required_error: 'Organization name is required' })
-      .min(1, { message: 'Organization name is required' }),
-    type: z
-      .string({ required_error: 'Organization type is required' })
-      .min(1, { message: 'Organization type is required' }),
-  }),
 });
 
 export const signUpValidationSchema = baseSignUpValidationSchema.refine(
@@ -44,3 +30,11 @@ export type SignUpValidationSchemaType = z.infer<typeof signUpValidationSchema>;
 
 export const forgotPasswordValidationSchema = signInValidationSchema.pick({ email: true });
 export type ForgotPasswordValidationSchemaType = z.infer<typeof forgotPasswordValidationSchema>;
+
+export const resetPasswordValidationSchema = baseSignUpValidationSchema
+  .omit({ provider: true })
+  .refine(({ password, confirmPassword }) => password === confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+export type ResetPasswordValidationSchemaType = z.infer<typeof resetPasswordValidationSchema>;

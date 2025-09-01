@@ -1,0 +1,41 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@paalan/react-ui';
+import Image from 'next/image';
+import type { FC } from 'react';
+
+import { api } from '@/trpc/server';
+
+import { EmployeeCheckInForm } from './_components/EmployeeCheckInForm';
+
+type CheckInEmployeePageProps = {
+  searchParams: {
+    orgId?: string;
+  };
+};
+const CheckInEmployeePage: FC<CheckInEmployeePageProps> = async ({ searchParams }) => {
+  const { orgId = '' } = searchParams;
+  const organization = await api.organizations.get(orgId);
+
+  return (
+    <Card className="lg:min-w-128">
+      <CardHeader className="text-center">
+        <Image
+          src="/logos/png/activpass-buddy-logo-white-blue.png"
+          alt="organization logo"
+          width={100}
+          height={100}
+        />
+        <CardTitle className="text-2xl">
+          Check In - <span className="text-primary">Employee</span>
+        </CardTitle>
+        <CardDescription className="text-balance">
+          Fill in the form below to check in an employee
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <EmployeeCheckInForm orgId={organization.id} />
+      </CardContent>
+    </Card>
+  );
+};
+
+export default CheckInEmployeePage;

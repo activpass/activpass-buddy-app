@@ -15,15 +15,8 @@ import {
 import { redis } from '@/server/database/redis';
 import { Logger } from '@/server/logger/logger';
 
-import { AUTH_ROLES } from '../../auth/constants';
 import { getRootAdminUser, isRootAdminUser } from '../../auth/helper/auth.helper';
-import { OrganizationModel } from '../../organization/model/organization.model';
-import {
-  type IUserData,
-  type IUserSchema,
-  type IUserVirtuals,
-  UserModel,
-} from '../model/user.model';
+import { type IUserData, type IUserSchema, UserModel } from '../model/user.model';
 
 class UserRepository {
   private readonly logger = new Logger(UserRepository.name);
@@ -60,7 +53,7 @@ class UserRepository {
     options?: GetUserByIdOptions<T>
   ): Promise<(T extends true ? ServerSession['user'] : IUserData) | null> => {
     const rootUser = getRootAdminUser();
-    if (rootUser.username === id || rootUser.id === id) return rootUser; // Return root user if id is root user
+    if (rootUser.id === id) return rootUser; // Return root user if id is root user
 
     const { includeSensitiveInfo = false, bypassCache = false } = options ?? {};
     if (!bypassCache) {
@@ -156,22 +149,8 @@ class UserRepository {
   create = async ({ data }: CreateUserParams) => {
     try {
       await this.isUserExists(data.email);
-      const { organization, ...rest } = data;
-      const organizationDoc = new OrganizationModel(organization);
-      const dataBody: Omit<IUserData, keyof IUserVirtuals> = {
-        ...rest,
-        username: data.email.split('@')[0] || '',
-        verified: true,
-        role: data.role || AUTH_ROLES.USER,
-        organization: organizationDoc.id,
-      };
 
-      const user = new UserModel(dataBody);
-
-      organizationDoc.createdBy = user.id;
-      organizationDoc.users.push(user.id);
-      // Save organization and user
-      await organizationDoc.save();
+      const user = new UserModel(data);
       await user.save();
 
       return user;

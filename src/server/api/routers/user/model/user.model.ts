@@ -6,6 +6,7 @@ import mongoose, {
   type Model,
 } from 'mongoose';
 
+import { imageKitFileSchemaDefinition } from '@/server/api/schemas/common';
 import { userProviderSchema } from '@/validations/auth.validation';
 
 import { AUTH_ROLES } from '../../auth/constants';
@@ -46,6 +47,7 @@ export interface IUserDocument extends HydratedDocument<IUserSchema, IUserSchema
 // Here, You have to explicity mention the type of statics.
 export interface IUserModel extends Model<IUserSchema, {}, IUserSchemaMethods> {
   authenticate(email: string, password: string): Promise<IUserDocument>;
+  authenticateWithLoginToken(loginToken: string): Promise<IUserDocument>;
   get(id: string | mongoose.Schema.Types.ObjectId): Promise<IUserDocument>;
   findByEmail(email: string): Promise<IUserDocument>;
   list(filter: FilterQuery<IUserSchema>): Promise<IUserDocument[]>;
@@ -65,21 +67,14 @@ const schemaOptions = {
 
 const UserSchema = new mongoose.Schema(
   {
-    organization: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', required: true },
+    organization: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization' },
     ownedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 
     firstName: {
       type: String,
-      required: true,
     },
     lastName: {
       type: String,
-      required: true,
-    },
-    username: {
-      type: String,
-      unique: true,
-      required: true,
     },
     email: {
       type: String,
@@ -92,11 +87,9 @@ const UserSchema = new mongoose.Schema(
     hash: {
       type: String,
     },
-    avatar: {
-      type: String,
-    },
+    avatar: imageKitFileSchemaDefinition,
     phoneNumber: {
-      type: String,
+      type: Number,
     },
 
     verified: {
@@ -136,6 +129,15 @@ const UserSchema = new mongoose.Schema(
       type: String,
       select: false,
     },
+
+    isOnboardingComplete: {
+      type: Boolean,
+    },
+
+    loginToken: {
+      type: String,
+      select: false,
+    },
   },
   schemaOptions
 );
@@ -145,6 +147,7 @@ UserSchema.virtual('fullName').get(function fullName() {
 });
 
 UserSchema.virtual('orgId').get(function getOrgId() {
+  if (!this.organization) return null;
   return this.organization.toHexString();
 });
 
@@ -189,8 +192,27 @@ UserSchema.static('authenticate', async function authenticate(email: string, pas
     throw new Error('Invalid email or password.');
   }
 
+  user.lastLogin = new Date();
+  await user.save();
+
   return user;
 });
+
+UserSchema.static(
+  'authenticateWithLoginToken',
+  async function authenticateWithLoginToken(loginToken: string) {
+    const user = await this.findOne({ loginToken }).exec();
+    if (!user) {
+      throw new Error('Invalid login token.');
+    }
+
+    user.lastLogin = new Date();
+    user.loginToken = undefined;
+    await user.save();
+
+    return user;
+  }
+);
 
 UserSchema.static('get', async function get(id: string) {
   const user = await this.findById(id).exec();

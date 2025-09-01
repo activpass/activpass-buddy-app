@@ -17,8 +17,10 @@ declare module 'next-auth' {
     id: string;
     name: string;
     email: string;
-    image: string;
+    avatarUrl: string;
+    orgId: string;
   }
+
   /**
    * The shape of the account object returned in the OAuth providers' `account` callback,
    * Usually contains information about the provider being used, like OAuth tokens (`access_token`, etc).
@@ -39,6 +41,15 @@ declare module 'next-auth/jwt' {
   interface JWT {
     /** User ID */
     id: string;
+    name: string;
     email: string;
+    orgId: string;
+  }
+}
+
+declare module '@auth/core/adapters' {
+  interface AdapterUser {
+    orgId: string;
+    avatarUrl: string;
   }
 }

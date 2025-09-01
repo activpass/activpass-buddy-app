@@ -23,6 +23,8 @@ export const authBaseConfig = {
         newToken.id = user.id || '';
         newToken.email = user.email || '';
         newToken.name = user.name || '';
+        newToken.picture = user.avatarUrl || '';
+        newToken.orgId = user.orgId || ''; // orgId is custom field added in next-auth.d.ts
       }
 
       return newToken;
@@ -35,6 +37,8 @@ export const authBaseConfig = {
           id: token.id || '',
           email: token.email || '',
           name: token.name,
+          avatarUrl: token.picture || '',
+          orgId: token.orgId || '', // orgId is custom field added in next-auth.d.ts
         };
       }
       return newSession;

@@ -41,6 +41,14 @@ const CheckInSchema = new mongoose.Schema(
       type: Number,
       default: () => crypto.randomInt(1000, 9999),
     },
+    client: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Client',
+    },
+    employee: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Employee',
+    },
   },
   schemaOptions
 );

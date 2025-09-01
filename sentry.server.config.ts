@@ -11,7 +11,7 @@ Sentry.init({
   dsn: SENTRY_DSN,
 
   // Enable Spotlight in development
-  spotlight: process.env.NODE_ENV === 'development',
+  spotlight: false, // process.env.NODE_ENV === 'development',
 
   ignoreErrors: [
     // Workaround for React RSC and Suspense boundaries: https://github.com/amannn/next-intl/issues/614#issuecomment-1862508393

@@ -1,11 +1,4 @@
-import type {
-  ClientCheckInInputSchema,
-  ClientCheckInVerifyInputSchema,
-  ClientCheckOutInputSchema,
-  ClientCheckOutVerifyInputSchema,
-  CreateCheckInInputSchema,
-  UpdateCheckInInputSchema,
-} from '../check-in.input';
+import type { CreateCheckInInputSchema, UpdateCheckInInputSchema } from '../check-in.input';
 
 export type GetCheckInByIdArgs = {
   id: string;
@@ -27,20 +20,4 @@ export type ListCheckInsArgs = {
 
 export type GenerateTokenCheckInArgs = {
   orgId: string;
-};
-
-export type ClientCheckInArgs = {
-  input: ClientCheckInInputSchema;
-};
-
-export type ClientCheckInVerifyArgs = {
-  input: ClientCheckInVerifyInputSchema;
-};
-
-export type ClientCheckOutArgs = {
-  input: ClientCheckOutInputSchema;
-};
-
-export type ClientCheckOutVerifyArgs = {
-  input: ClientCheckOutVerifyInputSchema;
 };

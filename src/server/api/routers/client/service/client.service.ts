@@ -100,7 +100,9 @@ class ClientService {
   update = async ({ input }: UpdateClientArgs) => {
     const { id, data } = input;
     try {
-      const client = await clientRepository.update({ id, data });
+      const { personalInformation, ...restData } = data;
+      const inputData = { ...personalInformation, ...restData };
+      const client = await clientRepository.update(id, inputData);
       return client;
     } catch (error: unknown) {
       throw new TRPCError({
@@ -183,6 +185,9 @@ class ClientService {
           avatar: client.avatar?.url || '',
           name: `${client.firstName} ${client.lastName}`.trim(),
           phoneNumber: client.phoneNumber,
+          email: client.email,
+          checkInDate: client.checkInDate,
+          joiningDate: client.createdAt,
           membershipPlanName: client.membershipPlan?.name || '',
           status: client.income?.paymentStatus || '',
           orgId: client.organization._id.toHexString(),

@@ -15,7 +15,7 @@ const SignUpPage = () => {
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Signup</CardTitle>
         <CardDescription className="text-balance">
-          Enter your information to create an account
+          Create an account with Activpass Buddy
         </CardDescription>
       </CardHeader>
       <CardContent>

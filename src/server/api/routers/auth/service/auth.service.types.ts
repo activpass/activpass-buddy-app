@@ -1,6 +1,8 @@
 import type { IUserSensitiveData } from '@/server/api/routers/user/model/user.model';
 import type { RouterInputs } from '@/trpc/shared';
 
+import type { CreateOnboardingStepInputSchema } from '../auth.input';
+
 export type ServerSession = {
   user: IUserSensitiveData & { orgId: string };
   sessionToken: string;
@@ -72,4 +74,10 @@ export type ResetPasswordArgs = {
 
 export type ForgotPasswordArgs = {
   input: RouterInputs['auth']['forgotPassword'];
+  url: string;
+};
+
+export type CreateOnboardingStepArgs = {
+  input: CreateOnboardingStepInputSchema;
+  headers: Headers;
 };

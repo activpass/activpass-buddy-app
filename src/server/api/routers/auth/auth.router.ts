@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server';
 
+import { env } from '@/env';
 // import { type MeQueryResult } from '@/server/api/routers/auth/auth.types';
 import { authService } from '@/server/api/routers/auth/service/auth.service';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
@@ -8,6 +9,7 @@ import { Logger } from '@/server/logger/logger';
 import type { IUserData } from '../user/model/user.model';
 import {
   accountVerifyInputSchema,
+  createOnboardingStepInputSchema,
   forgotPasswordInputSchema,
   resetPasswordInputSchema,
   signInInputSchema,
@@ -70,8 +72,18 @@ export const authRouter = createTRPCRouter({
     return result;
   }),
 
-  forgotPassword: publicProcedure.input(forgotPasswordInputSchema).mutation(async ({ input }) => {
-    const result = await authService.forgotPassword({ input });
-    return result;
-  }),
+  forgotPassword: publicProcedure
+    .input(forgotPasswordInputSchema)
+    .mutation(async ({ input, ctx }) => {
+      const url = ctx.headers.get('origin') || env.NEXTAUTH_URL;
+      const result = await authService.forgotPassword({ input, url });
+      return result;
+    }),
+
+  createOnboardingStep: publicProcedure
+    .input(createOnboardingStepInputSchema)
+    .mutation(async ({ input, ctx }) => {
+      const result = await authService.createOnboardingStep({ input, headers: ctx.headers });
+      return result;
+    }),
 });

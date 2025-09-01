@@ -4,7 +4,7 @@ import { cn } from '@paalan/react-shared/lib';
 import { Heading, Step, Stepper } from '@paalan/react-ui';
 import { type FC, useEffect } from 'react';
 
-import type { MembershipPlan } from '../../../membership/types';
+import type { MembershipPlan } from '../../../../membership/types';
 import { ADD_CLIENT_STEPPER_COMPONENT, ADD_CLIENT_STEPS } from './constants';
 import { useClientFormStore } from './store';
 

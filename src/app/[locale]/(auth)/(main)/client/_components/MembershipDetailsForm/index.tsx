@@ -72,10 +72,7 @@ export const MembershipDetailsForm: FC<MembershipDetailsFormProps> = ({
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col items-center">
-      <MembershipPricingHeader
-        title="Membership Plans"
-        subtitle="Choose the plan that's right for you"
-      />
+      <MembershipPricingHeader title="Plans" subtitle="Choose the plan that's right for you" />
       <MembershipPricingSwitch onChangeValue={onChangeTenure} value={selectedTenure} />
       <section className="mt-8 flex flex-col justify-center gap-8 sm:flex-row sm:flex-wrap">
         {filteredPlans.length ? (
@@ -91,9 +88,9 @@ export const MembershipDetailsForm: FC<MembershipDetailsFormProps> = ({
           })
         ) : (
           <Text className="mb-10 mt-6 text-center text-muted-foreground">
-            No membership plans available at the moment for{' '}
+            No plans available at the moment for{' '}
             <Strong>{CLIENT_MEMBERSHIP_TENURE[selectedTenure].display}</Strong>. Please create a
-            membership plan in{' '}
+            plan in{' '}
             <Link href="/client/membership" className="text-link underline">
               Membership
             </Link>{' '}

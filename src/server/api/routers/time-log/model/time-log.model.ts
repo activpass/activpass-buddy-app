@@ -35,6 +35,7 @@ const schemaOptions = {
 const TimeLogSchema = new mongoose.Schema(
   {
     client: { type: mongoose.Schema.Types.ObjectId, ref: 'Client' },
+    employee: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' },
     organization: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organization',

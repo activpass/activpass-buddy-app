@@ -104,7 +104,7 @@ export const goalsAndPreferenceSchema = z.object({
   classTimePreference: z.string().min(1, {
     message: 'Time preference is required',
   }),
-  additionalServices: convertObjectKeysIntoZodEnum(CLIENT_ADDITIONAL_SERVICE).array().optional(),
+  additionalServices: convertObjectKeysIntoZodEnum(CLIENT_ADDITIONAL_SERVICE).array(),
   instructorSupport: z.boolean(),
   fitnessAssessment: z.boolean(),
 });

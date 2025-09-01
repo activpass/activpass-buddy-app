@@ -11,3 +11,7 @@ export type CreateUserArgs = {
 export type UpdateUserArgs = {
   input: UpdateUserInputSchema;
 };
+
+export type GetOnboardingUserArgs = {
+  userId: string;
+};

@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 import { clientFormSchema } from '@/validations/client/add-form.validation';
-import { imageKitImageSchema } from '@/validations/common.validation';
+import { imageKitFileResponseSchema } from '@/validations/common.validation';
 
 export const createClientInputSchema = clientFormSchema.omit({ personalInformation: true }).extend({
   personalInformation: clientFormSchema.shape.personalInformation.extend({
-    avatar: imageKitImageSchema.nullable(),
+    avatar: imageKitFileResponseSchema.nullable(),
     dob: z.date(),
   }),
 });
@@ -18,10 +18,10 @@ export const updateClientInputSchema = z.object({
   data: z
     .object({
       personalInformation: createClientInputSchema.shape.personalInformation.partial(),
-      emergencyContact: createClientInputSchema.shape.emergencyContact.partial(),
-      goalsAndPreference: createClientInputSchema.shape.goalsAndPreference.partial(),
-      healthAndFitness: createClientInputSchema.shape.healthAndFitness.partial(),
-      avatar: imageKitImageSchema.nullable(),
+      emergencyContact: createClientInputSchema.shape.emergencyContact,
+      goalsAndPreference: createClientInputSchema.shape.goalsAndPreference,
+      healthAndFitness: createClientInputSchema.shape.healthAndFitness,
+      avatar: imageKitFileResponseSchema.nullable(),
     })
     .partial(),
 });
@@ -55,7 +55,7 @@ export const updateOnboardClientInputSchema = z.object({
 export type UpdateOnboardClientInputSchema = z.infer<typeof updateOnboardClientInputSchema>;
 
 export const updateAvatarInputSchema = z.object({
-  avatar: imageKitImageSchema.nullable(),
+  avatar: imageKitFileResponseSchema.nullable(),
   clientId: z.string().min(1, {
     message: 'Client ID is required',
   }),

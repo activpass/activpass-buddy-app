@@ -10,6 +10,7 @@ import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { redis } from '@/server/database/redis';
 import { Logger } from '@/server/logger';
 
+import { OrganizationModel } from '../../organization/model/organization.model';
 import {
   AUTH_ROLES,
   SESSION_TOKEN_COOKIE_KEY,
@@ -19,6 +20,7 @@ import {
 import {
   type AccountVerifyArgs,
   type AddUserSessionArgs,
+  type CreateOnboardingStepArgs,
   type DeleteSessionTokenArgs,
   type ForgotPasswordArgs,
   type ResetPasswordArgs,
@@ -34,10 +36,12 @@ import {
 class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
+  /** @deprecated */
   getSessionTokensKey = (userId: IUserData['id']): string => {
     return `${SESSION_TOKENS_PREFIX}${userId}`;
   };
 
+  /** @deprecated */
   private async addUserSession(args: AddUserSessionArgs): Promise<void> {
     const sessionKey = this.getSessionTokensKey(args.userId);
     const score = Math.floor(Date.now() / 1000) + args.expiresIn; // Current time + expiration time in seconds
@@ -70,11 +74,13 @@ class AuthService {
     await pipeline.exec();
   }
 
+  /** @deprecated */
   private async deleteSessionToken(args: DeleteSessionTokenArgs): Promise<void> {
     const sessionKey = this.getSessionTokensKey(args.userId);
     await redis.zrem(sessionKey, args.sessionToken);
   }
 
+  /** @deprecated */
   private async isTokenAboutToExpire(
     userId: IUserData['id'],
     decodedSessionToken: string
@@ -85,18 +91,19 @@ class AuthService {
     return score !== null && parseInt(score, 10) - currentTimestamp < TimeInSeconds.OneWeek;
   }
 
-  private async generateSessionToken(userId: IUserData['id']): Promise<string> {
+  private generateSessionToken(userId: IUserData['id']): string {
     const rawToken = `${userId}-${Date.now()}-${Math.random()}`;
     const hashedToken = getHashToken(rawToken);
     return hashedToken;
   }
 
+  /** @deprecated */
   private async renewSessionTokenAndCookies(
     userId: IUserData['id'],
     headers: Headers
   ): Promise<string> {
     const expiresIn = 60 * 60 * 24 * 5; // Renew for another 5 days
-    const newSessionToken = await this.generateSessionToken(userId);
+    const newSessionToken = this.generateSessionToken(userId);
     await this.addUserSession({
       userId,
       sessionToken: newSessionToken,
@@ -113,6 +120,7 @@ class AuthService {
     return newSessionToken;
   }
 
+  /** @deprecated */
   verifySessionTokenFromCookies = (headers: Headers) => {
     const sessionToken = headers
       .get('cookie')
@@ -141,6 +149,7 @@ class AuthService {
     };
   };
 
+  /** @deprecated */
   checkSessionTokenValidity = async (
     userId: IUserData['id'],
     sessionToken: string
@@ -156,38 +165,43 @@ class AuthService {
     return false;
   };
 
+  /** @deprecated */
+  createUserSession = async (user: IUserData, headers: Headers) => {
+    const expiresIn = TimeInSeconds.TwoWeeks;
+    const sessionToken = this.generateSessionToken(user.id);
+    await this.addUserSession({
+      userId: user.id,
+      sessionToken,
+      expiresIn,
+    });
+
+    createSecureCookie({
+      headers,
+      expiresInSeconds: expiresIn,
+      name: SESSION_TOKEN_COOKIE_KEY,
+      value: encodeURIComponent(sessionToken),
+    });
+
+    createSecureCookie({
+      headers,
+      expiresInSeconds: expiresIn,
+      name: USER_ID_COOKIE_KEY,
+      value: user.id,
+    });
+
+    return {
+      user,
+      sessionToken,
+    };
+  };
+
+  /** @deprecated */
   signIn = async (args: SignInArgs): Promise<ServerSession> => {
     const { input, headers } = args;
     try {
       const verifiedUser = await userRepository.authenticate(input.email, input.password);
       const user = verifiedUser.toClientObject();
-
-      const expiresIn = TimeInSeconds.TwoWeeks;
-      const sessionToken = await this.generateSessionToken(user.id);
-      await this.addUserSession({
-        userId: user.id,
-        sessionToken,
-        expiresIn,
-      });
-
-      createSecureCookie({
-        headers,
-        expiresInSeconds: expiresIn,
-        name: SESSION_TOKEN_COOKIE_KEY,
-        value: encodeURIComponent(sessionToken),
-      });
-
-      createSecureCookie({
-        headers,
-        expiresInSeconds: expiresIn,
-        name: USER_ID_COOKIE_KEY,
-        value: user.id,
-      });
-
-      return {
-        user,
-        sessionToken,
-      };
+      return await this.createUserSession(user, headers);
     } catch (error: unknown) {
       throw getTRPCError(error);
     }
@@ -198,6 +212,7 @@ class AuthService {
     const data = {
       ...input,
       role: AUTH_ROLES.OWNER,
+      isOnboardingComplete: false,
     };
     const newUser = await userRepository.create({ data });
 
@@ -208,6 +223,7 @@ class AuthService {
     return newUser.toClientObject();
   };
 
+  /** @deprecated */
   signOut = async (args: SignOutArgs): Promise<void> => {
     await this.deleteSessionToken({
       userId: args.session.user.id,
@@ -227,6 +243,7 @@ class AuthService {
     });
   };
 
+  /** @deprecated */
   validateSessionToken = async (
     args: ValidateSessionTokenArgs
   ): Promise<ValidateSessionTokenResult> => {
@@ -271,6 +288,7 @@ class AuthService {
     };
   };
 
+  /** @deprecated */
   removeAllSessions = async (args: SignOutAllSessionsArgs) => {
     const sessionKey = this.getSessionTokensKey(args.userId);
     await redis.del(sessionKey);
@@ -302,7 +320,7 @@ class AuthService {
   };
 
   forgotPassword = async (args: ForgotPasswordArgs) => {
-    const { input } = args;
+    const { input, url } = args;
     try {
       const email = input.email.toLowerCase().trim();
 
@@ -311,7 +329,7 @@ class AuthService {
       // Send email for forget password change
       const emailData = {
         email: userDoc.email,
-        username: userDoc.username,
+        fullName: userDoc.fullName,
         token: userDoc.resetPasswordToken,
       };
 
@@ -319,7 +337,16 @@ class AuthService {
       // TODO: Implement email service
       // email.send('forgot-password', { to: data.email }, data)
 
-      return { success: true };
+      const searchParams = new URLSearchParams({
+        token: emailData.token || '',
+        email: emailData.email || '',
+      });
+
+      const resetLink = `${url}/reset-password?${searchParams.toString()}`;
+
+      this.logger.debug(`Reset password link: ${resetLink}`);
+
+      return { success: true, url: resetLink }; // Return email data for testing purposes, Will remove later
     } catch (error) {
       throw getTRPCError(error);
     }
@@ -332,7 +359,7 @@ class AuthService {
 
     // Send email for password change
     const emailData = {
-      username: userDoc.username,
+      fullName: userDoc.fullName,
       email: userDoc.email,
     };
 
@@ -341,6 +368,77 @@ class AuthService {
     // email.send('reset-password', { to: emailData.email }, emailData)
 
     return { success: true };
+  };
+
+  createOnboardingStep = async (args: CreateOnboardingStepArgs) => {
+    try {
+      const { input } = args;
+      const { userId, data } = input;
+      const { profileSetup, facilitySetup } = data;
+      const user = await UserModel.findById(userId);
+
+      if (!user) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `User not found with id: ${userId}`,
+        });
+      }
+
+      // Check if email or phone number is already in use by another user
+      if (user.email !== profileSetup.email) {
+        const emailExists = await UserModel.findOne({ email: profileSetup.email });
+        if (emailExists) {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            message: 'Email already in use',
+          });
+        }
+      }
+
+      if (user.phoneNumber !== profileSetup.phoneNumber) {
+        const phoneExists = await UserModel.findOne({ phoneNumber: profileSetup.phoneNumber });
+        if (phoneExists) {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            message: 'Phone number already in use',
+          });
+        }
+      }
+
+      const loginToken = this.generateSessionToken(userId);
+
+      user.firstName = profileSetup.firstName;
+      user.lastName = profileSetup.lastName;
+      user.email = profileSetup.email;
+      user.phoneNumber = profileSetup.phoneNumber;
+      user.avatar = profileSetup.avatar;
+      user.isOnboardingComplete = true;
+      user.loginToken = loginToken;
+
+      // Create organization
+      const organization = {
+        name: facilitySetup.facilityName,
+        type: facilitySetup.businessType,
+        address: facilitySetup.address,
+        city: facilitySetup.city,
+        pincode: facilitySetup.pincode,
+        logo: facilitySetup.logo,
+      };
+      const organizationDoc = new OrganizationModel(organization);
+
+      organizationDoc.createdBy = user.id;
+      organizationDoc.users.push(user.id);
+      // Save organization and user
+      await organizationDoc.save();
+      await user.save();
+
+      return {
+        loginToken,
+      };
+    } catch (error) {
+      this.logger.error('Failed to create onboarding step', error);
+      throw error;
+    }
   };
 }
 

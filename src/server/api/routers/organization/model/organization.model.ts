@@ -6,6 +6,7 @@ import mongoose, {
 } from 'mongoose';
 
 import { PaymentMethod, Software } from '@/server/api/constants/common.constant';
+import { imageKitFileSchemaDefinition } from '@/server/api/schemas/common';
 
 const HolidayConfig = {
   name: { type: String, required: true },
@@ -61,7 +62,12 @@ const OrganizationSchema = new mongoose.Schema(
       lat: { type: String },
       lng: { type: String },
     },
+
     address: { type: String },
+    city: { type: String },
+    pincode: { type: String },
+    logo: imageKitFileSchemaDefinition,
+
     billingInfo: {
       paymentMethod: {
         type: String,

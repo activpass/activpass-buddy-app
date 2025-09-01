@@ -29,14 +29,14 @@ importers:
         specifier: ^1.4.1
         version: 1.4.1(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.25.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@paalan/react-shared':
-        specifier: ^1.4.11
-        version: 1.4.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.13))(@types/node@20.14.9)(typescript@5.5.4)))
+        specifier: ^1.5.1
+        version: 1.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.13))(@types/node@20.14.9)(typescript@5.5.4)))
       '@paalan/react-test-utils':
         specifier: ^1.4.1
         version: 1.4.1
       '@paalan/react-ui':
-        specifier: ^1.4.14
-        version: 1.4.14(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.4
+        version: 1.5.4(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-pdf/renderer':
         specifier: ^4.0.0
         version: 4.0.0(react@18.3.1)
@@ -3360,10 +3360,10 @@ packages:
       react-dom: '>=16.18.x'
       react-router-dom: '>=6.x.x'
 
-  '@paalan/react-shared@1.4.11':
+  '@paalan/react-shared@1.5.1':
     resolution:
       {
-        integrity: sha512-Gep88DOSK5lT0xUUFwMVRQqmOYfHq8Ju3Cqc/3khYvufM7ZHXuU3SIcXjLgkQ0UcVNOgq6qtUrNMnemv+CSwCQ==,
+        integrity: sha512-9WRRhQtTC5wxA+kCHvGT0qNC7tSXeyuMAn1UvcrHBY7N6O8InTiGfK1hp2o3yG1j4zgkHPsWjhDyF5vBtG5XCA==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -3378,10 +3378,10 @@ packages:
       }
     engines: { node: '>=16.x.x' }
 
-  '@paalan/react-ui@1.4.14':
+  '@paalan/react-ui@1.5.4':
     resolution:
       {
-        integrity: sha512-q+v+bjaCZtdbnWIdmoOfu7vxUTR5SnWfH+L+tkWTaAT2f84gHTKeSLmi0ZD/r9hlVee4a7/TnRSJds4wGBrw0w==,
+        integrity: sha512-+34CsJy1StqBNiBQT6qC0vixf0xXfPZXAYj5XaAdk0/VW/GCBBJ4fOgMjgrrruvD5mUQ2i02gyZmhvDUX9eV8w==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -21403,7 +21403,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@paalan/react-shared@1.4.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.13))(@types/node@20.14.9)(typescript@5.5.4)))':
+  '@paalan/react-shared@1.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.4(ts-node@10.9.2(@swc/core@1.6.6(@swc/helpers@0.5.13))(@types/node@20.14.9)(typescript@5.5.4)))':
     dependencies:
       axios: 1.7.2(debug@4.3.5)
       clsx: 2.1.1
@@ -21417,7 +21417,7 @@ snapshots:
 
   '@paalan/react-test-utils@1.4.1': {}
 
-  '@paalan/react-ui@1.4.14(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@paalan/react-ui@1.5.4(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@hookform/resolvers': 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@radix-ui/react-accordion': 1.2.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

@@ -1,9 +1,13 @@
 import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
 
 import { timeLogService } from './service/time-log.service';
 import {
+  clientCheckInInputSchema,
+  clientCheckInVerifyInputSchema,
+  clientCheckOutInputSchema,
+  clientCheckOutVerifyInputSchema,
   createTimeLogInputSchema,
   getTimeLogByClientIdWithDateRangeInputSchema,
   listTimeLogInputSchema,
@@ -27,5 +31,21 @@ export const timeLogRouter = createTRPCRouter({
     .input(getTimeLogByClientIdWithDateRangeInputSchema)
     .query(async ({ input, ctx }) => {
       return timeLogService.getByClientIdWithDateRange({ orgId: ctx.session.user.orgId, input });
+    }),
+  clientCheckIn: publicProcedure.input(clientCheckInInputSchema).mutation(async ({ input }) => {
+    return timeLogService.clientCheckIn({ input });
+  }),
+  clientCheckInVerify: publicProcedure
+    .input(clientCheckInVerifyInputSchema)
+    .mutation(async ({ input }) => {
+      return timeLogService.clientCheckInVerify({ input });
+    }),
+  clientCheckOut: publicProcedure.input(clientCheckOutInputSchema).mutation(async ({ input }) => {
+    return timeLogService.clientCheckOut({ input });
+  }),
+  clientCheckOutVerify: publicProcedure
+    .input(clientCheckOutVerifyInputSchema)
+    .mutation(async ({ input }) => {
+      return timeLogService.clientCheckOutVerify({ input });
     }),
 });

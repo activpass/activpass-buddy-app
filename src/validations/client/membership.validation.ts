@@ -21,8 +21,8 @@ export const createMembershipPlanSchema = z.object({
   features: z
     .array(
       z.object({
-        value: z.string().min(1, {
-          message: 'Feature name is required',
+        value: z.string().trim().min(1, {
+          message: 'Feature value is required',
         }),
       })
     )

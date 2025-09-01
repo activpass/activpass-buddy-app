@@ -11,7 +11,7 @@ export const phoneNumberSchema = z
     message: 'Phone number must be a 10 digit number',
   });
 
-export const imageKitImageSchema = z.object({
+export const imageKitFileResponseSchema = z.object({
   fileId: z.string(),
   filePath: z.string(),
   fileType: z.string(),
@@ -22,7 +22,7 @@ export const imageKitImageSchema = z.object({
   thumbnailUrl: z.string(),
   url: z.string(),
 });
-export type ImageKitImageSchema = z.infer<typeof imageKitImageSchema>;
+export type ImageKitFileResponseSchema = z.infer<typeof imageKitFileResponseSchema>;
 
 export const otpPinFormSchema = z.object({
   pin: z.string().min(4, {

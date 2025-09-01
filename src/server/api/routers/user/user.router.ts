@@ -1,7 +1,7 @@
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
 
 import { userService } from './service/user.service';
-import { createUserInputSchema } from './user.input';
+import { createUserInputSchema, getOnboardingUserInputSchema } from './user.input';
 
 export const userRouter = createTRPCRouter({
   getById: protectedProcedure.query(async ({ ctx }) => {
@@ -10,4 +10,9 @@ export const userRouter = createTRPCRouter({
   create: protectedProcedure.input(createUserInputSchema).mutation(async ({ input }) => {
     return userService.create({ input });
   }),
+  getOnboardingUser: publicProcedure
+    .input(getOnboardingUserInputSchema)
+    .query(async ({ input }) => {
+      return userService.getOnboardingUser({ userId: input.userId });
+    }),
 });

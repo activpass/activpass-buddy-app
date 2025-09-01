@@ -16,13 +16,13 @@ const ClientPage = async () => {
       <SetBreadcrumbItems
         items={[
           {
-            label: 'Client',
+            label: 'Clients',
           },
         ]}
       />
       <div className="flex h-full flex-col gap-8">
         <div className="mb-2">
-          <Heading as="h1">Client Zone</Heading>
+          <Heading as="h1">Clients List</Heading>
           <Text className="text-muted-foreground">
             This section provides all the essential information about our clients.
           </Text>

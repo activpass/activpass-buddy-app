@@ -5,6 +5,9 @@ import { cn } from '@paalan/react-shared/lib';
 import Image from 'next/image';
 import type { FC } from 'react';
 
+import blackLogo from '@/public/logos/png/activpass-buddy-logo-black-blue.png';
+import whiteLogo from '@/public/logos/png/activpass-buddy-logo-white-blue.png';
+
 import Link from '../Link';
 
 type LogoProps = {
@@ -16,11 +19,7 @@ export const Logo: FC<LogoProps> = ({ className }) => {
   return (
     <Link href="/">
       <Image
-        src={
-          isDark
-            ? '/logos/png/activpass-buddy-logo-white-blue.png'
-            : '/logos/png/activpass-buddy-logo-black-blue.png'
-        }
+        src={isDark ? whiteLogo : blackLogo}
         alt="Activpass"
         width="140"
         height="25"

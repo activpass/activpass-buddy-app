@@ -14,7 +14,7 @@ import {
 } from '@paalan/react-ui';
 import { useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { type FC, useState } from 'react';
+import { type FC, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 
 import Link from '@/components/Link';
@@ -29,6 +29,7 @@ export const SignInForm: FC<SignInFormProps> = _props => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/dashboard';
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm({
     resolver: zodResolver(signInValidationSchema),
@@ -49,13 +50,17 @@ export const SignInForm: FC<SignInFormProps> = _props => {
         callbackUrl: redirectTo,
         redirect: false,
       });
+
       if (response?.error) {
         throw new Error('Invalid email or password.');
       }
-      if (response?.url) {
-        toast.success('Signed in successfully');
-        router.push(response.url);
-      }
+
+      startTransition(() => {
+        if (response?.url) {
+          toast.success('Signed in successfully');
+          router.push(response.url);
+        }
+      });
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message || 'Failed to sign in');
@@ -66,6 +71,8 @@ export const SignInForm: FC<SignInFormProps> = _props => {
       setIsSubmitting(false);
     }
   };
+
+  const isLoading = isPending || isSubmitting;
 
   return (
     <FormRoot {...form}>
@@ -104,8 +111,8 @@ export const SignInForm: FC<SignInFormProps> = _props => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" isLoading={isSubmitting}>
-          {isSubmitting ? 'Signing in...' : 'Sign In'}
+        <Button type="submit" className="w-full" isLoading={isLoading}>
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </Button>
       </form>
     </FormRoot>

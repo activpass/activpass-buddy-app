@@ -84,7 +84,25 @@
     "sign_out": "Sign out"
   },
   "ForgotPassword": {
-    "meta_title": "Forgot password",
+    "meta_title": "Forgot Password",
     "meta_description": "Forgot your password? No worries! Easily reset it through our password recovery process."
+  },
+  "ResetPassword": {
+    "meta_title": "Reset Password",
+    "meta_description": "Reset your password securely and conveniently with our password reset feature.",
+    "title": "Reset Password",
+    "description": "Enter your new password below to reset your account password.",
+    "new_password_label": "New Password",
+    "confirm_password_label": "Confirm Password",
+    "submit_button": "Submit",
+    "submitting_button": "Submitting...",
+    "redirect_to_login": "Redirect to login Page",
+    "success_message": "Password reset successfully, redirecting to login page...",
+    "error_message": "Failed to reset password",
+    "new_password_placeholder": "Enter your new password",
+    "confirm_password_placeholder": "Re-enter your new password",
+    "token_missing_message": "Password reset token is missing",
+    "email_label": "Email",
+    "email_placeholder": "Enter your registered email"
   }
 }

@@ -1,25 +1,28 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Button,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormRoot,
-  Input,
-  useToast,
-} from '@paalan/react-ui';
-import type { FC } from 'react';
+import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
+import { type FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { useCopyToClipboard } from '@/hooks';
 import { api } from '@/trpc/client';
 import {
   forgotPasswordValidationSchema,
   type ForgotPasswordValidationSchemaType,
 } from '@/validations/auth.validation';
+
+const formFields: FormFieldItem<ForgotPasswordValidationSchemaType>[] = [
+  {
+    type: 'input',
+    name: 'email',
+    label: 'Email',
+    placeholder: 'Enter your registered email',
+    required: true,
+    inputType: 'email',
+    inputProps: { autoFocus: true },
+  },
+];
 
 export const ForgotPasswordForm: FC = () => {
   const form = useForm({
@@ -28,7 +31,13 @@ export const ForgotPasswordForm: FC = () => {
       email: '',
     },
   });
-  const toast = useToast();
+  const [copied, setTextCopy] = useCopyToClipboard();
+
+  useEffect(() => {
+    if (copied) {
+      toast.success('Reset password link copied to clipboard');
+    }
+  }, [copied]);
 
   const forgotPasswordMutation = api.auth.forgotPassword.useMutation({
     onSuccess(data) {
@@ -36,38 +45,28 @@ export const ForgotPasswordForm: FC = () => {
         toast.error('Failed to send verification email');
         return;
       }
-      toast.success('Verification email sent successfully');
+      setTextCopy(data.url);
+      // toast.success('Verification email sent successfully, please check your inbox.');
     },
     onError(error) {
       toast.error(error.message || 'Failed to send verification email');
     },
   });
 
-  const onSubmit = async (values: ForgotPasswordValidationSchemaType) => {
+  const handleSubmit = (values: ForgotPasswordValidationSchemaType) => {
     forgotPasswordMutation.mutate(values);
   };
 
   const isLoading = forgotPasswordMutation.isPending;
   return (
-    <FormRoot {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <FormControl>
-                <Input id="email" placeholder="Enter your registered email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="w-full" isLoading={isLoading}>
-          {isLoading ? 'Sending...' : 'Send verification email'}
-        </Button>
-      </form>
-    </FormRoot>
+    <Form<ForgotPasswordValidationSchemaType>
+      form={form}
+      fields={formFields}
+      onSubmit={handleSubmit}
+      hideResetButton
+      isSubmitting={isLoading}
+      submitText={isLoading ? 'Sending...' : 'Send Reset Link'}
+      submitClassName="w-full"
+    />
   );
 };

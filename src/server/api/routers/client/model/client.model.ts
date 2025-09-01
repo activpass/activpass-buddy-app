@@ -15,6 +15,7 @@ import {
   CLIENT_RELATIONSHIP,
 } from '@/constants/client/add-form.constant';
 import { generateClientCode } from '@/server/api/helpers/common';
+import { imageKitFileSchemaDefinition } from '@/server/api/schemas/common';
 import { getObjectKeys } from '@/utils/helpers';
 
 // Virtuals are not included in the schema type
@@ -70,17 +71,7 @@ const ClientSchema = new mongoose.Schema(
     },
 
     clientCode: { type: String, required: true, unique: true, default: () => generateClientCode() },
-    avatar: {
-      fileId: { type: String },
-      filePath: { type: String },
-      fileType: { type: String },
-      height: { type: Number },
-      width: { type: Number },
-      name: { type: String },
-      size: { type: Number },
-      thumbnailUrl: { type: String },
-      url: { type: String },
-    },
+    avatar: imageKitFileSchemaDefinition,
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     phoneNumber: { type: Number, required: true, unique: true },
@@ -142,6 +133,9 @@ const ClientSchema = new mongoose.Schema(
       },
     },
     isDeleted: { type: Boolean, default: false },
+
+    checkInDate: { type: Date },
+    checkOutDate: { type: Date },
   },
   schemaOptions
 );

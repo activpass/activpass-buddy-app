@@ -1,3 +1,4 @@
+import { cn } from '@paalan/react-shared/lib';
 import { type ComponentProps, forwardRef } from 'react';
 
 import { Link as LocalizedLink } from '@/lib/navigation';
@@ -7,17 +8,19 @@ type LinkProps = Omit<ComponentProps<typeof LocalizedLink>, 'href'> & {
 };
 
 const Link = forwardRef<React.ComponentRef<typeof LocalizedLink>, LinkProps>(
-  ({ children, href, ...props }, ref) => {
+  ({ children, href, className, ...props }, ref) => {
+    const localClassName = cn('', className);
+
     if (!href || href.toString().startsWith('http')) {
       return (
-        <a href={href} {...props}>
+        <a href={href} className={localClassName} {...props}>
           {children}
         </a>
       );
     }
 
     return (
-      <LocalizedLink href={href?.toString()} {...props} ref={ref}>
+      <LocalizedLink href={href?.toString()} className={localClassName} {...props} ref={ref}>
         {children}
       </LocalizedLink>
     );

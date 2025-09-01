@@ -34,9 +34,6 @@ export const ClientTable = () => {
         }}
         toolbarRightSideContent={
           <div className="flex gap-2">
-            <Link href="/client/membership">
-              <Button variant="outline">Manage Membership</Button>
-            </Link>
             <Link href="/client/new">
               <Button leftIcon={<AddIcon className="size-3" />}>Add Client</Button>
             </Link>

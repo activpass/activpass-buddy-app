@@ -1,5 +1,6 @@
 'use client';
 
+import { dateIntl } from '@paalan/react-shared/lib';
 import { Avatar, Button, type DataTableColumnDef, DataTableColumnHeader } from '@paalan/react-ui';
 import { LuUser2 } from 'react-icons/lu';
 
@@ -12,7 +13,7 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
   {
     id: 'name',
     accessorKey: 'name',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" className="ml-0" />,
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2 pl-3">
@@ -35,15 +36,9 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
     },
   },
   {
-    id: 'phoneNumber',
-    accessorKey: 'phoneNumber',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Contact" />,
-    enableSorting: false,
-  },
-  {
     id: 'membershipPlanName',
     accessorKey: 'membershipPlanName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Membership" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Plan" />,
     enableSorting: false,
     cell: ({ row }) => {
       if (!row.original.membershipPlanName) return 'N/A';
@@ -61,6 +56,30 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
     },
   },
   {
+    id: 'checkInDate',
+    accessorKey: 'checkInDate',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Check-in Date" />,
+    cell: ({ row }) => dateIntl.format(row.original.checkInDate),
+  },
+  {
+    id: 'joiningDate',
+    accessorKey: 'joiningDate',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Joining Date" />,
+    cell: ({ row }) => dateIntl.format(row.original.joiningDate),
+  },
+  {
+    id: 'email',
+    accessorKey: 'email',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+    enableSorting: false,
+  },
+  {
+    id: 'phoneNumber',
+    accessorKey: 'phoneNumber',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,
+    enableSorting: false,
+  },
+  {
     id: 'status',
     accessorKey: 'status',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
@@ -70,25 +89,6 @@ export const CLIENT_TABLE_COLUMNS: DataTableColumnDef<ClientData>[] = [
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: 'checkIn',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Check In" />,
-    enableSorting: false,
-    cell: ({ row }) => {
-      return (
-        <Button
-          as={Link}
-          variant="link"
-          color="blue"
-          href={`/${row.original.orgId}/check-in`}
-          className="pl-0"
-          target="_blank"
-        >
-          Check In
-        </Button>
-      );
     },
   },
 ];

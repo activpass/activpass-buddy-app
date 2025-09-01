@@ -8,7 +8,6 @@ import {
   type DeleteAvatarParams,
   type ListClientParams,
   type UpdateAvatarParams,
-  type UpdateClientParams,
 } from '@/server/api/routers/client/repository/client.repository.types';
 import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger/logger';
@@ -87,14 +86,9 @@ class ClientRepository {
     }
   };
 
-  update = async ({ id, data }: UpdateClientParams) => {
+  update = async (id: string, data: Partial<IClientSchema>) => {
     try {
-      const { personalInformation, ...restData } = data;
-      const updatedClient = await ClientModel.findByIdAndUpdate(
-        id,
-        { ...personalInformation, ...restData },
-        { new: true }
-      ).exec();
+      const updatedClient = await ClientModel.findByIdAndUpdate(id, data, { new: true }).exec();
       if (!updatedClient) {
         throw new TRPCError({
           code: 'NOT_FOUND',

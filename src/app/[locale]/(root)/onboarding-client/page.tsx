@@ -1,7 +1,6 @@
 import { Flex, Heading, Paper, Text } from '@paalan/react-ui';
 import type { FC } from 'react';
 
-import { logger } from '@/server/logger';
 import { api } from '@/trpc/server';
 
 import { AddClientForm } from '../../(auth)/(main)/client/new/_components/AddClientForm';
@@ -15,10 +14,7 @@ type OnboardClientPageProps = {
 const OnboardClientPage: FC<OnboardClientPageProps> = async ({ searchParams }) => {
   const { token } = searchParams;
   const data = await api.clients.verifyOnboardingToken({ token });
-  logger.info(
-    '🚀 ~ constOnboardClientPage:FC<OnboardClientPageProps>= ~ verifiedOnboardData:',
-    data
-  );
+
   return (
     <div className="overflow-auto p-4 sm:p-0">
       <Paper className="p-8">

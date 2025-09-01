@@ -23,8 +23,8 @@ const isProtectedRoute = createRouteMatcher([
   '/:locale/client(.*)',
   '/employee(.*)',
   '/:locale/employee(.*)',
-  '/finance(.*)',
-  '/:locale/finance(.*)',
+  '/plans(.*)',
+  '/:locale/plans(.*)',
 ]);
 
 const authMiddleware = (request: NextAuthRequest) => {
@@ -46,5 +46,5 @@ export default function middleware(request: NextRequest, response: AppRouteHandl
 export const config = {
   // The following matcher runs middleware on all routes
   // except static assets and API routes.
-  matcher: ['/((?!.+\\.[\\w]+$|_next|api|trpc|favicon.ico).*)', '/', '/_not-found'],
+  matcher: ['/((?!.+\\.[\\w]+$|_next|api|trpc|favicon.ico|\\.well-known).*)', '/', '/_not-found'],
 };

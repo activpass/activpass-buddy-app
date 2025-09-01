@@ -11,30 +11,31 @@ type ClientAnalyticsProps = {};
 export const ClientAnalytics: FC<ClientAnalyticsProps> = () => {
   const { data: analyticsData, isLoading } = api.clients.analytics.useQuery();
 
+  // Cards data
   const cardItems = useMemo(() => {
     return [
       {
         title: 'Total Clients',
         icon: LuUsers,
-        value: numberIntl.format(analyticsData?.overallCount || 0),
+        value: numberIntl.format(analyticsData?.overallCount),
         description: 'Overall total clients',
       },
       {
         title: 'New Clients',
         icon: LuFileText,
-        value: numberIntl.format(analyticsData?.newAddedCount || 0),
+        value: numberIntl.format(analyticsData?.newAddedCount),
         description: 'New clients this month',
       },
       {
         title: 'Present',
         icon: LuCheckCircle,
-        value: numberIntl.format(analyticsData?.presentCount || 0),
+        value: numberIntl.format(analyticsData?.presentCount),
         description: 'Today clients present',
       },
       {
         title: 'Absent',
         icon: LuXCircle,
-        value: numberIntl.format(analyticsData?.absentCount || 0),
+        value: numberIntl.format(analyticsData?.absentCount),
         description: 'Today clients absent',
       },
     ];

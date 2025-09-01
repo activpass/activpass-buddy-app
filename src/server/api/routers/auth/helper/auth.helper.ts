@@ -8,7 +8,6 @@ import { ADMIN_CREDENTIALS, AUTH_ROLES } from '../constants';
 const organization = new mongoose.Types.ObjectId();
 const rootAdminUser: IUserData = {
   id: 'root-admin-user-id',
-  username: ADMIN_CREDENTIALS.username,
   email: `${ADMIN_CREDENTIALS.username.toLowerCase()}@activpass.in`,
   rawPassword: ADMIN_CREDENTIALS.password,
   firstName: 'Admin',
@@ -22,7 +21,7 @@ const rootAdminUser: IUserData = {
 };
 
 export const isRootAdminUser = (email: string) => {
-  return rootAdminUser.username === email || rootAdminUser.email === email;
+  return rootAdminUser.email === email;
 };
 
 export const getRootAdminUser = () => rootAdminUser;
