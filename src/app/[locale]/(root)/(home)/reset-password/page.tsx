@@ -34,7 +34,7 @@ const ResetPasswordPage: FC<ResetPasswordPageProps> = async ({ params, searchPar
   const { token = '', email = '' } = searchParams;
 
   return (
-    <Card>
+    <Card className="flex-1">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">{t('title')}</CardTitle>
         <CardDescription className="text-balance">{t('description')}</CardDescription>

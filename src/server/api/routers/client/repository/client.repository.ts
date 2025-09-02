@@ -34,16 +34,17 @@ class ClientRepository {
     return ClientModel.findByPhoneNumber(phoneNumber);
   };
 
-  isClientExists = async (email: string, phoneNumber: number) => {
+  isClientExistsWithSameOrg = async (orgId: string, email: string, phoneNumber: number) => {
     try {
       const client = await ClientModel.findOne({
+        organization: orgId,
         $or: [{ email }, { phoneNumber }],
       }).exec();
 
       if (client) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `Client with phoneNumber "${phoneNumber}" or email "${email}" already exist.`,
+          message: `Client with phoneNumber "${phoneNumber}" or email "${email}" already exist in this organization.`,
         });
       }
     } catch (error) {
@@ -56,7 +57,11 @@ class ClientRepository {
     try {
       const { personalInformation, ...rest } = data;
 
-      await this.isClientExists(personalInformation.email, personalInformation.phoneNumber);
+      await this.isClientExistsWithSameOrg(
+        orgId,
+        personalInformation.email,
+        personalInformation.phoneNumber
+      );
 
       const goalsAndPreference: IClientSchema['goalsAndPreference'] = {
         ...rest.goalsAndPreference,

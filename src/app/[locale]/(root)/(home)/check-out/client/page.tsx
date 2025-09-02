@@ -18,7 +18,7 @@ const CheckOutClientPage: FC<CheckOutClientPageProps> = async ({ searchParams })
   const logoUrl = organization?.logo?.url;
 
   return (
-    <Card>
+    <Card className="flex-1">
       <CardHeader className="mb-4 text-center">
         {logoUrl && (
           <div className="mb-5 flex justify-center">

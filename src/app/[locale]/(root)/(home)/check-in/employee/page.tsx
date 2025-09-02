@@ -17,7 +17,7 @@ const CheckInEmployeePage: FC<CheckInEmployeePageProps> = async ({ searchParams 
   const logoUrl = organization?.logo?.url;
 
   return (
-    <Card className="lg:min-w-128">
+    <Card className="flex-1">
       <CardHeader className="text-center">
         {logoUrl && (
           <div className="mb-5 flex justify-center">

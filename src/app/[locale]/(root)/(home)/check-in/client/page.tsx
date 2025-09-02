@@ -18,7 +18,7 @@ const CheckInClientPage: FC<CheckInClientPageProps> = async ({ searchParams }) =
   const logoUrl = organization?.logo?.url;
 
   return (
-    <Card className="m-8 lg:min-w-128">
+    <Card className="m-8 flex-1">
       <CardHeader className="mb-4 text-center">
         {logoUrl && (
           <div className="mb-5 flex justify-center">

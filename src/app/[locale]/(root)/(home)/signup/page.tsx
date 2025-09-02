@@ -11,7 +11,7 @@ export const metadata = {
 
 const SignUpPage = () => {
   return (
-    <Card>
+    <Card className="flex-1">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Signup</CardTitle>
         <CardDescription className="text-balance">
