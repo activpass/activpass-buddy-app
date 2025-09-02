@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, toast } from '@paalan/react-ui';
+import { toast } from '@paalan/react-ui';
 import { useState } from 'react';
 
 import { api } from '@/trpc/client';
@@ -58,17 +58,15 @@ export const OnboardingStepClientPage = ({ userId, userEmail }: OnboardingStepCl
     }
   };
 
+  if (loginToken) {
+    return <OnboardingCompletionForm loginToken={loginToken} />;
+  }
+
   return (
-    <Box className="lg:max-w-128">
-      {loginToken ? (
-        <OnboardingCompletionForm loginToken={loginToken} />
-      ) : (
-        <OnboardingStepper
-          onComplete={handleComplete}
-          userEmail={userEmail}
-          isSubmitting={isSubmitting}
-        />
-      )}
-    </Box>
+    <OnboardingStepper
+      onComplete={handleComplete}
+      userEmail={userEmail}
+      isSubmitting={isSubmitting}
+    />
   );
 };

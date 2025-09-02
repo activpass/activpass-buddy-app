@@ -14,22 +14,15 @@ class UserService {
   private readonly logger = new Logger(UserService.name);
 
   getById = async ({ id }: GetUserByIdArgs) => {
-    try {
-      if (!id) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'User ID is required',
-        });
-      }
-      const user = await userRepository.getById(id);
-      return user;
-    } catch (error: unknown) {
-      this.logger.error('Failed to get user by id', error);
+    if (!id) {
       throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to get user by id',
+        code: 'BAD_REQUEST',
+        message: 'User ID is required',
       });
     }
+
+    const user = await userRepository.getByIdOrThrow(id);
+    return user;
   };
 
   create = async ({ input }: CreateUserArgs) => {
@@ -60,9 +53,7 @@ class UserService {
   };
 
   getOnboardingUser = async ({ userId }: GetOnboardingUserArgs) => {
-    const user = await userRepository.getByIdOrThrow(userId, {
-      bypassCache: true,
-    });
+    const user = await userRepository.get(userId);
     return {
       id: user.id,
       email: user.email,

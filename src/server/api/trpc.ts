@@ -138,6 +138,10 @@ const enforceUserIsAuthenticated = t.middleware(async opts => {
       throw getTRPCError('Failed to retrieve user info');
     }
 
+    if (!result.userInfo.orgId) {
+      throw getTRPCError('User is not associated with any organization', 'FORBIDDEN');
+    }
+
     return await opts.next({
       ctx: {
         ...opts.ctx,

@@ -36,7 +36,7 @@ const CheckOutPage: React.FC<CheckOutPageProps> = async ({ searchParams }) => {
   }
 
   return (
-    <Card className="border-none bg-transparent shadow-none lg:min-w-128">
+    <Card className="border-none bg-transparent shadow-none">
       <CardHeader className="text-center">
         <CardTitle className="text-3xl">Check Out</CardTitle>
         <CardDescription className="text-balance text-base">

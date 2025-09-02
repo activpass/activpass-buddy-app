@@ -31,7 +31,7 @@ class UserRepository {
       userKey,
       JSON.stringify(user),
       'EX',
-      60 * 60 * 24 * 7 // 7 days in seconds
+      60 * 60 * 24 * 2 // 2 days in seconds
     );
   };
 
@@ -46,6 +46,11 @@ class UserRepository {
     const userKey = this.getUserInfoKey(userId);
     const cachedUserInfo = await redis.get(userKey);
     return cachedUserInfo !== null ? (JSON.parse(cachedUserInfo) as ServerSession['user']) : null;
+  };
+
+  get = async (id: string) => {
+    const user = await UserModel.get(id);
+    return user;
   };
 
   getById = async <T extends boolean = false>(
@@ -77,7 +82,6 @@ class UserRepository {
       userData = userDoc.toClientObject(includeSensitiveInfo);
     } catch (error) {
       this.logger.error('Failed to get user by id', error);
-      return null;
     }
 
     if (userData) {
@@ -110,13 +114,11 @@ class UserRepository {
       if (isRootAdminUser(email)) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: 'Already admin has this name. So you cannot use this username!',
+          message: 'Already admin has this email!',
         });
       }
 
-      const user = await UserModel.findOne({
-        $or: [{ email }, { username: email }],
-      });
+      const user = await UserModel.findByEmail(email);
 
       if (user) {
         const userEmail = user.email;
@@ -169,7 +171,7 @@ class UserRepository {
           message: 'User not found',
         });
       }
-      this.cacheUserInfo(updatedUser.toClientObject(true));
+      this.cacheUserInfo(updatedUser.toClientObject());
       return updatedUser;
     } catch (error) {
       this.logger.error('Failed to update user', error);

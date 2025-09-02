@@ -11,7 +11,7 @@ export const metadata = {
 
 const SignUpPage = () => {
   return (
-    <Card className="lg:min-w-128">
+    <Card>
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Signup</CardTitle>
         <CardDescription className="text-balance">

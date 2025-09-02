@@ -3,7 +3,7 @@ import { mongodbConnect } from '@/server/database/mongodb';
 
 import { getSession } from './auth';
 
-export const auth = async () => {
+export const getSessionUser = async () => {
   const session = await getSession();
   if (!session?.user) throw new Error('Not authenticated.');
   if (!session.user.id) throw new Error('User ID not found.');

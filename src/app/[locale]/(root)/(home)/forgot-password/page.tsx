@@ -19,7 +19,7 @@ export async function generateMetadata(props: { params: { locale: string } }) {
 
 const ForgotPasswordPage = () => {
   return (
-    <Card className="lg:min-w-128">
+    <Card>
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Forgot Password</CardTitle>
         <CardDescription className="text-balance">

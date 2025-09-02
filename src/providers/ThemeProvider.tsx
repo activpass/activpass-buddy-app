@@ -45,5 +45,14 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({
     router.replace(redirectPath, { scroll: false });
   }, [pathname, router, searchParams, enableGlobalToaster]);
 
-  return <NextThemeProvider {...props}>{children}</NextThemeProvider>;
+  return (
+    <NextThemeProvider
+      toastProps={{
+        position: 'bottom-right',
+      }}
+      {...props}
+    >
+      {children}
+    </NextThemeProvider>
+  );
 };

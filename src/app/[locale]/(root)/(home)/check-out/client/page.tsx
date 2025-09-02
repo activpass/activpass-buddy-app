@@ -16,8 +16,9 @@ const CheckOutClientPage: FC<CheckOutClientPageProps> = async ({ searchParams })
   const { orgId = '' } = searchParams;
   const organization = await api.organizations.get(orgId);
   const logoUrl = organization?.logo?.url;
+
   return (
-    <Card className="lg:min-w-128">
+    <Card>
       <CardHeader className="mb-4 text-center">
         {logoUrl && (
           <div className="mb-5 flex justify-center">

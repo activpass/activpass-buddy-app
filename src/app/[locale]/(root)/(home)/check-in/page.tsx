@@ -24,7 +24,7 @@ const CheckInPage: React.FC<CheckInPageProps> = async ({ searchParams }) => {
 
   if (!orgId) {
     return (
-      <Card className="border-none bg-transparent shadow-none lg:min-w-128">
+      <Card className="border-none bg-transparent shadow-none">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl">Check In</CardTitle>
           <CardDescription className="text-balance text-base">
@@ -36,7 +36,7 @@ const CheckInPage: React.FC<CheckInPageProps> = async ({ searchParams }) => {
   }
 
   return (
-    <Card className="border-none bg-transparent shadow-none lg:min-w-128">
+    <Card className="border-none bg-transparent shadow-none">
       <CardHeader className="text-center">
         <CardTitle className="text-3xl">Check In</CardTitle>
         <CardDescription className="text-balance text-base">

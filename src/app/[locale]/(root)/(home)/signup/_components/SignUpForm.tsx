@@ -48,9 +48,7 @@ export const SignUpForm: FC = () => {
 
   const signUpMutation = api.auth.signUp.useMutation({
     onSuccess: user => {
-      toast.success('Account was created successfully.', {
-        duration: 6000,
-      });
+      toast.success('Account was created successfully, redirecting to onboarding...');
       startTransition(() => {
         router.push(`/onboarding-step?userId=${user.id}`);
       });
