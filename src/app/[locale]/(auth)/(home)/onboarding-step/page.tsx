@@ -25,7 +25,7 @@ const OnboardingStepPage = async ({ searchParams }: OnboardingStepPageProps) => 
   const onboardingUser = await api.users.getOnboardingUser({ userId });
 
   if (onboardingUser.isOnboardingComplete) {
-    return redirect('/dashboard', RedirectType.replace);
+    return redirect('/signin', RedirectType.replace);
   }
 
   return <OnboardingStepClientPage userEmail={onboardingUser.email} userId={onboardingUser.id} />;

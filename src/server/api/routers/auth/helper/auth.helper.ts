@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { userProviderSchema } from '@/validations/auth.validation';
 
 import type { IUserData } from '../../user/model/user.model';
-import { ADMIN_CREDENTIALS, AUTH_ROLES } from '../constants';
+import { ADMIN_CREDENTIALS, UserRoleEnum } from '../constants';
 
 const organization = new mongoose.Types.ObjectId();
 const rootAdminUser: IUserData = {
@@ -12,7 +12,7 @@ const rootAdminUser: IUserData = {
   rawPassword: ADMIN_CREDENTIALS.password,
   firstName: 'Admin',
   lastName: 'Admin',
-  role: AUTH_ROLES.ADMIN,
+  role: UserRoleEnum.ADMIN,
   verified: true,
   fullName: 'Admin Admin',
   provider: userProviderSchema.enum.email,

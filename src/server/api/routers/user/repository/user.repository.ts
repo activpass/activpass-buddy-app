@@ -12,48 +12,21 @@ import {
   type ResetPasswordParams,
   type UpdateUserParams,
 } from '@/server/api/routers/user/repository/user.repository.types';
-import { redis } from '@/server/database/redis';
 import { Logger } from '@/server/logger/logger';
 
 import { getRootAdminUser, isRootAdminUser } from '../../auth/helper/auth.helper';
+import { cacheUserInfo, clearCachedUserInfo, getCachedUserInfo } from '../helper/user.helper';
 import { type IUserData, type IUserSchema, UserModel } from '../model/user.model';
 
 class UserRepository {
   private readonly logger = new Logger(UserRepository.name);
 
-  private getUserInfoKey = (userId: IUserSchema['id']): string => {
-    return `user-info:${userId}`;
-  };
-
-  private cacheUserInfo = async (user: ServerSession['user']): Promise<void> => {
-    const userKey = this.getUserInfoKey(user.id);
-    await redis.set(
-      userKey,
-      JSON.stringify(user),
-      'EX',
-      60 * 60 * 24 * 2 // 2 days in seconds
-    );
-  };
-
-  private clearCachedUserInfo = async (userId: ServerSession['user']['id']): Promise<void> => {
-    const userKey = this.getUserInfoKey(userId);
-    await redis.del(userKey);
-  };
-
-  private getCachedUserInfo = async (
-    userId: ServerSession['user']['id']
-  ): Promise<ServerSession['user'] | null> => {
-    const userKey = this.getUserInfoKey(userId);
-    const cachedUserInfo = await redis.get(userKey);
-    return cachedUserInfo !== null ? (JSON.parse(cachedUserInfo) as ServerSession['user']) : null;
-  };
-
-  get = async (id: string) => {
+  getById = async (id: string) => {
     const user = await UserModel.get(id);
     return user;
   };
 
-  getById = async <T extends boolean = false>(
+  getUserCacheById = async <T extends boolean = false>(
     id: IUserData['id'],
     options?: GetUserByIdOptions<T>
   ): Promise<(T extends true ? ServerSession['user'] : IUserData) | null> => {
@@ -62,7 +35,7 @@ class UserRepository {
 
     const { includeSensitiveInfo = false, bypassCache = false } = options ?? {};
     if (!bypassCache) {
-      const cachedUserInfo = await this.getCachedUserInfo(id);
+      const cachedUserInfo = await getCachedUserInfo(id);
       if (cachedUserInfo) {
         if (includeSensitiveInfo) return cachedUserInfo;
 
@@ -85,17 +58,17 @@ class UserRepository {
     }
 
     if (userData) {
-      this.cacheUserInfo(userData);
+      await cacheUserInfo(userData);
     }
 
     return userData ?? null;
   };
 
-  getByIdOrThrow = async <T extends boolean = false>(
+  getUserCacheByIdOrThrow = async <T extends boolean = false>(
     id: IUserSchema['id'],
     options?: GetUserByIdOptions<T>
   ): Promise<T extends true ? ServerSession['user'] : IUserData> => {
-    const user = await this.getById(id, options);
+    const user = await this.getUserCacheById(id, options);
     if (user === null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -105,7 +78,7 @@ class UserRepository {
     return user;
   };
 
-  getByEmail = async (email: IUserSchema['email']) => {
+  getByEmail = async (email: string) => {
     return UserModel.findByEmail(email);
   };
 
@@ -118,7 +91,13 @@ class UserRepository {
         });
       }
 
-      const user = await UserModel.findByEmail(email);
+      let user: IUserSchema | null = null;
+
+      try {
+        user = await this.getByEmail(email);
+      } catch {
+        user = null; // User does not exist, which is expected
+      }
 
       if (user) {
         const userEmail = user.email;
@@ -140,7 +119,7 @@ class UserRepository {
       const user = await UserModel.authenticate(email, password);
       user.set('lastLogin', new Date());
       const savedUser = await user.save();
-      await this.clearCachedUserInfo(user.id);
+      await clearCachedUserInfo(user.id);
       return savedUser;
     } catch (error) {
       this.logger.error('Failed to authenticate user', error);
@@ -171,7 +150,7 @@ class UserRepository {
           message: 'User not found',
         });
       }
-      this.cacheUserInfo(updatedUser.toClientObject());
+      await cacheUserInfo(updatedUser.toClientObject());
       return updatedUser;
     } catch (error) {
       this.logger.error('Failed to update user', error);

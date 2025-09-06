@@ -48,9 +48,11 @@ export const SignUpForm: FC = () => {
 
   const signUpMutation = api.auth.signUp.useMutation({
     onSuccess: user => {
-      toast.success('Account was created successfully, redirecting to onboarding...');
+      toast.success(
+        'Account created successfully! Please check your email to verify your account.'
+      );
       startTransition(() => {
-        router.push(`/onboarding-step?userId=${user.id}`);
+        router.push(`/signup/success?email=${encodeURIComponent(user.email)}`);
       });
     },
     onError: error => {

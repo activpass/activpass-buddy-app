@@ -14,6 +14,18 @@ export const env = createEnv({
     REDIS_URL: z.string(),
     IMAGEKIT_PRIVATE_KEY: z.string(),
 
+    // Email configuration
+    RESEND_API_KEY: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
+    SMTP_HOST:
+      process.env.NODE_ENV === 'development' ? z.string().optional() : z.string().optional(),
+    SMTP_PORT:
+      process.env.NODE_ENV === 'development' ? z.string().optional() : z.string().optional(),
+    SMTP_USER:
+      process.env.NODE_ENV === 'development' ? z.string().optional() : z.string().optional(),
+    SMTP_PASS:
+      process.env.NODE_ENV === 'development' ? z.string().optional() : z.string().optional(),
+    FROM_EMAIL: z.string(),
+
     KV_REST_API_TOKEN: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
     KV_REST_API_URL: process.env.NODE_ENV === 'production' ? z.string() : z.string().optional(),
     UPSTASH_REDIS_REST_BASE_KEY_PREFIX:
@@ -51,6 +63,14 @@ export const env = createEnv({
   runtimeEnv: {
     MONGODB_URI: process.env.MONGODB_URI,
     REDIS_URL: process.env.REDIS_URL,
+
+    // Email configuration
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    SMTP_HOST: process.env.SMTP_HOST,
+    SMTP_PORT: process.env.SMTP_PORT,
+    SMTP_USER: process.env.SMTP_USER,
+    SMTP_PASS: process.env.SMTP_PASS,
+    FROM_EMAIL: process.env.FROM_EMAIL,
 
     KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN,
     KV_REST_API_URL: process.env.KV_REST_API_URL,

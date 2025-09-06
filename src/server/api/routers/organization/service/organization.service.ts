@@ -13,7 +13,7 @@ import type {
 class OrganizationService {
   private readonly logger = new Logger(OrganizationService.name);
 
-  getById = async ({ id }: GetOrganizationByIdArgs) => {
+  getUserCacheById = async ({ id }: GetOrganizationByIdArgs) => {
     try {
       if (!id) {
         throw new TRPCError({
@@ -21,7 +21,7 @@ class OrganizationService {
           message: 'Organization ID is required',
         });
       }
-      const organization = await organizationRepository.getById(id);
+      const organization = await organizationRepository.getUserCacheById(id);
       return organization;
     } catch (error: unknown) {
       this.logger.error('Failed to get organization by id', error);

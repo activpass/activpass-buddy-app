@@ -13,7 +13,7 @@ import {
 class OrganizationRepository {
   private readonly logger = new Logger(OrganizationRepository.name);
 
-  getById = async (id: IOrganizationSchema['id']) => {
+  getUserCacheById = async (id: IOrganizationSchema['id']) => {
     return OrganizationModel.get(id);
   };
 

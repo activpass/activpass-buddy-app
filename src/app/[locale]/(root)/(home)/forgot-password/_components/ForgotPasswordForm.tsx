@@ -2,10 +2,9 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, type FormFieldItem, toast } from '@paalan/react-ui';
-import { type FC, useEffect } from 'react';
+import { type FC } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useCopyToClipboard } from '@/hooks';
 import { api } from '@/trpc/client';
 import {
   forgotPasswordValidationSchema,
@@ -31,22 +30,14 @@ export const ForgotPasswordForm: FC = () => {
       email: '',
     },
   });
-  const [copied, setTextCopy] = useCopyToClipboard();
-
-  useEffect(() => {
-    if (copied) {
-      toast.success('Reset password link copied to clipboard');
-    }
-  }, [copied]);
 
   const forgotPasswordMutation = api.auth.forgotPassword.useMutation({
     onSuccess(data) {
       if (!data.success) {
-        toast.error('Failed to send verification email');
+        toast.error('Failed to send verification email. Please try again later.');
         return;
       }
-      setTextCopy(data.url);
-      // toast.success('Verification email sent successfully, please check your inbox.');
+      toast.success('Password reset email sent successfully. Please check your inbox.');
     },
     onError(error) {
       toast.error(error.message || 'Failed to send verification email');

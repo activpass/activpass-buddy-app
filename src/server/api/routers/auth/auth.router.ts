@@ -11,6 +11,7 @@ import {
   accountVerifyInputSchema,
   createOnboardingStepInputSchema,
   forgotPasswordInputSchema,
+  resendVerificationInputSchema,
   resetPasswordInputSchema,
   signInInputSchema,
   signUpInputSchema,
@@ -80,10 +81,24 @@ export const authRouter = createTRPCRouter({
       return result;
     }),
 
+  resendVerification: publicProcedure
+    .input(resendVerificationInputSchema)
+    .mutation(async ({ input }) => {
+      const result = await authService.resendVerification({ input });
+      return result;
+    }),
+
   createOnboardingStep: publicProcedure
     .input(createOnboardingStepInputSchema)
     .mutation(async ({ input, ctx }) => {
       const result = await authService.createOnboardingStep({ input, headers: ctx.headers });
+      return result;
+    }),
+
+  checkEmailStatus: publicProcedure
+    .input(resendVerificationInputSchema)
+    .query(async ({ input }) => {
+      const result = await authService.checkEmailStatus({ input });
       return result;
     }),
 });

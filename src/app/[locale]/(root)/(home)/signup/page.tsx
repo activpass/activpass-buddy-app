@@ -9,7 +9,7 @@ export const metadata = {
   description: 'Sign up to create an account',
 };
 
-const SignUpPage = () => {
+const SignUpPage = async () => {
   return (
     <Card className="flex-1">
       <CardHeader className="text-center">

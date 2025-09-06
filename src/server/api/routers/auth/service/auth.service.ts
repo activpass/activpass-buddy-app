@@ -2,20 +2,30 @@ import { TRPCError } from '@trpc/server';
 import type { Session } from 'next-auth';
 
 import { TimeInSeconds } from '@/server/api/enums/time-in-seconds.enum';
-import { generateMongooseObjectId, getHashToken } from '@/server/api/helpers/common';
+import {
+  generateMongooseObjectId,
+  generateRandomToken,
+  getHashToken,
+} from '@/server/api/helpers/common';
 import { type IUserData, UserModel } from '@/server/api/routers/user/model/user.model';
-import { userRepository } from '@/server/api/routers/user/repository/user.repository';
 import { createSecureCookie, deleteCookie } from '@/server/api/utils/cookie-management';
 import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { redis } from '@/server/database/redis';
 import { Logger } from '@/server/logger';
 
-import { OrganizationModel } from '../../organization/model/organization.model';
 import {
-  AUTH_ROLES,
+  sendEmailVerificationEmail,
+  sendOnboardingCompletionEmail,
+  sendPasswordResetEmail,
+  sendPasswordResetSuccessEmail,
+} from '../../../services/email';
+import { OrganizationModel } from '../../organization/model/organization.model';
+import { userRepository } from '../../user/repository/user.repository';
+import {
   SESSION_TOKEN_COOKIE_KEY,
   SESSION_TOKENS_PREFIX,
   USER_ID_COOKIE_KEY,
+  UserRoleEnum,
 } from '../constants';
 import {
   type AccountVerifyArgs,
@@ -23,6 +33,7 @@ import {
   type CreateOnboardingStepArgs,
   type DeleteSessionTokenArgs,
   type ForgotPasswordArgs,
+  type ResendVerificationArgs,
   type ResetPasswordArgs,
   type ServerSession,
   type SignInArgs,
@@ -209,10 +220,16 @@ class AuthService {
 
   signUp = async (args: SignUpArgs) => {
     const { input } = args;
+
+    // Generate verification token
+    const verifyToken = generateRandomToken();
+
     const data = {
       ...input,
-      role: AUTH_ROLES.OWNER,
+      role: UserRoleEnum.OWNER,
       isOnboardingComplete: false,
+      verified: false, // Set to false for new users
+      verifyToken,
     };
     const newUser = await userRepository.create({ data });
 
@@ -220,7 +237,40 @@ class AuthService {
       throw getTRPCError('Failed to create user');
     }
 
-    return newUser.toClientObject();
+    const userClient = newUser.toClientObject();
+
+    // Send verification email
+    try {
+      const verificationResult = await sendEmailVerificationEmail({
+        username:
+          userClient.fullName ||
+          `${userClient.firstName || ''} ${userClient.lastName || ''}`.trim() ||
+          'User',
+        email: userClient.email,
+        verificationToken: verifyToken,
+      });
+
+      this.logger.info(`Email verification sent to ${userClient.email}`, {
+        success: verificationResult.success,
+        messageId: verificationResult.messageId,
+      });
+
+      if (!verificationResult.success) {
+        this.logger.error('Failed to send verification email', {
+          error: verificationResult.error,
+          email: userClient.email,
+        });
+        // Don't fail signup if email fails - user can resend later
+      }
+    } catch (error) {
+      this.logger.error('Failed to send verification email', {
+        error,
+        email: userClient.email,
+      });
+      // Don't fail signup if email fails
+    }
+
+    return userClient;
   };
 
   /** @deprecated */
@@ -266,7 +316,7 @@ class AuthService {
 
     return {
       success: true,
-      userInfo: await userRepository.getById(args.userId, {
+      userInfo: await userRepository.getUserCacheById(args.userId, {
         includeSensitiveInfo: true,
       }),
       sessionToken: finalSessionToken,
@@ -281,7 +331,7 @@ class AuthService {
     const userId = session.user.id as string;
 
     return {
-      userInfo: await userRepository.getById(userId, {
+      userInfo: await userRepository.getUserCacheById(userId, {
         includeSensitiveInfo: true,
       }),
       sessionToken: session.accessToken || '',
@@ -306,48 +356,115 @@ class AuthService {
 
   accountVerify = async (args: AccountVerifyArgs) => {
     const { input } = args;
-    const user = await UserModel.findOne({ verifyToken: input.token });
+
+    const doc = await userRepository.getByEmail(input.email);
+
+    if (doc && doc.verified) return doc.toClientObject();
+
+    const user = await UserModel.findOne({ verifyToken: input.token, email: input.email });
+
     if (!user) {
       throw new Error('Verification token is invalid!');
     }
 
     user.verified = true;
     user.verifyToken = undefined;
-    user.lastLogin = new Date();
 
     const savedUser = await user.save();
     return savedUser.toClientObject();
   };
 
   forgotPassword = async (args: ForgotPasswordArgs) => {
-    const { input, url } = args;
+    const { input } = args;
     try {
       const email = input.email.toLowerCase().trim();
 
       const userDoc = await userRepository.forgotPassword({ email });
+      const user = userDoc.toClientObject();
 
-      // Send email for forget password change
-      const emailData = {
-        email: userDoc.email,
-        fullName: userDoc.fullName,
-        token: userDoc.resetPasswordToken,
-      };
+      if (!user.resetPasswordToken) {
+        this.logger.error('Reset password token not set for user', { email: userDoc.email });
+        // Don't throw an error to prevent email enumeration attacks
+        // Still return success to the user
+        return { success: true };
+      }
 
-      this.logger.info(`Forgot password email sent to ${emailData.email}`);
-      // TODO: Implement email service
-      // email.send('forgot-password', { to: data.email }, data)
-
-      const searchParams = new URLSearchParams({
-        token: emailData.token || '',
-        email: emailData.email || '',
+      // Send password reset email
+      const resetEmailResult = await sendPasswordResetEmail({
+        username:
+          user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User',
+        email: user.email,
+        resetToken: user.resetPasswordToken!,
+        expirationHours: 24,
       });
 
-      const resetLink = `${url}/reset-password?${searchParams.toString()}`;
+      this.logger.info(`Forgot password email sent to ${user.email}`, {
+        success: resetEmailResult.success,
+        messageId: resetEmailResult.messageId,
+      });
 
-      this.logger.debug(`Reset password link: ${resetLink}`);
+      if (!resetEmailResult.success) {
+        this.logger.error('Failed to send password reset email', {
+          error: resetEmailResult.error,
+          email: user.email,
+        });
+        // Don't throw an error to prevent email enumeration attacks
+        // Still return success to the user
+      }
 
-      return { success: true, url: resetLink }; // Return email data for testing purposes, Will remove later
+      return { success: true };
     } catch (error) {
+      throw getTRPCError(error);
+    }
+  };
+
+  resendVerification = async (args: ResendVerificationArgs) => {
+    const { input } = args;
+    try {
+      const email = input.email.trim();
+
+      // Find user by email
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        // Don't throw an error to prevent email enumeration attacks
+        return { success: true };
+      }
+
+      if (user.verified) {
+        // User is already verified
+        return { success: true, message: 'Email is already verified' };
+      }
+
+      if (!user.verifyToken) {
+        // Generate new verification token if not exists
+        user.verifyToken = generateRandomToken();
+        await user.save();
+      }
+
+      // Send verification email
+      const verificationResult = await sendEmailVerificationEmail({
+        username:
+          user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User',
+        email: user.email,
+        verificationToken: user.verifyToken!,
+      });
+
+      this.logger.info(`Verification email resent to ${user.email}`, {
+        success: verificationResult.success,
+        messageId: verificationResult.messageId,
+      });
+
+      if (!verificationResult.success) {
+        this.logger.error('Failed to resend verification email', {
+          error: verificationResult.error,
+          email: user.email,
+        });
+        // Don't throw an error to prevent exposing internal errors
+      }
+
+      return { success: true };
+    } catch (error) {
+      this.logger.error('Error in resendVerification', error);
       throw getTRPCError(error);
     }
   };
@@ -356,16 +473,27 @@ class AuthService {
     const { input } = args;
 
     const userDoc = await userRepository.resetPassword(input);
+    const user = userDoc.toClientObject();
 
-    // Send email for password change
-    const emailData = {
-      fullName: userDoc.fullName,
-      email: userDoc.email,
-    };
+    // Send password reset success email
+    const successEmailResult = await sendPasswordResetSuccessEmail({
+      username: user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User',
+      email: user.email,
+      resetDate: new Date(),
+    });
 
-    this.logger.info(`Password reset email sent to ${emailData.email}`);
-    // TODO: Implement email service
-    // email.send('reset-password', { to: emailData.email }, emailData)
+    this.logger.info(`Password reset success email sent to ${user.email}`, {
+      success: successEmailResult.success,
+      messageId: successEmailResult.messageId,
+    });
+
+    if (!successEmailResult.success) {
+      this.logger.error('Failed to send password reset success email', {
+        error: successEmailResult.error,
+        email: user.email,
+      });
+      // Don't fail the password reset if email fails
+    }
 
     return { success: true };
   };
@@ -435,12 +563,55 @@ class AuthService {
       user.organization = generateMongooseObjectId(organizationDoc.id);
       await user.save();
 
+      // Send onboarding completion email
+      try {
+        const onboardingEmailResult = await sendOnboardingCompletionEmail({
+          username: user.fullName || `${user.firstName} ${user.lastName}`.trim() || 'User',
+          email: user.email,
+          facilityName: facilitySetup.facilityName,
+          businessType: facilitySetup.businessType,
+        });
+
+        this.logger.info(`Onboarding completion email sent to ${user.email}`, {
+          success: onboardingEmailResult.success,
+          messageId: onboardingEmailResult.messageId,
+        });
+
+        if (!onboardingEmailResult.success) {
+          this.logger.error('Failed to send onboarding completion email', {
+            error: onboardingEmailResult.error,
+            email: user.email,
+          });
+          // Don't fail onboarding if email fails
+        }
+      } catch (error) {
+        this.logger.error('Failed to send onboarding completion email', {
+          error,
+          email: user.email,
+        });
+        // Don't fail onboarding if email fails
+      }
+
       return {
         loginToken,
       };
     } catch (error) {
       this.logger.error('Failed to create onboarding step', error);
       throw error;
+    }
+  };
+
+  checkEmailStatus = async (args: ResendVerificationArgs) => {
+    const { input } = args;
+    try {
+      const email = input.email.trim();
+
+      // Find user by email
+      const user = await userRepository.getByEmail(email);
+      return { exists: true, verified: user.verified };
+    } catch (error) {
+      this.logger.error('Error in checkEmailStatus', error);
+      return { exists: false, verified: false };
     }
   };
 }

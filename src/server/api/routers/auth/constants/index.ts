@@ -10,7 +10,7 @@ export const ADMIN_CREDENTIALS = {
   password: env.ADMIN_PASSWORD || 'admin',
 } as const;
 
-export const AUTH_ROLES = {
+export const UserRoleEnum = {
   OWNER: 'owner',
   ADMIN: 'admin',
   USER: 'user',

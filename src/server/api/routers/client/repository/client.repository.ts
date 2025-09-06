@@ -18,7 +18,7 @@ import { ClientModel, type IClientSchema, type IClientVirtuals } from '../model/
 class ClientRepository {
   private readonly logger = new Logger(ClientRepository.name);
 
-  getById = async (id: IClientSchema['id']) => {
+  getUserCacheById = async (id: IClientSchema['id']) => {
     return ClientModel.get(id);
   };
 

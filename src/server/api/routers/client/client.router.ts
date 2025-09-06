@@ -17,7 +17,7 @@ import { clientService } from './service/client.service';
 
 export const clientRouter = createTRPCRouter({
   get: protectedProcedure.input(z.string()).query(async ({ input }) => {
-    return clientService.getById({ id: input });
+    return clientService.getUserCacheById({ id: input });
   }),
   create: protectedProcedure.input(createClientInputSchema).mutation(async ({ ctx, input }) => {
     return clientService.create({

@@ -18,13 +18,10 @@ export const authBaseConfig = {
   providers: [],
   callbacks: {
     async jwt({ token, user }) {
-      const newToken = { ...token };
+      let newToken = { ...token };
+
       if (user) {
-        newToken.id = user.id || '';
-        newToken.email = user.email || '';
-        newToken.name = user.name || '';
-        newToken.picture = user.avatarUrl || '';
-        newToken.orgId = user.orgId || ''; // orgId is custom field added in next-auth.d.ts
+        newToken = { ...token, ...user };
       }
 
       return newToken;
@@ -34,11 +31,8 @@ export const authBaseConfig = {
       if (token) {
         newSession.user = {
           ...newSession.user,
-          id: token.id || '',
+          ...token,
           email: token.email || '',
-          name: token.name,
-          avatarUrl: token.picture || '',
-          orgId: token.orgId || '', // orgId is custom field added in next-auth.d.ts
         };
       }
       return newSession;

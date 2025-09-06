@@ -13,7 +13,7 @@ import type {
 class UserService {
   private readonly logger = new Logger(UserService.name);
 
-  getById = async ({ id }: GetUserByIdArgs) => {
+  getUserCacheById = async ({ id }: GetUserByIdArgs) => {
     if (!id) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
@@ -21,7 +21,7 @@ class UserService {
       });
     }
 
-    const user = await userRepository.getByIdOrThrow(id);
+    const user = await userRepository.getUserCacheByIdOrThrow(id);
     return user;
   };
 
@@ -53,7 +53,7 @@ class UserService {
   };
 
   getOnboardingUser = async ({ userId }: GetOnboardingUserArgs) => {
-    const user = await userRepository.get(userId);
+    const user = await userRepository.getById(userId);
     return {
       id: user.id,
       email: user.email,

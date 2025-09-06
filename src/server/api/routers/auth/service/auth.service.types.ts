@@ -77,6 +77,10 @@ export type ForgotPasswordArgs = {
   url: string;
 };
 
+export type ResendVerificationArgs = {
+  input: RouterInputs['auth']['resendVerification'];
+};
+
 export type CreateOnboardingStepArgs = {
   input: CreateOnboardingStepInputSchema;
   headers: Headers;

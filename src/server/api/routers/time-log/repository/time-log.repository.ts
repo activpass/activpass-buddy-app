@@ -16,7 +16,7 @@ import {
 class TimeLogRepository {
   private readonly logger = new Logger(TimeLogRepository.name);
 
-  getById = async (id: ITimeLogSchema['id']) => {
+  getUserCacheById = async (id: ITimeLogSchema['id']) => {
     return TimeLogModel.get(id);
   };
 

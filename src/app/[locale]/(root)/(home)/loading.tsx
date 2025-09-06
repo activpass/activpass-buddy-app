@@ -1,10 +1,8 @@
-import { Flex, Loading } from '@paalan/react-ui';
+import { Loading } from '@paalan/react-ui';
 
 const LoadingComponent = () => {
   return (
-    <Flex justifyContent="center" alignItems="center">
-      <Loading className="size-5" content="Loading..." />
-    </Flex>
+    <Loading className="size-5" parentClassName="flex-1 justify-center" content="Loading..." />
   );
 };
 

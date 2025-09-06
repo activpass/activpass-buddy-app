@@ -1,0 +1,10 @@
+export type { BaseEmailProps } from './base-template';
+export { getBaseEmailTemplate } from './base-template';
+export type { EmailVerificationProps } from './email-verification';
+export { generateEmailVerificationEmail } from './email-verification';
+export type { OnboardingCompletionEmailProps } from './onboarding-completion';
+export { generateOnboardingCompletionEmail } from './onboarding-completion';
+export type { PasswordResetEmailProps } from './password-reset';
+export { generatePasswordResetEmail } from './password-reset';
+export type { PasswordResetSuccessEmailProps } from './password-reset-success';
+export { generatePasswordResetSuccessEmail } from './password-reset-success';

@@ -10,6 +10,6 @@ export const getSessionUser = async () => {
 
   await mongodbConnect();
 
-  const user = await userRepository.getByIdOrThrow(session.user.id);
+  const user = await userRepository.getUserCacheByIdOrThrow(session.user.id);
   return user;
 };

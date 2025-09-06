@@ -1,4 +1,4 @@
-import type { NextAuthConfig } from 'next-auth';
+import type { NextAuthConfig, Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
 import { type IUserData, UserModel } from '@/server/api/routers/user/model/user.model';
@@ -14,7 +14,13 @@ const returnResponse = (user: IUserData) => {
     name: user.fullName,
     avatarUrl: user.avatar?.url,
     orgId: user.orgId,
-  };
+    verified: user.verified ?? false,
+    verifyToken: user.verifyToken ?? null,
+    lastLogin: user.lastLogin || null,
+    provider: user.provider,
+    role: user.role,
+    isOnboardingComplete: user.isOnboardingComplete ?? false,
+  } satisfies Session['user'];
 };
 
 export const authConfig = {

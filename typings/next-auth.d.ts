@@ -19,6 +19,12 @@ declare module 'next-auth' {
     email: string;
     avatarUrl: string;
     orgId: string;
+    verified: boolean;
+    verifyToken: string | null;
+    lastLogin: Date | null;
+    provider: UserProviderEnum;
+    role: UserRoleEnum;
+    isOnboardingComplete: boolean;
   }
 
   /**
@@ -38,12 +44,8 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
-  interface JWT {
-    /** User ID */
+  interface JWT extends User {
     id: string;
-    name: string;
-    email: string;
-    orgId: string;
   }
 }
 
@@ -51,5 +53,11 @@ declare module '@auth/core/adapters' {
   interface AdapterUser {
     orgId: string;
     avatarUrl: string;
+    verified: boolean;
+    verifyToken: string | null;
+    lastLogin: Date | null;
+    provider: UserProviderEnum;
+    role: UserRoleEnum;
+    isOnboardingComplete: boolean;
   }
 }

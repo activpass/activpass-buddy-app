@@ -28,9 +28,9 @@ export const listIncomeInputSchema = z.object({
 });
 export type ListIncomeInputSchema = z.infer<typeof listIncomeInputSchema>;
 
-export const getByIdInputSchema = z.object({
+export const getUserCacheByIdInputSchema = z.object({
   id: z.string().min(1, {
     message: 'Income ID is required',
   }),
 });
-export type GetByIdInputSchema = z.infer<typeof getByIdInputSchema>;
+export type GetByIdInputSchema = z.infer<typeof getUserCacheByIdInputSchema>;

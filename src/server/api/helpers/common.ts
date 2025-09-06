@@ -2,10 +2,10 @@ import crypto, { createHash } from 'crypto';
 import mongoose from 'mongoose';
 /**
  * Generates a random token of the specified length.
- * @param length The length of the token to generate. Defaults to 30.
+ * @param length The length of the token to generate. Defaults to 25.
  * @returns A random token.
  */
-export const generateRandomToken = (length: number = 20) => {
+export const generateRandomToken = (length: number = 25) => {
   return crypto.randomBytes(length).toString('hex');
 };
 

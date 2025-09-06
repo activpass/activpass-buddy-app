@@ -2,19 +2,23 @@ import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
 import {
   createIncomeInputSchema,
-  getByIdInputSchema,
+  getUserCacheByIdInputSchema,
   listIncomeInputSchema,
   updateIncomeInputSchema,
 } from './income.input';
 import { incomeService } from './service/income.service';
 
 export const incomeRouter = createTRPCRouter({
-  getById: protectedProcedure.input(getByIdInputSchema).query(async ({ input }) => {
-    return incomeService.getById({ input });
-  }),
-  getPopulatedById: protectedProcedure.input(getByIdInputSchema).query(async ({ input }) => {
-    return incomeService.getPopulatedById({ input });
-  }),
+  getUserCacheById: protectedProcedure
+    .input(getUserCacheByIdInputSchema)
+    .query(async ({ input }) => {
+      return incomeService.getUserCacheById({ input });
+    }),
+  getPopulatedById: protectedProcedure
+    .input(getUserCacheByIdInputSchema)
+    .query(async ({ input }) => {
+      return incomeService.getPopulatedById({ input });
+    }),
   create: protectedProcedure.input(createIncomeInputSchema).mutation(async ({ ctx, input }) => {
     return incomeService.create({ input, orgId: ctx.session.user.orgId });
   }),

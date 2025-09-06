@@ -35,7 +35,7 @@ import type {
 class ClientService {
   private readonly logger = new Logger(ClientService.name);
 
-  getById = async ({ id }: GetClientByIdArgs) => {
+  getUserCacheById = async ({ id }: GetClientByIdArgs) => {
     try {
       if (!id) {
         throw new TRPCError({
@@ -43,7 +43,7 @@ class ClientService {
           message: 'Client ID is required',
         });
       }
-      const client = await (await clientRepository.getById(id)).populate('membershipPlan');
+      const client = await (await clientRepository.getUserCacheById(id)).populate('membershipPlan');
 
       return client.toObject({
         flattenObjectIds: true,
@@ -221,9 +221,9 @@ class ClientService {
 
   submitOnboardingClient = async ({ input }: SubmitOnboardingClientArgs) => {
     const { onboardClientId, ...restInput } = input;
-    const onboardClient = await onboardClientRepository.getById(onboardClientId);
+    const onboardClient = await onboardClientRepository.getUserCacheById(onboardClientId);
 
-    const organization = await organizationService.getById({
+    const organization = await organizationService.getUserCacheById({
       id: onboardClient.organization.toHexString(),
     });
 
@@ -284,7 +284,7 @@ class ClientService {
   };
 
   getCurrentMembershipPlan = async ({ clientId }: CurrentMembershipPlanArgs) => {
-    const client = await clientRepository.getById(clientId);
+    const client = await clientRepository.getUserCacheById(clientId);
     const plan = await incomeRepository.getCurrentMembershipPlanIncome({
       clientId: client.id,
       orgId: client.organization.toHexString(),

@@ -27,12 +27,16 @@ const isProtectedRoute = createRouteMatcher([
   '/:locale/plans(.*)',
 ]);
 
+const isAuthRoute = createRouteMatcher(['/signin']);
+
 const authMiddleware = (request: NextAuthRequest) => {
-  if (!request.auth?.user?.id && !request.nextUrl.pathname.includes('/signin')) {
+  const user = request.auth?.user;
+  if ((!user?.id || !user?.email) && !isAuthRoute(request)) {
     const url = new URL('/signin', request.url);
     url.searchParams.set('redirectTo', request.nextUrl.pathname);
     return NextResponse.redirect(url);
   }
+
   return intlMiddleware(request);
 };
 

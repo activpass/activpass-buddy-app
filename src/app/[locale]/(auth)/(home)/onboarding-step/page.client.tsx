@@ -1,6 +1,7 @@
 'use client';
 
 import { toast } from '@paalan/react-ui';
+import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 
 import { api } from '@/trpc/client';
@@ -48,6 +49,8 @@ export const OnboardingStepClientPage = ({ userId, userEmail }: OnboardingStepCl
           },
         },
       });
+
+      await signOut({ redirect: false }); // Sign out the user to clear any existing session
 
       toast.success('Onboarding completed successfully!');
       setLoginToken(response.loginToken);

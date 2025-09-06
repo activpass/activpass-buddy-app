@@ -19,6 +19,7 @@ export type SignUpInputSchema = z.infer<typeof signUpInputSchema>;
 
 export const accountVerifyInputSchema = z.object({
   token: z.string(),
+  email: z.string().email(),
 });
 export type AccountVerifyInputSchema = z.infer<typeof accountVerifyInputSchema>;
 
@@ -34,6 +35,9 @@ export type ResetPasswordInputSchema = z.infer<typeof resetPasswordInputSchema>;
 
 export const forgotPasswordInputSchema = baseSignUpValidationSchema.pick({ email: true });
 export type ForgotPasswordInputSchema = z.infer<typeof forgotPasswordInputSchema>;
+
+export const resendVerificationInputSchema = baseSignUpValidationSchema.pick({ email: true });
+export type ResendVerificationInputSchema = z.infer<typeof resendVerificationInputSchema>;
 
 export const createOnboardingStepInputSchema = z.object({
   userId: z.string(),

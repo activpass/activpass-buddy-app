@@ -13,7 +13,7 @@ export async function updateMembershipPlan({
   membershipPlanId: string;
   isUpgrade?: boolean;
 }) {
-  const client = await clientRepository.getById(clientId);
+  const client = await clientRepository.getUserCacheById(clientId);
 
   if (isUpgrade && client.membershipPlan.toHexString() === membershipPlanId) {
     throw getTRPCError('Client already has the same membership plan', 'BAD_REQUEST');

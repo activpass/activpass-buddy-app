@@ -3,7 +3,7 @@ import type { FC } from 'react';
 
 import { api } from '@/trpc/server';
 
-import { AddClientForm } from '../../(auth)/(main)/client/new/_components/AddClientForm';
+import { AddClientForm } from '../../../(auth)/(main)/client/new/_components/AddClientForm';
 
 type OnboardClientPageProps = {
   searchParams: {

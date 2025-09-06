@@ -9,7 +9,8 @@ import mongoose, {
 import { imageKitFileSchemaDefinition } from '@/server/api/schemas/common';
 import { userProviderSchema } from '@/validations/auth.validation';
 
-import { AUTH_ROLES } from '../../auth/constants';
+import { UserRoleEnum } from '../../auth/constants';
+import { cacheUserInfo, clearCachedUserInfo } from '../helper/user.helper';
 
 // Virtuals are not included in the schema type
 export interface IUserVirtuals {
@@ -50,6 +51,7 @@ export interface IUserModel extends Model<IUserSchema, {}, IUserSchemaMethods> {
   authenticateWithLoginToken(loginToken: string): Promise<IUserDocument>;
   get(id: string | mongoose.Schema.Types.ObjectId): Promise<IUserDocument>;
   findByEmail(email: string): Promise<IUserDocument>;
+  findByVerifiedEmail(email: string): Promise<IUserDocument>;
   list(filter: FilterQuery<IUserSchema>): Promise<IUserDocument[]>;
   changePassword(
     id: string | mongoose.Schema.Types.ObjectId,
@@ -94,7 +96,7 @@ const UserSchema = new mongoose.Schema(
 
     verified: {
       type: Boolean,
-      default: true,
+      default: false,
     },
 
     verifyToken: {
@@ -115,8 +117,8 @@ const UserSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: Object.values(AUTH_ROLES),
-      default: AUTH_ROLES.USER,
+      enum: Object.values(UserRoleEnum),
+      default: UserRoleEnum.USER,
     },
 
     provider: {
@@ -187,6 +189,12 @@ UserSchema.static('authenticate', async function authenticate(email: string, pas
     throw new Error('Email is not registered.');
   }
 
+  if (!user.verified) {
+    throw new Error(
+      'Please verify your email before signing in. Check your inbox for a verification email.'
+    );
+  }
+
   const passwordCorrect = await user.verifyPassword(password);
   if (!passwordCorrect) {
     throw new Error('Invalid email or password.');
@@ -206,9 +214,17 @@ UserSchema.static(
       throw new Error('Invalid login token.');
     }
 
+    if (!user.verified) {
+      throw new Error(
+        'Please verify your email before signing in. Check your inbox for a verification email.'
+      );
+    }
+
     user.lastLogin = new Date();
     user.loginToken = undefined;
     await user.save();
+
+    await clearCachedUserInfo(user.id);
 
     return user;
   }
@@ -226,6 +242,14 @@ UserSchema.static('findByEmail', async function findByEmail(email: string) {
   const user = await this.findOne({ email }).exec();
   if (!user) {
     throw new Error(`User with email '${email}' does not exist.`);
+  }
+  return user;
+});
+
+UserSchema.static('findByVerifiedEmail', async function findByVerifiedEmail(email: string) {
+  const user = await this.findOne({ email, verified: true }).exec();
+  if (!user) {
+    throw new Error(`User with email '${email}' does not exist or is not verified.`);
   }
   return user;
 });
@@ -250,6 +274,10 @@ UserSchema.static('changePassword', async function changePassword(id, oldPasswor
   user.set('password', newPassword);
   const updatedUser = await user.save();
   return updatedUser;
+});
+
+UserSchema.post('save', async function save(doc: IUserDocument) {
+  await cacheUserInfo(doc.toClientObject(false));
 });
 
 export const UserModel =

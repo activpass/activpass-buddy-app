@@ -14,7 +14,7 @@ import {
 class CheckInRepository {
   private readonly logger = new Logger(CheckInRepository.name);
 
-  getById = async (id: ICheckInSchema['id']) => {
+  getUserCacheById = async (id: ICheckInSchema['id']) => {
     return CheckInModel.get(id);
   };
 
