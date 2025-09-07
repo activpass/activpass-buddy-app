@@ -7,7 +7,7 @@ import { logger } from '@/server/logger';
 const isProd = process.env.NODE_ENV === 'production';
 
 // Initialize Resend for production
-const resend = isProd ? new Resend(env.RESEND_API_KEY) : null;
+const resend = isProd && env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
 // Initialize Nodemailer for development
 const createNodemailerTransporter = async () => {

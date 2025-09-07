@@ -35,8 +35,8 @@ importers:
         specifier: ^1.4.1
         version: 1.4.1
       '@paalan/react-ui':
-        specifier: ^1.5.4
-        version: 1.5.4(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.5.5
+        version: 1.5.5(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-pdf/renderer':
         specifier: ^4.0.0
         version: 4.0.0(react@18.3.1)
@@ -3601,10 +3601,10 @@ packages:
       }
     engines: { node: '>=16.x.x' }
 
-  '@paalan/react-ui@1.5.4':
+  '@paalan/react-ui@1.5.5':
     resolution:
       {
-        integrity: sha512-+34CsJy1StqBNiBQT6qC0vixf0xXfPZXAYj5XaAdk0/VW/GCBBJ4fOgMjgrrruvD5mUQ2i02gyZmhvDUX9eV8w==,
+        integrity: sha512-xXxevYHvcmoVBqYvmltUIvP1xPmHZC3alCjDzl48o8WKPeArQNAcURzppN1jcl9kt9JbbtPL0eNPdVKaN7Gwxg==,
       }
     engines: { node: '>=16.x.x' }
     peerDependencies:
@@ -22373,7 +22373,7 @@ snapshots:
 
   '@paalan/react-test-utils@1.4.1': {}
 
-  '@paalan/react-ui@1.5.4(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@paalan/react-ui@1.5.5(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@hookform/resolvers': 3.6.0(react-hook-form@7.52.0(react@18.3.1))
       '@radix-ui/react-accordion': 1.2.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
