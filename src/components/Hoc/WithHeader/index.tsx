@@ -137,11 +137,15 @@ export const WithHeader: FC = () => {
                       <DropdownMenuSubTrigger>QR Check-in</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent>
-                          <DropdownMenuItem>
-                            <Link href={`/check-in/client?orgId=${orgId}`}>Client</Link>
+                          <DropdownMenuItem className="cursor-pointer">
+                            <Link href={`/check-in/client?orgId=${orgId}`} target="_blank">
+                              Client
+                            </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Link href={`/check-in/employee?orgId=${orgId}`}>Employee</Link>
+                          <DropdownMenuItem className="cursor-pointer">
+                            <Link href={`/check-in/employee?orgId=${orgId}`} target="_blank">
+                              Employee
+                            </Link>
                           </DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
@@ -150,11 +154,15 @@ export const WithHeader: FC = () => {
                       <DropdownMenuSubTrigger>QR Check-out</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent>
-                          <DropdownMenuItem>
-                            <Link href={`/check-out/client?orgId=${orgId}`}>Client</Link>
+                          <DropdownMenuItem className="cursor-pointer">
+                            <Link href={`/check-out/client?orgId=${orgId}`} target="_blank">
+                              Client
+                            </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Link href={`/check-out/employee?orgId=${orgId}`}>Employee</Link>
+                          <DropdownMenuItem className="cursor-pointer">
+                            <Link href={`/check-out/employee?orgId=${orgId}`} target="_blank">
+                              Employee
+                            </Link>
                           </DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>

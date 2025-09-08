@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { dateIntl } from '@paalan/react-shared/lib';
 import {
+  Button,
   Form,
   type FormFieldItem,
   InputOTP,
@@ -17,7 +18,6 @@ import { type OtpPinFormSchema, otpPinFormSchema } from '@/validations/common.va
 
 import { ClientCheckInVerifiedSuccess } from './ClientCheckInVerifiedSuccess';
 import type { ClientCheckInResult } from './types';
-import Link from '@/components/Link';
 
 const fields: FormFieldItem<OtpPinFormSchema>[] = [
   {
@@ -109,9 +109,9 @@ export const ClientCheckInVerified: FC<ClientCheckInVerifiedProps> = ({
 
       <Text className="mt-4 text-center text-sm">
         Want to go back?{' '}
-        <Link href="#" onClick={resetClientResult} className="text-link underline">
+        <Button variant="link" color="blue" onClick={resetClientResult}>
           Reset
-        </Link>
+        </Button>
       </Text>
     </div>
   );
