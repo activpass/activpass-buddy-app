@@ -270,7 +270,9 @@ class AuthService {
         // Don't fail signup if email fails
       });
 
-    return userClient;
+    return {
+      email: userClient.email,
+    };
   };
 
   /** @deprecated */

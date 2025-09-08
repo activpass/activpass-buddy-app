@@ -10,10 +10,9 @@ const Layout: FC<PropsWithChildren> = async ({ children }) => {
 
   if (user && !user.verified) {
     const searchParams = new URLSearchParams({
-      token: user.verifyToken || '',
       email: user.email || '',
     });
-    return redirect(`/verify-email?${searchParams.toString()}`);
+    return redirect(`/signup/success?${searchParams.toString()}`);
   }
 
   if (user && !user.isOnboardingComplete) {
