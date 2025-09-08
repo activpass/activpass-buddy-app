@@ -26,12 +26,12 @@ class ClientRepository {
     return ClientModel.getPopulated(id, ['organization', 'membershipPlan']);
   };
 
-  findByEmail = async (email: IClientSchema['email']) => {
-    return ClientModel.findByEmail(email);
+  findByEmail = async (orgId: string, email: IClientSchema['email']) => {
+    return ClientModel.findByEmail(orgId, email);
   };
 
-  findByPhoneNumber = async (phoneNumber: IClientSchema['phoneNumber']) => {
-    return ClientModel.findByPhoneNumber(phoneNumber);
+  findByPhoneNumber = async (orgId: string, phoneNumber: IClientSchema['phoneNumber']) => {
+    return ClientModel.findByPhoneNumber(orgId, phoneNumber);
   };
 
   isClientExistsWithSameOrg = async (orgId: string, email: string, phoneNumber: number) => {

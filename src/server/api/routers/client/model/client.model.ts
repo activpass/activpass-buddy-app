@@ -39,8 +39,8 @@ export interface IClientModel extends Model<IClientSchema, {}, IClientSchemaMeth
     id: string | mongoose.Schema.Types.ObjectId,
     populatedOption: PopulateOption['populate']
   ): Promise<IClientDocument>;
-  findByEmail(email: string): Promise<IClientDocument>;
-  findByPhoneNumber(phoneNumber: number): Promise<IClientDocument>;
+  findByEmail(orgId: string, email: string): Promise<IClientDocument>;
+  findByPhoneNumber(orgId: string, phoneNumber: number): Promise<IClientDocument>;
   list(filter?: FilterQuery<IClientSchema>): Promise<IClientDocument[]>;
 }
 
@@ -142,21 +142,26 @@ ClientSchema.static('getPopulated', async function get(id, populatedOption) {
   return client;
 });
 
-ClientSchema.static('findByEmail', async function findByEmail(email: string) {
-  const client = await this.findOne({ email }).exec();
+ClientSchema.static('findByEmail', async function findByEmail(orgId: string, email: string) {
+  const client = await this.findOne({ organization: orgId, email }).exec();
   if (!client) {
-    throw new Error(`Client with email "${email}" does not exist.`);
+    throw new Error(`Client with email "${email}" does not exist in this organization "${orgId}".`);
   }
   return client;
 });
 
-ClientSchema.static('findByPhoneNumber', async function findByPhoneNumber(phoneNumber: string) {
-  const client = await this.findOne({ phoneNumber }).exec();
-  if (!client) {
-    throw new Error(`Client with phone number "${phoneNumber}" does not exist.`);
+ClientSchema.static(
+  'findByPhoneNumber',
+  async function findByPhoneNumber(orgId: string, phoneNumber: number) {
+    const client = await this.findOne({ organization: orgId, phoneNumber }).exec();
+    if (!client) {
+      throw new Error(
+        `Client with phoneNumber "${phoneNumber}" does not exist in this organization "${orgId}".`
+      );
+    }
+    return client;
   }
-  return client;
-});
+);
 
 ClientSchema.static('list', async function list(options) {
   const newOptions = options || {};

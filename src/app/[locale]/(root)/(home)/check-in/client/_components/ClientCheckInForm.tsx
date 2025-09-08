@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, type FormFieldItem, useToast } from '@paalan/react-ui';
+import { Form, type FormFieldItem, Text, useToast, VStack } from '@paalan/react-ui';
 import { type FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -10,6 +10,7 @@ import { type CheckInFormSchema, checkInFormSchema } from '@/validations/check-i
 
 import { ClientCheckInVerified } from './ClientCheckInVerified';
 import type { ClientCheckInResult } from './types';
+import Link from '@/components/Link';
 
 const formFields: FormFieldItem<CheckInFormSchema>[] = [
   {
@@ -68,14 +69,22 @@ export const ClientCheckInForm: FC<ClientCheckInFormProps> = ({ orgId }) => {
   }
 
   return (
-    <Form<CheckInFormSchema>
-      form={form}
-      fields={formFields}
-      onSubmit={onSubmit}
-      hideResetButton
-      isSubmitting={isLoading}
-      submitText="Verify"
-      submitClassName="flex-grow"
-    />
+    <VStack gap="4">
+      <Form<CheckInFormSchema>
+        form={form}
+        fields={formFields}
+        onSubmit={onSubmit}
+        hideResetButton
+        isSubmitting={isLoading}
+        submitText="Verify"
+        submitClassName="flex-grow"
+      />
+      <Text className="text-center text-sm">
+        Want to go client check out?{' '}
+        <Link href={`/check-out/client?orgId=${orgId}`} className="text-link underline">
+          Client Check out
+        </Link>
+      </Text>
+    </VStack>
   );
 };

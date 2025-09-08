@@ -1,8 +1,7 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Text } from '@paalan/react-ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@paalan/react-ui';
 import Image from 'next/image';
 import type { FC } from 'react';
 
-import Link from '@/components/Link';
 import { api } from '@/trpc/server';
 
 import { ClientCheckInForm } from './_components/ClientCheckInForm';
@@ -40,12 +39,6 @@ const CheckInClientPage: FC<CheckInClientPageProps> = async ({ searchParams }) =
       </CardHeader>
       <CardContent>
         <ClientCheckInForm orgId={organization.id} />
-        <Text className="mt-4 text-center text-sm">
-          Want to client check out?{' '}
-          <Link href={`/check-out/client?orgId=${orgId}`} className="text-link underline">
-            Client Check out
-          </Link>
-        </Text>
       </CardContent>
     </Card>
   );

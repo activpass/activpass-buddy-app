@@ -96,14 +96,7 @@ class TimeLogService {
 
   clientCheckIn = async ({ input }: ClientCheckInArgs) => {
     const { phoneNumber, orgId } = input;
-    const clientDoc = await clientRepository.findByPhoneNumber(phoneNumber);
-
-    if (clientDoc.organization.toString() !== orgId) {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Client does not belong to this organization',
-      });
-    }
+    const clientDoc = await clientRepository.findByPhoneNumber(orgId, phoneNumber);
 
     return {
       name: clientDoc.fullName,
@@ -116,14 +109,7 @@ class TimeLogService {
 
   clientCheckInVerify = async ({ input }: ClientCheckInVerifyArgs) => {
     const { phoneNumber, orgId, pin } = input;
-    const clientDoc = await clientRepository.findByPhoneNumber(phoneNumber);
-
-    if (clientDoc.organization.toString() !== orgId) {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Client does not belong to this organization',
-      });
-    }
+    const clientDoc = await clientRepository.findByPhoneNumber(orgId, phoneNumber);
 
     const checkInDoc = await checkInRepository.getByOrgId({
       orgId,
@@ -162,14 +148,7 @@ class TimeLogService {
 
   clientCheckOutVerify = async ({ input }: ClientCheckOutVerifyArgs) => {
     const { phoneNumber, orgId, pin } = input;
-    const clientDoc = await clientRepository.findByPhoneNumber(phoneNumber);
-
-    if (clientDoc.organization.toString() !== orgId) {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Client does not belong to this organization',
-      });
-    }
+    const clientDoc = await clientRepository.findByPhoneNumber(orgId, phoneNumber);
 
     const checkInDoc = await checkInRepository.getByOrgId({
       orgId,

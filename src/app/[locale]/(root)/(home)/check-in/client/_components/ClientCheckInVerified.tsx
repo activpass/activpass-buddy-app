@@ -6,6 +6,7 @@ import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
+  Text,
   toast,
 } from '@paalan/react-ui';
 import { type FC, useState } from 'react';
@@ -16,6 +17,7 @@ import { type OtpPinFormSchema, otpPinFormSchema } from '@/validations/common.va
 
 import { ClientCheckInVerifiedSuccess } from './ClientCheckInVerifiedSuccess';
 import type { ClientCheckInResult } from './types';
+import Link from '@/components/Link';
 
 const fields: FormFieldItem<OtpPinFormSchema>[] = [
   {
@@ -104,6 +106,13 @@ export const ClientCheckInVerified: FC<ClientCheckInVerifiedProps> = ({
           submitText="Check In"
         />
       </div>
+
+      <Text className="mt-4 text-center text-sm">
+        Want to go back?{' '}
+        <Link href="#" onClick={resetClientResult} className="text-link underline">
+          Reset
+        </Link>
+      </Text>
     </div>
   );
 };
