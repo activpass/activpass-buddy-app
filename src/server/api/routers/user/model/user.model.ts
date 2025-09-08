@@ -191,11 +191,11 @@ UserSchema.static('authenticate', async function authenticate(email: string, pas
     throw new Error('Email is not registered.');
   }
 
-  if (!user.verified) {
-    throw new Error(
-      'Please verify your email before signing in. Check your inbox for a verification email.'
-    );
-  }
+  // if (!user.verified) {
+  //   throw new Error(
+  //     'Please verify your email before signing in. Check your inbox for a verification email.'
+  //   );
+  // }
 
   const passwordCorrect = await user.verifyPassword(password);
   if (!passwordCorrect) {
@@ -216,11 +216,11 @@ UserSchema.static(
       throw new Error('Invalid login token.');
     }
 
-    if (!user.verified) {
-      throw new Error(
-        'Please verify your email before signing in. Check your inbox for a verification email.'
-      );
-    }
+    // if (!user.verified) {
+    //   throw new Error(
+    //     'Please verify your email before signing in. Check your inbox for a verification email.'
+    //   );
+    // }
 
     user.lastLogin = new Date();
     user.loginToken = undefined;
