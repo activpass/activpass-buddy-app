@@ -167,6 +167,8 @@ UserSchema.virtual('password')
 UserSchema.method('toClientObject', function toClientObject(includeSensitiveData = false) {
   const userObj = this.toObject();
 
+  delete userObj.rawPassword;
+
   if (!includeSensitiveData) {
     delete userObj.salt;
     delete userObj.hash;
