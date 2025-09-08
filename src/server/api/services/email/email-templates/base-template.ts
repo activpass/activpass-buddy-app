@@ -212,7 +212,7 @@ export const getBaseEmailTemplate = (props: BaseEmailProps) => {
         ${footerText || `This email was sent by ${appName}. If you have any questions, please contact our support team.`}
       </div>
       <div class="email-footer-links">
-        <a href="${appUrl}" target="_blank">Visit Website</a>
+        <a href="${appUrl}/contact" target="_blank">Visit Website</a>
         ${unsubscribeUrl ? `<a href="${unsubscribeUrl}" target="_blank">Unsubscribe</a>` : ''}
       </div>
     </div>`,
