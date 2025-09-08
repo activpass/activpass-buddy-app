@@ -73,8 +73,8 @@ const ClientSchema = new mongoose.Schema(
     avatar: imageKitFileSchemaDefinition,
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    phoneNumber: { type: Number, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
+    phoneNumber: { type: Number, required: true },
+    email: { type: String, required: true },
     gender: {
       type: String,
       required: true,
