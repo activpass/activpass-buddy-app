@@ -7,7 +7,6 @@ import mongoose, {
 } from 'mongoose';
 
 import {
-  CLIENT_ADDITIONAL_SERVICE,
   CLIENT_CLASS_PREFERENCE,
   CLIENT_FITNESS_GOAL,
   CLIENT_FITNESS_LEVEL,
@@ -90,18 +89,17 @@ const ClientSchema = new mongoose.Schema(
       phoneNumber: { type: Number, required: true },
       email: { type: String },
       address: { type: String },
+      gender: {
+        type: String,
+        required: true,
+        enum: getObjectKeys(CLIENT_GENDER),
+      },
     },
 
     healthAndFitness: {
       height: { type: Number, required: true },
       weight: { type: Number, required: true },
       fitnessLevel: { type: String, required: true, enum: getObjectKeys(CLIENT_FITNESS_LEVEL) },
-      medicalCondition: { type: String },
-      allergy: { type: String },
-      injury: { type: String },
-    },
-
-    goalsAndPreference: {
       fitnessGoals: [{ type: String, enum: getObjectKeys(CLIENT_FITNESS_GOAL) }],
       classPreference: {
         type: String,
@@ -112,26 +110,10 @@ const ClientSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      additionalServices: [{ type: String, enum: getObjectKeys(CLIENT_ADDITIONAL_SERVICE) }],
       instructorSupport: { type: Boolean, default: false },
       fitnessAssessment: { type: Boolean, default: false },
     },
 
-    consentAndAgreement: {
-      termsAndConditions: { type: Boolean, default: false },
-      privacyPolicy: { type: Boolean, default: false },
-      websAppCommunication: { type: Boolean, default: false },
-      promotionalCommunication: { type: Boolean, default: false },
-      signature: {
-        name: {
-          type: String,
-          required: true,
-        },
-        provider: {
-          type: String,
-        },
-      },
-    },
     isDeleted: { type: Boolean, default: false },
 
     checkInDate: { type: Date },

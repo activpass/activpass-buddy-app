@@ -18,7 +18,7 @@ import {
 class IncomeRepository {
   private readonly logger = new Logger(IncomeRepository.name);
 
-  getUserCacheById = async (id: IIncomeSchema['id']) => {
+  getById = async (id: IIncomeSchema['id']) => {
     return IncomeModel.get(id);
   };
 

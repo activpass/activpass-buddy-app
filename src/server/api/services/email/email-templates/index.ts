@@ -1,7 +1,11 @@
 export type { BaseEmailProps } from './base-template';
 export { getBaseEmailTemplate } from './base-template';
+export type { ClientWelcomeEmailProps } from './client-welcome';
+export { generateClientWelcomeEmail } from './client-welcome';
 export type { EmailVerificationProps } from './email-verification';
 export { generateEmailVerificationEmail } from './email-verification';
+export type { NewMemberNotificationEmailProps } from './new-member-notification';
+export { generateNewMemberNotificationEmail } from './new-member-notification';
 export type { OnboardingCompletionEmailProps } from './onboarding-completion';
 export { generateOnboardingCompletionEmail } from './onboarding-completion';
 export type { PasswordResetEmailProps } from './password-reset';

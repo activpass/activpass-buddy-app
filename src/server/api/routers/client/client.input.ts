@@ -19,7 +19,6 @@ export const updateClientInputSchema = z.object({
     .object({
       personalInformation: createClientInputSchema.shape.personalInformation.partial(),
       emergencyContact: createClientInputSchema.shape.emergencyContact,
-      goalsAndPreference: createClientInputSchema.shape.goalsAndPreference,
       healthAndFitness: createClientInputSchema.shape.healthAndFitness,
       avatar: imageKitFileResponseSchema.nullable(),
     })

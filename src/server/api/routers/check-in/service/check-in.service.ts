@@ -13,7 +13,7 @@ import type {
 class CheckInService {
   private readonly logger = new Logger(CheckInService.name);
 
-  getUserCacheById = async ({ id }: GetCheckInByIdArgs) => {
+  getById = async ({ id }: GetCheckInByIdArgs) => {
     try {
       if (!id) {
         throw new TRPCError({
@@ -21,7 +21,7 @@ class CheckInService {
           message: 'CheckIn ID is required',
         });
       }
-      const checkIn = await checkInRepository.getUserCacheById(id);
+      const checkIn = await checkInRepository.getById(id);
       return checkIn;
     } catch (error: unknown) {
       this.logger.error('Failed to get checkIn by id', error);

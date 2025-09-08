@@ -1,4 +1,3 @@
-import { useStepper } from '@paalan/react-ui';
 import type { FC } from 'react';
 
 import { MembershipDetailsForm } from '../../../../../_components/MembershipDetailsForm';
@@ -8,7 +7,8 @@ import { StepperFormActions } from '../StepperFormActions';
 export const MembershipDetailsStepperForm: FC = () => {
   const membershipPlansList = useClientFormStore(state => state.onboardingData.membershipPlans);
   const updateMembershipDetail = useClientFormStore(state => state.updateMembershipDetail);
-  const { nextStep } = useStepper();
+  const nextStep = useClientFormStore(state => state.nextStep);
+
   const membershipDetail = useClientMemberShipDetail();
 
   return (
@@ -17,7 +17,7 @@ export const MembershipDetailsStepperForm: FC = () => {
       updateMembershipDetail={updateMembershipDetail}
       nextStep={nextStep}
       membershipPlans={membershipPlansList}
-      formAction={<StepperFormActions />}
+      formAction={<StepperFormActions disabled={!membershipDetail.selectedPlan} />}
     />
   );
 };

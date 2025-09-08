@@ -1,75 +1,20 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { dateIntl } from '@paalan/react-shared/lib';
-import { Form, toast } from '@paalan/react-ui';
-import { useParams } from 'next/navigation';
+import { FormFieldItems, Grid } from '@paalan/react-ui';
 import { type FC } from 'react';
-import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
+import { type UseFormReturn } from 'react-hook-form';
 
-import { api } from '@/trpc/client';
-import type { ClientFormSchema } from '@/validations/client/add-form.validation';
-import { clientPersonalInformationSchema } from '@/validations/client/add-form.validation';
-
+import type { ClientProfileFormSchema } from '../../schema';
 import { formFields } from './fields';
 
-const clientPersonalInformationWithoutAvatarSchema = clientPersonalInformationSchema.omit({
-  avatar: true,
-});
-
-export type ClientPersonalInformationSchema = z.infer<
-  typeof clientPersonalInformationWithoutAvatarSchema
->;
-
 type ClientInfoProps = {
-  data: Omit<ClientFormSchema['personalInformation'], 'avatar'>;
+  form: UseFormReturn<ClientProfileFormSchema>;
 };
 
-export const ClientInfo: FC<ClientInfoProps> = ({ data }) => {
-  const { id } = useParams<{ id: string }>();
-
-  const form = useForm<ClientPersonalInformationSchema>({
-    resolver: zodResolver(clientPersonalInformationWithoutAvatarSchema),
-    defaultValues: {
-      ...data,
-      dob: dateIntl.formatDate(data.dob, {
-        dateFormat: 'yyyy-MM-dd',
-      }),
-    },
-    mode: 'onChange',
-  });
-
-  const updateProfile = api.clients.update.useMutation();
-
-  const onSubmit = async (updateData: ClientPersonalInformationSchema) => {
-    try {
-      await updateProfile.mutateAsync({
-        id,
-        data: {
-          personalInformation: {
-            ...updateData,
-            dob: new Date(updateData.dob),
-          },
-        },
-      });
-
-      toast.success('Personal Information updated successfully!');
-    } catch (err) {
-      const error = err as Error;
-      toast.error(error.message);
-    }
-  };
-
+export const ClientInfo: FC<ClientInfoProps> = ({ form }) => {
   return (
-    <Form<ClientPersonalInformationSchema>
-      form={form}
-      fields={formFields}
-      onSubmit={onSubmit}
-      submitText="Update Profile Info"
-      isSubmitting={updateProfile.isPending}
-      hideResetButton
-      className="grid grid-cols-1 gap-4 space-y-0 sm:grid-cols-2"
-    />
+    <Grid className="grid grid-cols-1 gap-4 space-y-0 sm:grid-cols-2">
+      <FormFieldItems<ClientProfileFormSchema> fields={formFields} control={form.control} />
+    </Grid>
   );
 };

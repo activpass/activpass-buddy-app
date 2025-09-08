@@ -12,9 +12,9 @@ import type {
 class IncomeService {
   private readonly logger = new Logger(IncomeService.name);
 
-  getUserCacheById = async ({ input }: GetIncomeByIdArgs) => {
+  getById = async ({ input }: GetIncomeByIdArgs) => {
     try {
-      const income = await incomeRepository.getUserCacheById(input.id);
+      const income = await incomeRepository.getById(input.id);
       return income;
     } catch (error: unknown) {
       this.logger.error('Failed to get income by id', error);

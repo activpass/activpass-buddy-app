@@ -23,7 +23,7 @@ import type {
 class TimeLogService {
   private readonly logger = new Logger(TimeLogService.name);
 
-  getUserCacheById = async ({ id }: GetTimeLogByIdArgs) => {
+  getById = async ({ id }: GetTimeLogByIdArgs) => {
     try {
       if (!id) {
         throw new TRPCError({
@@ -31,7 +31,7 @@ class TimeLogService {
           message: 'TimeLog ID is required',
         });
       }
-      const timeLog = await timeLogRepository.getUserCacheById(id);
+      const timeLog = await timeLogRepository.getById(id);
       return timeLog;
     } catch (error) {
       this.logger.error('Failed to get timeLog by id', error);

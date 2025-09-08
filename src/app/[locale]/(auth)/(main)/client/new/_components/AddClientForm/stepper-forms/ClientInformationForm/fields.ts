@@ -89,22 +89,14 @@ export const getEmergencyContactFields = (form: UseFormReturn<ClientInformationS
     {
       type: 'input',
       name: 'emergencyContact.name',
-      label: 'Name',
+      label: 'Emergency Name',
       placeholder: 'Enter name eg. John Doe',
-      required: true,
-    },
-    {
-      type: 'select',
-      name: 'emergencyContact.relationship',
-      label: 'Relationship',
-      placeholder: 'Select a relationship',
-      options: getOptionsFromDisplayConstant(CLIENT_RELATIONSHIP),
       required: true,
     },
     {
       type: 'number',
       name: 'emergencyContact.phoneNumber',
-      label: 'Contact Number',
+      label: 'Emergency Number',
       placeholder: 'Enter phone number eg. 9123456789',
       required: true,
       onValueChange(value) {
@@ -118,21 +110,20 @@ export const getEmergencyContactFields = (form: UseFormReturn<ClientInformationS
       },
     },
     {
-      type: 'input',
-      name: 'emergencyContact.email',
-      label: 'Email',
-      placeholder: 'Enter email eg. abc@gmail.com',
+      type: 'select',
+      name: 'emergencyContact.relationship',
+      label: 'Relationship',
+      placeholder: 'Select a relationship',
+      options: getOptionsFromDisplayConstant(CLIENT_RELATIONSHIP),
+      required: true,
     },
     {
-      type: 'textarea',
-      name: 'emergencyContact.address',
-      label: 'Address',
-      placeholder: 'Enter address eg. 123, Main Street, City',
-      formItemClassName: 'sm:col-span-2',
-      textareaProps: {
-        rows: 3,
-        className: 'resize-none',
-      },
+      type: 'select',
+      name: 'gender',
+      label: 'Gender',
+      placeholder: 'Select a gender',
+      options: getOptionsFromDisplayConstant(CLIENT_GENDER),
+      required: true,
     },
   ];
   return fields;

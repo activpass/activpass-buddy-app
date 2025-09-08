@@ -5,6 +5,10 @@ import { deleteFileFromImageKit } from '@/server/api/utils/imagekit';
 import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger';
 
+import {
+  sendClientWelcomeEmail,
+  sendNewMemberNotificationEmail,
+} from '../../../services/email/email.service';
 import type { IIncomeSchema } from '../../income/model/income.model';
 import { incomeRepository } from '../../income/repository/income.repository';
 import {
@@ -12,6 +16,7 @@ import {
   MembershipPlanModel,
 } from '../../membership-plan/model/membership-plan.model';
 import { organizationService } from '../../organization/service/organization.service';
+import { UserModel } from '../../user/model/user.model';
 import { updateMembershipPlan } from '../helper/client.helper';
 import { createClientIncome } from '../helper/createClientIncome.helper';
 import { ClientModel, type IClientSchema } from '../model/client.model';
@@ -35,7 +40,7 @@ import type {
 class ClientService {
   private readonly logger = new Logger(ClientService.name);
 
-  getUserCacheById = async ({ id }: GetClientByIdArgs) => {
+  getById = async ({ id }: GetClientByIdArgs) => {
     try {
       if (!id) {
         throw new TRPCError({
@@ -43,7 +48,7 @@ class ClientService {
           message: 'Client ID is required',
         });
       }
-      const client = await (await clientRepository.getUserCacheById(id)).populate('membershipPlan');
+      const client = await (await clientRepository.getById(id)).populate('membershipPlan');
 
       return client.toObject({
         flattenObjectIds: true,
@@ -221,24 +226,80 @@ class ClientService {
 
   submitOnboardingClient = async ({ input }: SubmitOnboardingClientArgs) => {
     const { onboardClientId, ...restInput } = input;
-    const onboardClient = await onboardClientRepository.getUserCacheById(onboardClientId);
+    const onboardClient = await onboardClientRepository.getById(onboardClientId);
 
-    const organization = await organizationService.getUserCacheById({
+    const organizationDoc = await organizationService.getById({
       id: onboardClient.organization.toHexString(),
     });
+
+    const organization = organizationDoc.toObject();
 
     if (onboardClient.onBoarded) {
       throw new Error('Client already onboarded');
     }
 
-    await this.create({
+    // Create the client
+    const createdClientDoc = await this.create({
       orgId: organization.id,
       input: restInput,
     });
 
+    const createdClient = createdClientDoc.toObject();
+
+    // Get membership plan details for email
+    const membershipPlan = await MembershipPlanModel.findById(restInput.membershipDetail.planId);
+
+    // Get organization owner details
+    const organizationOwner = await UserModel.findById(organization.createdBy);
+
     onboardClient.onBoarded = true;
     onboardClient.onBoardedAt = new Date();
     await onboardClient.save();
+
+    // Send emails in parallel (don't wait for them to complete)
+    const emailPromises = [];
+
+    // 1. Send welcome email to the client
+    if (createdClient.email) {
+      emailPromises.push(
+        sendClientWelcomeEmail({
+          clientName: `${createdClient.firstName} ${createdClient.lastName}`.trim(),
+          clientEmail: createdClient.email,
+          organizationName: organization.name,
+          organizationType: organization.type,
+          membershipPlanName: membershipPlan?.name || 'Standard Plan',
+          clientId: createdClient.id,
+          orgId: organization.id,
+        }).catch((error: unknown) => {
+          this.logger.error('Failed to send client welcome email:', error);
+        })
+      );
+    }
+
+    // 2. Send notification email to organization owner
+    if (organizationOwner?.email) {
+      emailPromises.push(
+        sendNewMemberNotificationEmail({
+          organizationOwnerName:
+            `${organizationOwner.firstName || ''} ${organizationOwner.lastName || ''}`.trim() ||
+            'Organization Owner',
+          organizationOwnerEmail: organizationOwner.email,
+          organizationName: organization.name,
+          organizationType: organization.type,
+          clientName: `${createdClient.firstName} ${createdClient.lastName}`.trim(),
+          clientEmail: createdClient.email || '',
+          membershipPlanName: membershipPlan?.name || 'Standard Plan',
+          joinDate: new Date().toLocaleDateString(),
+        }).catch((error: unknown) => {
+          this.logger.error('Failed to send new member notification email:', error);
+        })
+      );
+    }
+
+    // Execute email promises without blocking the response
+    Promise.all(emailPromises).catch((error: unknown) => {
+      this.logger.error('Email notification errors:', error);
+    });
 
     return {
       message: 'Client onboarded successfully',
@@ -284,7 +345,7 @@ class ClientService {
   };
 
   getCurrentMembershipPlan = async ({ clientId }: CurrentMembershipPlanArgs) => {
-    const client = await clientRepository.getUserCacheById(clientId);
+    const client = await clientRepository.getById(clientId);
     const plan = await incomeRepository.getCurrentMembershipPlanIncome({
       clientId: client.id,
       orgId: client.organization.toHexString(),

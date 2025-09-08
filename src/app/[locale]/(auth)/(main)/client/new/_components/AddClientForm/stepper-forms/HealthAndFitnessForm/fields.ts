@@ -1,6 +1,10 @@
 import type { FormFieldItem } from '@paalan/react-ui';
 
-import { CLIENT_FITNESS_LEVEL } from '@/constants/client/add-form.constant';
+import {
+  CLIENT_CLASS_PREFERENCE,
+  CLIENT_FITNESS_GOAL,
+  CLIENT_FITNESS_LEVEL,
+} from '@/constants/client/add-form.constant';
 import { getOptionsFromDisplayConstant } from '@/utils/helpers';
 import type { HealthAndFitnessSchema } from '@/validations/client/add-form.validation';
 
@@ -11,6 +15,9 @@ export const HEALTH_AND_FITNESS_FIELDS: FormFieldItem<HealthAndFitnessSchema>[] 
     label: 'Height (in cm)',
     placeholder: 'Enter height eg. 180',
     required: true,
+    numberInputProps: {
+      zeroAsEmptyString: true,
+    },
   },
   {
     type: 'number',
@@ -18,6 +25,9 @@ export const HEALTH_AND_FITNESS_FIELDS: FormFieldItem<HealthAndFitnessSchema>[] 
     label: 'Weight (in kg)',
     placeholder: 'Enter weight eg. 70',
     required: true,
+    numberInputProps: {
+      zeroAsEmptyString: true,
+    },
   },
   {
     type: 'select',
@@ -28,21 +38,41 @@ export const HEALTH_AND_FITNESS_FIELDS: FormFieldItem<HealthAndFitnessSchema>[] 
     required: true,
   },
   {
-    type: 'input',
-    name: 'medicalCondition',
-    label: 'Medical Condition (if any)',
-    placeholder: 'Enter medical condition eg. Diabetes, Asthma',
+    type: 'multi-select',
+    name: 'fitnessGoals',
+    label: 'Fitness Goals',
+    placeholder: 'Select fitness goals',
+    required: true,
+    options: getOptionsFromDisplayConstant(CLIENT_FITNESS_GOAL),
+  },
+  {
+    type: 'select',
+    name: 'classPreference',
+    label: 'Class Preference',
+    placeholder: 'Select class preference',
+    required: true,
+    options: getOptionsFromDisplayConstant(CLIENT_CLASS_PREFERENCE),
   },
   {
     type: 'input',
-    name: 'allergy',
-    label: 'Allergy (if any)',
-    placeholder: 'Enter allergy eg. Pollen, Dust',
+    inputType: 'time',
+    name: 'classTimePreference',
+    label: 'Class Time Preference',
+    placeholder: 'Select class time preference',
+    required: true,
   },
   {
-    type: 'input',
-    name: 'injury',
-    label: 'Injury (if any)',
-    placeholder: 'Enter injury eg. Knee, Back',
+    type: 'checkbox',
+    name: 'instructorSupport',
+    label: 'Do you need instructor?',
+    description: 'Instructor will help you in your fitness journey',
+    formItemClassName: 'pt-3 space-y-1',
+  },
+  {
+    type: 'checkbox',
+    name: 'fitnessAssessment',
+    label: 'Do you need fitness assessment?',
+    description: 'Fitness assessment will help you in your fitness journey',
+    formItemClassName: 'pt-3 space-y-1',
   },
 ];

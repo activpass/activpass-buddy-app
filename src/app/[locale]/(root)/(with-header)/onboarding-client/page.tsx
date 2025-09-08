@@ -1,4 +1,4 @@
-import { Flex, Heading, Paper, Text } from '@paalan/react-ui';
+import { Center, Flex, Heading, Paper, Text, VStack } from '@paalan/react-ui';
 import type { FC } from 'react';
 
 import { api } from '@/trpc/server';
@@ -26,11 +26,15 @@ const OnboardClientPage: FC<OnboardClientPageProps> = async ({ searchParams }) =
             Please fill out the form below to complete your registration.
           </Text>
         </Flex>
-        <AddClientForm
-          membershipPlans={data.membershipPlans}
-          organization={data.organization}
-          onboardClientId={data.onBoardingId}
-        />
+        <Center>
+          <VStack className="w-full max-w-4xl">
+            <AddClientForm
+              membershipPlans={data.membershipPlans}
+              organization={data.organization}
+              onboardClientId={data.onBoardingId}
+            />
+          </VStack>
+        </Center>
       </Paper>
     </div>
   );

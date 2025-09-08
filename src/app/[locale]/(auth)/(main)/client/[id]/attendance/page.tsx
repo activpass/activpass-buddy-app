@@ -1,10 +1,11 @@
-import { Heading, Separator, Skeleton, Text } from '@paalan/react-ui';
+import { Skeleton } from '@paalan/react-ui';
 import type { Metadata } from 'next';
 import { type FC, Suspense } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 import { api } from '@/trpc/server';
 
+import { ProfileHeader } from '../_components/ProfileHeader';
 import { AttendanceCalendar } from './_components/AttendanceCalendar';
 import { AttendanceTable } from './_components/AttendanceTable';
 
@@ -35,13 +36,10 @@ const AttendancePage: FC<AttendancePageProps> = async ({ params }) => {
         ]}
       />
       <div className="space-y-6">
-        <div>
-          <Heading as="h3">Attendance</Heading>
-          <Text fontSize="sm" className="text-muted-foreground">
-            Attendance details and status.
-          </Text>
-        </div>
-        <Separator />
+        <ProfileHeader
+          title="Attendance Details"
+          description="Details of your client’s attendance can be viewed here"
+        />
         <div className="flex flex-col gap-5">
           <AttendanceCalendar clientId={clientId} />
           <Suspense fallback={<Skeleton className="h-28 w-full" />}>

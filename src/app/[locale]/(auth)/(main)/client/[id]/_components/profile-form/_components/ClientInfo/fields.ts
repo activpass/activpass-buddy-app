@@ -1,36 +1,28 @@
 import type { FormFieldItem } from '@paalan/react-ui';
-import type { z } from 'zod';
 
 import { CLIENT_GENDER } from '@/constants/client/add-form.constant';
 import { getOptionsFromDisplayConstant } from '@/utils/helpers';
-import { clientPersonalInformationSchema } from '@/validations/client/add-form.validation';
 
-const clientPersonalInformationWithoutAvatarSchema = clientPersonalInformationSchema.omit({
-  avatar: true,
-});
+import type { ClientProfileFormSchema } from '../../schema';
 
-export type ClientPersonalInformationSchema = z.infer<
-  typeof clientPersonalInformationWithoutAvatarSchema
->;
-
-export const formFields: FormFieldItem<ClientPersonalInformationSchema>[] = [
+export const formFields: FormFieldItem<ClientProfileFormSchema>[] = [
   {
     type: 'input',
-    name: 'firstName',
+    name: 'personalInformation.firstName',
     label: 'First Name',
     placeholder: 'Enter first name eg. Cristiano',
     required: true,
   },
   {
     type: 'input',
-    name: 'lastName',
+    name: 'personalInformation.lastName',
     label: 'Last Name',
     placeholder: 'Enter last name eg. Ronaldo',
     required: true,
   },
   {
     type: 'input',
-    name: 'phoneNumber',
+    name: 'personalInformation.phoneNumber',
     label: 'Phone Number',
     placeholder: 'Enter phone number eg. 1234567890',
     required: true,
@@ -38,14 +30,14 @@ export const formFields: FormFieldItem<ClientPersonalInformationSchema>[] = [
   },
   {
     type: 'input',
-    name: 'email',
+    name: 'personalInformation.email',
     label: 'Email',
     required: true,
     placeholder: 'Enter email eg. abc@gmail.com',
   },
   {
     type: 'select',
-    name: 'gender',
+    name: 'personalInformation.gender',
     label: 'Gender',
     placeholder: 'Select gender eg. Male',
     required: true,
@@ -53,7 +45,7 @@ export const formFields: FormFieldItem<ClientPersonalInformationSchema>[] = [
   },
   {
     type: 'input',
-    name: 'dob',
+    name: 'personalInformation.dob',
     label: 'Date of Birth',
     inputType: 'date',
     placeholder: 'Enter date of birth eg. 1985-02-05',
@@ -61,7 +53,7 @@ export const formFields: FormFieldItem<ClientPersonalInformationSchema>[] = [
   },
   {
     type: 'textarea',
-    name: 'address',
+    name: 'personalInformation.address',
     label: 'Address',
     className: 'resize-none',
     placeholder: 'Enter address eg. 123 Main St, Springfield',

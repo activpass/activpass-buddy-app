@@ -7,7 +7,7 @@ import { organizationService } from './service/organization.service';
 
 export const organizationRouter = createTRPCRouter({
   get: protectedProcedure.input(z.string()).query(async ({ input }) => {
-    return organizationService.getUserCacheById({ id: input });
+    return organizationService.getById({ id: input });
   }),
   create: protectedProcedure.input(createOrganizationInputSchema).mutation(async ({ input }) => {
     return organizationService.create({ input });

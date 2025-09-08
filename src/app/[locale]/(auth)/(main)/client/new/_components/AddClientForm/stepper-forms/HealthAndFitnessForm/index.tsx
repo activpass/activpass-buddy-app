@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, useStepper } from '@paalan/react-ui';
+import { Form } from '@paalan/react-ui';
 import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -13,7 +13,7 @@ import { StepperFormActions } from '../StepperFormActions';
 import { HEALTH_AND_FITNESS_FIELDS } from './fields';
 
 export const HealthAndFitnessForm: FC = () => {
-  const { nextStep } = useStepper();
+  const nextStep = useClientFormStore(state => state.nextStep);
   const setHealthAndFitness = useClientFormStore(state => state.setHealthAndFitness);
   const clientHealthAndFitness = useClientHealthAndFitness();
 

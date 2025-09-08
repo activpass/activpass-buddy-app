@@ -27,7 +27,7 @@ const ProfileLayout: FC<ProfileLayoutProps> = async ({ children, params }) => {
       href: `/client/${params.id}`,
     },
     {
-      title: 'Membership',
+      title: 'Plans',
       href: `/client/${params.id}/membership`,
     },
     {
@@ -41,7 +41,7 @@ const ProfileLayout: FC<ProfileLayoutProps> = async ({ children, params }) => {
       <div className="space-y-0.5">
         <Heading as="h2">Client Profile</Heading>
         <Text className="text-muted-foreground">
-          Manage your client profile, membership, and attendance.
+          Manage your client profile, plans, and attendance.
         </Text>
       </div>
       <Separator className="my-6" />

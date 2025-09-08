@@ -76,7 +76,7 @@ MembershipPlanSchema.virtual('discountAmount').get(function discountAmount() {
 
 MembershipPlanSchema.virtual('totalAmount').get(function totalAmount() {
   if (!this.amount) return 0;
-  return this.amount - (this.amount * (this.discountPercentage || 0)) / 100;
+  return Math.round(this.amount - (this.amount * (this.discountPercentage || 0)) / 100);
 });
 
 MembershipPlanSchema.static('get', async function get(id: string) {

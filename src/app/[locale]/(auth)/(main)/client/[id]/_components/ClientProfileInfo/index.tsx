@@ -4,7 +4,6 @@ import { TrashIcon, UploadIcon } from '@paalan/react-icons';
 import { dateIntl } from '@paalan/react-shared/lib';
 import { AlertDialog, Button, HStack, toast } from '@paalan/react-ui';
 import { useEffect, useState } from 'react';
-import { FaWhatsapp } from 'react-icons/fa';
 
 import { uploadToImagekit } from '@/lib/imagekit';
 import { api } from '@/trpc/client';
@@ -189,10 +188,6 @@ export const ClientProfileInfo: React.FC<ClientProfileInfoProps> = ({ clientData
             })}
           </p>
         </div>
-        <Button color="green" className="mt-3" disabled>
-          Send Message
-          <FaWhatsapp className="mr-2 size-5" />
-        </Button>
       </div>
     </div>
   );

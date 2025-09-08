@@ -3,7 +3,6 @@ import { startOfDay } from 'date-fns';
 import { z } from 'zod';
 
 import {
-  CLIENT_ADDITIONAL_SERVICE,
   CLIENT_CLASS_PREFERENCE,
   CLIENT_FITNESS_GOAL,
   CLIENT_FITNESS_LEVEL,
@@ -74,6 +73,7 @@ export const clientEmergencyContactSChema = z.object({
     ])
     .nullish(),
   address: z.string().nullish(),
+  gender: convertObjectKeysIntoZodEnum(CLIENT_GENDER),
 });
 export type ClientEmergencyContactSchema = z.infer<typeof clientEmergencyContactSChema>;
 
@@ -90,13 +90,6 @@ export const healthAndFitnessSchema = z.object({
     message: 'Weight is required',
   }),
   fitnessLevel: convertObjectKeysIntoZodEnum(CLIENT_FITNESS_LEVEL),
-  medicalCondition: z.string().nullish(),
-  allergy: z.string().nullish(),
-  injury: z.string().nullish(),
-});
-export type HealthAndFitnessSchema = z.infer<typeof healthAndFitnessSchema>;
-
-export const goalsAndPreferenceSchema = z.object({
   fitnessGoals: z.array(convertObjectKeysIntoZodEnum(CLIENT_FITNESS_GOAL), {
     message: 'Fitness goals is required',
   }),
@@ -104,11 +97,10 @@ export const goalsAndPreferenceSchema = z.object({
   classTimePreference: z.string().min(1, {
     message: 'Time preference is required',
   }),
-  additionalServices: convertObjectKeysIntoZodEnum(CLIENT_ADDITIONAL_SERVICE).array(),
   instructorSupport: z.boolean(),
   fitnessAssessment: z.boolean(),
 });
-export type GoalsAndPreferencesSchema = z.infer<typeof goalsAndPreferenceSchema>;
+export type HealthAndFitnessSchema = z.infer<typeof healthAndFitnessSchema>;
 
 export const membershipDetailSchema = createMembershipPlanSchema.pick({ tenure: true }).extend({
   planId: z.string().min(1, {
@@ -124,33 +116,11 @@ export const paymentDetailSchema = z.object({
 });
 export type PaymentDetailSchema = z.infer<typeof paymentDetailSchema>;
 
-export const consentAndAgreementSchema = z.object({
-  termsAndConditions: z.boolean().refine(value => value, {
-    message: 'You must agree to the terms and conditions',
-  }),
-  privacyPolicy: z.boolean().refine(value => value, {
-    message: 'You must agree to the privacy policy',
-  }),
-  websAppCommunication: z.boolean().refine(value => value, {
-    message: 'You must agree to the WhatsApp communication',
-  }),
-  promotionalCommunication: z.boolean(),
-  signature: z.object({
-    name: z.string().min(1, {
-      message: 'Signature Name is required',
-    }),
-    provider: z.string().optional(),
-  }),
-});
-export type ConsentAndAgreementSchema = z.infer<typeof consentAndAgreementSchema>;
-
 export const clientFormSchema = z.object({
   personalInformation: clientPersonalInformationSchema,
   emergencyContact: clientEmergencyContactSChema,
   healthAndFitness: healthAndFitnessSchema,
-  goalsAndPreference: goalsAndPreferenceSchema,
   membershipDetail: membershipDetailSchema,
   paymentDetail: paymentDetailSchema,
-  consentAndAgreement: consentAndAgreementSchema,
 });
 export type ClientFormSchema = z.infer<typeof clientFormSchema>;

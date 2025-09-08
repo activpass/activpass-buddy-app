@@ -9,11 +9,9 @@ import {
 import { incomeService } from './service/income.service';
 
 export const incomeRouter = createTRPCRouter({
-  getUserCacheById: protectedProcedure
-    .input(getUserCacheByIdInputSchema)
-    .query(async ({ input }) => {
-      return incomeService.getUserCacheById({ input });
-    }),
+  getById: protectedProcedure.input(getUserCacheByIdInputSchema).query(async ({ input }) => {
+    return incomeService.getById({ input });
+  }),
   getPopulatedById: protectedProcedure
     .input(getUserCacheByIdInputSchema)
     .query(async ({ input }) => {

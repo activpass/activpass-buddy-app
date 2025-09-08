@@ -15,8 +15,8 @@ import {
 } from './time-log.input';
 
 export const timeLogRouter = createTRPCRouter({
-  getUserCacheById: protectedProcedure.input(z.string()).query(async ({ input }) => {
-    return timeLogService.getUserCacheById({ id: input });
+  getById: protectedProcedure.input(z.string()).query(async ({ input }) => {
+    return timeLogService.getById({ id: input });
   }),
   create: protectedProcedure.input(createTimeLogInputSchema).mutation(async ({ ctx, input }) => {
     return timeLogService.create({ input, orgId: ctx.session.user.orgId });

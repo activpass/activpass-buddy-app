@@ -1,10 +1,11 @@
-import { Heading, Separator, Skeleton, Text } from '@paalan/react-ui';
+import { Skeleton } from '@paalan/react-ui';
 import type { Metadata } from 'next';
 import { type FC, Suspense } from 'react';
 
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 import { api } from '@/trpc/server';
 
+import { ProfileHeader } from '../_components/ProfileHeader';
 import { InvoiceTable } from './_components/InvoiceTable';
 import { MembershipHeader } from './_components/MembershipHeader';
 
@@ -33,18 +34,15 @@ const MembershipPage: FC<MembershipPageProps> = async ({ params }) => {
           { label: 'Client', href: '/client' },
           { label: clientData.fullName, href: `/client/${params.id}` },
           {
-            label: 'Membership',
+            label: 'Plans',
           },
         ]}
       />
       <div className="space-y-6">
-        <div>
-          <Heading as="h3">Membership</Heading>
-          <Text fontSize="sm" className="text-muted-foreground">
-            Membership details and status.
-          </Text>
-        </div>
-        <Separator />
+        <ProfileHeader
+          title="Plan Details"
+          description="Details of your client’s plans can be viewed here"
+        />
         <div>
           <Suspense fallback={<Skeleton className="mb-6 h-28 w-full" />}>
             <MembershipHeader currentMembershipPlanPromise={currentMembershipPlanPromise} />

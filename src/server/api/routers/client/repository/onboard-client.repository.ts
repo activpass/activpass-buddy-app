@@ -19,7 +19,7 @@ import type {
 class OnboardClientRepository {
   private readonly logger = new Logger(OnboardClientRepository.name);
 
-  getUserCacheById = async (id: IClientSchema['id']) => {
+  getById = async (id: IClientSchema['id']) => {
     return OnboardClientModel.get(id);
   };
 

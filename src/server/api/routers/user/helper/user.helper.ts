@@ -1,3 +1,5 @@
+import { redis } from '@/server/database/redis';
+
 import type { ServerSession } from '../../auth/service/auth.service.types';
 
 export const getUserInfoKey = (userId: string): string => {

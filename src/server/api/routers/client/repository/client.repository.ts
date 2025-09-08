@@ -18,7 +18,7 @@ import { ClientModel, type IClientSchema, type IClientVirtuals } from '../model/
 class ClientRepository {
   private readonly logger = new Logger(ClientRepository.name);
 
-  getUserCacheById = async (id: IClientSchema['id']) => {
+  getById = async (id: IClientSchema['id']) => {
     return ClientModel.get(id);
   };
 
@@ -63,16 +63,10 @@ class ClientRepository {
         personalInformation.phoneNumber
       );
 
-      const goalsAndPreference: IClientSchema['goalsAndPreference'] = {
-        ...rest.goalsAndPreference,
-        additionalServices: rest.goalsAndPreference.additionalServices || [],
-      };
       const dataBody: Omit<IClientSchema, keyof IClientVirtuals> = {
         ...personalInformation,
         emergencyContact: rest.emergencyContact,
         healthAndFitness: rest.healthAndFitness,
-        goalsAndPreference,
-        consentAndAgreement: rest.consentAndAgreement,
         clientCode: generateClientCode(),
         organization: generateMongooseObjectId(orgId),
         membershipPlan: generateMongooseObjectId(rest.membershipDetail.planId),

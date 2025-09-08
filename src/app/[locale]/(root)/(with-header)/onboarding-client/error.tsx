@@ -7,9 +7,7 @@ type ErrorPageProps = {
   error: Error;
 };
 const ErrorPage: FC<ErrorPageProps> = ({ error }) => {
-  return (
-    <ErrorInternalResponse heading="Internal Server Error" subHeading={error.message} showIcon />
-  );
+  return <ErrorInternalResponse heading="An error occured" subHeading={error.message} showIcon />;
 };
 
 export default ErrorPage;

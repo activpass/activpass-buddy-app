@@ -4,6 +4,7 @@ import { createTRPCRouter } from '@/server/api/trpc';
 
 import { checkInRouter } from './routers/check-in/check-in.router';
 import { clientRouter } from './routers/client/client.router';
+import { clientDashboardRouter } from './routers/client-dashboard/client-dashboard.router';
 import { contactRouter } from './routers/contact/contact.router';
 import { incomeRouter } from './routers/income/income.router';
 import { membershipPlanRouter } from './routers/membership-plan/membership-plan.router';
@@ -19,6 +20,7 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   users: userRouter,
   clients: clientRouter,
+  clientDashboard: clientDashboardRouter,
   contacts: contactRouter,
   incomes: incomeRouter,
   membershipPlans: membershipPlanRouter,

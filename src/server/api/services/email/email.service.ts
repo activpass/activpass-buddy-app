@@ -1,11 +1,15 @@
 import { sendMail } from '@/lib/resend';
 
 import {
+  type ClientWelcomeEmailProps,
   type EmailVerificationProps,
+  generateClientWelcomeEmail,
   generateEmailVerificationEmail,
+  generateNewMemberNotificationEmail,
   generateOnboardingCompletionEmail,
   generatePasswordResetEmail,
   generatePasswordResetSuccessEmail,
+  type NewMemberNotificationEmailProps,
   type OnboardingCompletionEmailProps,
   type PasswordResetEmailProps,
   type PasswordResetSuccessEmailProps,
@@ -104,6 +108,40 @@ You can now access your account and start managing your activities.
 Best regards,
 The ActivPass Team
     `,
+  });
+
+  return result;
+};
+
+/**
+ * Sends a welcome email to a new client who joined an organization
+ */
+export const sendClientWelcomeEmail = async (props: ClientWelcomeEmailProps) => {
+  const { clientEmail, organizationName } = props;
+  const { html, text } = generateClientWelcomeEmail(props);
+
+  const result = await sendMail({
+    to: clientEmail,
+    subject: `Welcome to ${organizationName}!`,
+    html,
+    text,
+  });
+
+  return result;
+};
+
+/**
+ * Sends a notification email to organization owner about a new member
+ */
+export const sendNewMemberNotificationEmail = async (props: NewMemberNotificationEmailProps) => {
+  const { organizationOwnerEmail, clientName, organizationName } = props;
+  const { html, text } = generateNewMemberNotificationEmail(props);
+
+  const result = await sendMail({
+    to: organizationOwnerEmail,
+    subject: `New Member Alert: ${clientName} joined ${organizationName}`,
+    html,
+    text,
   });
 
   return result;

@@ -1,4 +1,3 @@
-import { Heading, Separator, Text } from '@paalan/react-ui';
 import type { Metadata } from 'next';
 import type { FC } from 'react';
 
@@ -6,6 +5,7 @@ import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 import { api } from '@/trpc/server';
 
 import { ProfileForm } from './_components/profile-form';
+import { ProfileHeader } from './_components/ProfileHeader';
 
 export const metadata: Metadata = {
   title: 'Client Profile',
@@ -22,16 +22,13 @@ const ClientProfilePage: FC<ClientProfilePageProps> = async ({ params }) => {
   return (
     <>
       <SetBreadcrumbItems
-        items={[{ label: 'Client', href: '/client' }, { label: clientData.fullName }]}
+        items={[{ label: 'Clients', href: '/client' }, { label: clientData.fullName }]}
       />
       <div className="space-y-6">
-        <div>
-          <Heading as="h3">Profile</Heading>
-          <Text fontSize="sm" className="text-muted-foreground">
-            Manage your profile details
-          </Text>
-        </div>
-        <Separator />
+        <ProfileHeader
+          title="Profile Details"
+          description="Details of your client’s profile can be viewed here"
+        />
         <ProfileForm clientData={clientData} />
       </div>
     </>
