@@ -360,8 +360,14 @@ class AuthService {
     const { input } = args;
 
     const doc = await userRepository.getByEmail(input.email);
+    const clientDoc = doc?.toClientObject();
 
-    if (doc && doc.verified) return doc.toClientObject();
+    if (clientDoc && clientDoc.verified) {
+      return {
+        id: clientDoc.id,
+        email: clientDoc.email,
+      };
+    }
 
     const user = await UserModel.findOne({ verifyToken: input.token, email: input.email });
 
@@ -373,7 +379,11 @@ class AuthService {
     user.verifyToken = undefined;
 
     const savedUser = await user.save();
-    return savedUser.toClientObject();
+    const clientUser = savedUser.toClientObject();
+    return {
+      id: clientUser.id,
+      email: clientUser.email,
+    };
   };
 
   forgotPassword = async (args: ForgotPasswordArgs) => {

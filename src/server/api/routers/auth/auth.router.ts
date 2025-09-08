@@ -63,7 +63,7 @@ export const authRouter = createTRPCRouter({
 
   accountVerify: publicProcedure
     .input(accountVerifyInputSchema)
-    .mutation(async ({ input }): Promise<IUserData> => {
+    .mutation(async ({ input }): Promise<Pick<IUserData, 'id' | 'email'>> => {
       const result = await authService.accountVerify({ input });
       return result;
     }),

@@ -15,7 +15,6 @@ const returnResponse = (user: IUserData) => {
     avatarUrl: user.avatar?.url,
     orgId: user.orgId,
     verified: user.verified ?? false,
-    verifyToken: user.verifyToken ?? null,
     lastLogin: user.lastLogin || null,
     provider: user.provider,
     role: user.role,

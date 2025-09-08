@@ -20,7 +20,6 @@ declare module 'next-auth' {
     avatarUrl: string;
     orgId: string;
     verified: boolean;
-    verifyToken: string | null;
     lastLogin: Date | null;
     provider: UserProviderEnum;
     role: UserRoleEnum;
@@ -54,7 +53,6 @@ declare module '@auth/core/adapters' {
     orgId: string;
     avatarUrl: string;
     verified: boolean;
-    verifyToken: string | null;
     lastLogin: Date | null;
     provider: UserProviderEnum;
     role: UserRoleEnum;
