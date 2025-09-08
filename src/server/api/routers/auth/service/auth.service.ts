@@ -239,36 +239,36 @@ class AuthService {
 
     const userClient = newUser.toClientObject();
 
-    // Send verification email
-    try {
-      const verificationResult = await sendEmailVerificationEmail({
-        username:
-          userClient.fullName ||
-          `${userClient.firstName || ''} ${userClient.lastName || ''}`.trim() ||
-          'User',
-        email: userClient.email,
-        verificationToken: verifyToken,
-      });
+    // Send verification email - this can be done async without awaiting
+    sendEmailVerificationEmail({
+      username:
+        userClient.fullName ||
+        `${userClient.firstName || ''} ${userClient.lastName || ''}`.trim() ||
+        'User',
+      email: userClient.email,
+      verificationToken: verifyToken,
+    })
+      .then(verificationResult => {
+        this.logger.info(`Email verification sent to ${userClient.email}`, {
+          success: verificationResult.success,
+          messageId: verificationResult.messageId,
+        });
 
-      this.logger.info(`Email verification sent to ${userClient.email}`, {
-        success: verificationResult.success,
-        messageId: verificationResult.messageId,
-      });
-
-      if (!verificationResult.success) {
+        if (!verificationResult.success) {
+          this.logger.error('Failed to send verification email', {
+            error: verificationResult.error,
+            email: userClient.email,
+          });
+          // Don't fail signup if email fails - user can resend later
+        }
+      })
+      .catch(error => {
         this.logger.error('Failed to send verification email', {
-          error: verificationResult.error,
+          error,
           email: userClient.email,
         });
-        // Don't fail signup if email fails - user can resend later
-      }
-    } catch (error) {
-      this.logger.error('Failed to send verification email', {
-        error,
-        email: userClient.email,
+        // Don't fail signup if email fails
       });
-      // Don't fail signup if email fails
-    }
 
     return userClient;
   };

@@ -21,7 +21,7 @@ const NewClientPage: React.FC = () => {
             href: '/client',
           },
           {
-            label: 'New',
+            label: 'Add Client',
           },
         ]}
       />
