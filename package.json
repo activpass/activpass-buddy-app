@@ -63,7 +63,6 @@
     "@trpc/react-query": "11.0.0-rc.370",
     "@trpc/server": "11.0.0-rc.370",
     "@upstash/redis": "^1.34.0",
-    "@zodyac/zod-mongoose": "^4.2.0",
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
