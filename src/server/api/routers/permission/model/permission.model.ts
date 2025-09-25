@@ -134,7 +134,7 @@ const PermissionMongooseSchema = new Schema<IPermissionBase>(
       type: Number,
       required: true,
       min: [1, 'Priority must be at least 1'],
-      max: [10, 'Priority must not exceed 10'],
+      max: [100, 'Priority must not exceed 100'],
       default: 5,
     },
     conditions: {
@@ -239,7 +239,7 @@ PermissionMongooseSchema.statics.findWithPagination = async function findWithPag
   if (category) query.category = category;
   if (typeof isActive === 'boolean') query.isActive = isActive;
   if (typeof isSystemDefined === 'boolean') query.isSystemDefined = isSystemDefined;
-  if (organizationId) query.organizationId = organizationId;
+  if (organizationId) query.organization = organizationId;
 
   // Calculate pagination
   const skip = (page - 1) * limit;

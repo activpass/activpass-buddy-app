@@ -16,9 +16,8 @@ export class PermissionRepository implements IPermissionRepository {
     try {
       // Validate input data
       const validation = validatePermissionInput(data);
-      if (!validation.success) {
+      if (validation.error) {
         return {
-          success: false,
           error: `Validation error: ${validation.error.issues.map(i => i.message).join(', ')}`,
         };
       }
@@ -27,7 +26,6 @@ export class PermissionRepository implements IPermissionRepository {
       const keyExists = await PermissionModel.keyExists(data.key);
       if (keyExists) {
         return {
-          success: false,
           error: `Permission with key '${data.key}' already exists`,
         };
       }
@@ -37,12 +35,10 @@ export class PermissionRepository implements IPermissionRepository {
       const savedPermission = await permission.save();
 
       return {
-        success: true,
         data: savedPermission,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -54,18 +50,15 @@ export class PermissionRepository implements IPermissionRepository {
 
       if (!permission) {
         return {
-          success: false,
           error: `Permission with ID '${id}' not found`,
         };
       }
 
       return {
-        success: true,
         data: permission,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -77,18 +70,15 @@ export class PermissionRepository implements IPermissionRepository {
 
       if (!permission) {
         return {
-          success: false,
           error: `Permission with key '${key}' not found`,
         };
       }
 
       return {
-        success: true,
         data: permission,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -97,9 +87,7 @@ export class PermissionRepository implements IPermissionRepository {
   async getAll(filter: IPermissionFilter) {
     try {
       const result = await PermissionModel.findWithPagination(filter);
-
       return {
-        success: true,
         data: result.permissions,
         pagination: {
           total: result.total,
@@ -111,7 +99,6 @@ export class PermissionRepository implements IPermissionRepository {
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -121,9 +108,8 @@ export class PermissionRepository implements IPermissionRepository {
     try {
       // Validate input data
       const validation = validatePermissionUpdate(data);
-      if (!validation.success) {
+      if (validation.error) {
         return {
-          success: false,
           error: `Validation error: ${validation.error.issues.map(i => i.message).join(', ')}`,
         };
       }
@@ -132,7 +118,6 @@ export class PermissionRepository implements IPermissionRepository {
       const existingPermission = await PermissionModel.findById(id).exec();
       if (!existingPermission) {
         return {
-          success: false,
           error: `Permission with ID '${id}' not found`,
         };
       }
@@ -142,7 +127,6 @@ export class PermissionRepository implements IPermissionRepository {
         const keyExists = await PermissionModel.keyExists(data.key, id);
         if (keyExists) {
           return {
-            success: false,
             error: `Permission with key '${data.key}' already exists`,
           };
         }
@@ -156,12 +140,10 @@ export class PermissionRepository implements IPermissionRepository {
       ).exec();
 
       return {
-        success: true,
         data: updatedPermission,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -173,7 +155,6 @@ export class PermissionRepository implements IPermissionRepository {
 
       if (!permission) {
         return {
-          success: false,
           error: `Permission with ID '${id}' not found`,
         };
       }
@@ -181,7 +162,6 @@ export class PermissionRepository implements IPermissionRepository {
       // Prevent deletion of system-defined permissions
       if (permission.isSystemDefined) {
         return {
-          success: false,
           error: 'Cannot delete system-defined permissions',
         };
       }
@@ -189,12 +169,10 @@ export class PermissionRepository implements IPermissionRepository {
       await PermissionModel.findByIdAndDelete(id).exec();
 
       return {
-        success: true,
         data: { message: 'Permission deleted successfully' },
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -205,12 +183,10 @@ export class PermissionRepository implements IPermissionRepository {
       const permissions = await PermissionModel.findByModule(module);
 
       return {
-        success: true,
         data: permissions,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -221,12 +197,10 @@ export class PermissionRepository implements IPermissionRepository {
       const permissions = await PermissionModel.findByResource(resource);
 
       return {
-        success: true,
         data: permissions,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -237,12 +211,10 @@ export class PermissionRepository implements IPermissionRepository {
       const permissions = await PermissionModel.findByCategory(category);
 
       return {
-        success: true,
         data: permissions,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -261,12 +233,10 @@ export class PermissionRepository implements IPermissionRepository {
       const modules = await PermissionModel.getModules();
 
       return {
-        success: true,
         data: modules,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -277,12 +247,10 @@ export class PermissionRepository implements IPermissionRepository {
       const resources = await PermissionModel.getResources();
 
       return {
-        success: true,
         data: resources,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -293,12 +261,10 @@ export class PermissionRepository implements IPermissionRepository {
       const actions = await PermissionModel.getActions();
 
       return {
-        success: true,
         data: actions,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -309,9 +275,8 @@ export class PermissionRepository implements IPermissionRepository {
       // Validate all permissions
       for (const permission of permissions) {
         const validation = validatePermissionInput(permission);
-        if (!validation.success) {
+        if (validation.error) {
           return {
-            success: false,
             error: `Validation error for permission '${permission.key}': ${validation.error.issues.map(i => i.message).join(', ')}`,
           };
         }
@@ -322,7 +287,6 @@ export class PermissionRepository implements IPermissionRepository {
       const duplicateKeys = keys.filter((key, index) => keys.indexOf(key) !== index);
       if (duplicateKeys.length > 0) {
         return {
-          success: false,
           error: `Duplicate keys found in input: ${duplicateKeys.join(', ')}`,
         };
       }
@@ -335,7 +299,6 @@ export class PermissionRepository implements IPermissionRepository {
       if (existingPermissions.length > 0) {
         const existingKeys = existingPermissions.map(p => p.key);
         return {
-          success: false,
           error: `Permissions with these keys already exist: ${existingKeys.join(', ')}`,
         };
       }
@@ -344,12 +307,10 @@ export class PermissionRepository implements IPermissionRepository {
       const createdPermissions = await PermissionModel.createMany(permissions);
 
       return {
-        success: true,
         data: createdPermissions,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -360,12 +321,10 @@ export class PermissionRepository implements IPermissionRepository {
       await PermissionModel.createSystemPermissions();
 
       return {
-        success: true,
         data: { message: 'System permissions created successfully' },
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -400,12 +359,10 @@ export class PermissionRepository implements IPermissionRepository {
       };
 
       return {
-        success: true,
         data: stats,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }

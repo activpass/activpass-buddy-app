@@ -65,10 +65,7 @@ export const getJobDetailsFields = (form: UseFormReturn<JobDetailsFormData>) => 
           form.setValue('salary', '');
           return;
         }
-        form.setValue('salary', salaryValue || '', {
-          shouldValidate: true,
-          shouldDirty: true,
-        });
+        form.setValue('salary', salaryValue || '');
       },
     },
     {

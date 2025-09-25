@@ -1,5 +1,6 @@
 import {
   Badge,
+  Box,
   Button,
   Card,
   Checkbox,
@@ -138,7 +139,7 @@ export const RoleForm: FC<RoleFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
       <div className="flex items-center space-x-3">
         <div className="rounded-lg bg-primary/10 p-3">
           <FiShield className="size-6 text-primary" />
@@ -155,237 +156,238 @@ export const RoleForm: FC<RoleFormProps> = ({
 
       <Separator />
 
-      {/* Basic Information */}
-      <div className="space-y-4">
-        <h4 className="flex items-center space-x-2 text-base font-medium">
-          <FiInfo className="size-4" />
-          <span>Basic Information</span>
-        </h4>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <Label className="mb-2 block text-sm font-medium text-muted-foreground">
-              Role Name *
-            </Label>
-            <Input
-              value={formData.name}
-              onChange={e => handleNameChange(e.target.value)}
-              placeholder="Enter role name"
-              required
-            />
-          </div>
-
-          <div>
-            <Label className="mb-2 block text-sm font-medium text-muted-foreground">
-              Role Key *
-            </Label>
-            <Input
-              value={formData.key}
-              onChange={e => setFormData({ ...formData, key: e.target.value })}
-              placeholder="org:role_name"
-              disabled={!!role}
-              required
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label className="mb-2 block text-sm font-medium text-muted-foreground">
-            Description
-          </Label>
-          <Textarea
-            value={formData.description}
-            onChange={e => setFormData({ ...formData, description: e.target.value })}
-            placeholder="Describe the role's purpose and responsibilities"
-            rows={3}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div>
-            <Label className="mb-2 block text-sm font-medium text-muted-foreground">Type</Label>
-            <Select
-              value={formData.type}
-              onValueChange={(value: NonNullable<Role['type']>) =>
-                setFormData({ ...formData, type: value })
-              }
-              options={[
-                { value: 'CUSTOM', label: 'Custom' },
-                { value: 'ORGANIZATION', label: 'Organization' },
-                { value: 'SYSTEM', label: 'System', disabled: true },
-              ]}
-            />
-          </div>
-
-          <div>
-            <Label className="mb-2 block text-sm font-medium text-muted-foreground">Level</Label>
-            <Select
-              value={formData.level}
-              onValueChange={(value: NonNullable<Role['level']>) =>
-                setFormData({ ...formData, level: value })
-              }
-              options={[
-                { value: 'SUPER_ADMIN', label: 'Super Admin' },
-                { value: 'ADMIN', label: 'Admin' },
-                { value: 'MANAGER', label: 'Manager' },
-                { value: 'EMPLOYEE', label: 'Employee' },
-                { value: 'VIEWER', label: 'Viewer' },
-                { value: 'GUEST', label: 'Guest' },
-              ]}
-            />
-          </div>
-
-          <div>
-            <Label className="mb-2 block text-sm font-medium text-muted-foreground">
-              Priority (1-100)
-            </Label>
-            <Input
-              type="number"
-              min="1"
-              max="100"
-              value={formData.priority}
-              onChange={e =>
-                setFormData({ ...formData, priority: parseInt(e.target.value, 10) || 50 })
-              }
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <Label className="mb-2 block text-sm font-medium text-muted-foreground">
-              Max Members (Optional)
-            </Label>
-            <Input
-              type="number"
-              min="0"
-              value={formData.maxMembers || ''}
-              onChange={e =>
-                setFormData({
-                  ...formData,
-                  maxMembers: e.target.value ? parseInt(e.target.value, 10) : undefined,
-                })
-              }
-              placeholder="Unlimited"
-            />
-          </div>
-
-          <div className="flex items-center space-x-2 pt-6">
-            <Switch
-              checked={formData.isActive}
-              onCheckedChange={checked => setFormData({ ...formData, isActive: checked })}
-            />
-            <Label className="text-sm font-medium">Active Role</Label>
-          </div>
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Permissions */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
+      <Box className="mt-0 flex-1 basis-[65vh] space-y-4 overflow-auto px-2">
+        {/* Basic Information */}
+        <div className="space-y-4">
           <h4 className="flex items-center space-x-2 text-base font-medium">
-            <FiKey className="size-4" />
-            <span>Permissions ({selectedPermissions.length})</span>
+            <FiInfo className="size-4" />
+            <span>Basic Information</span>
           </h4>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <Label className="mb-2 block text-sm font-medium text-muted-foreground">
+                Role Name *
+              </Label>
+              <Input
+                value={formData.name}
+                onChange={e => handleNameChange(e.target.value)}
+                placeholder="Enter role name"
+                required
+              />
+            </div>
+
+            <div>
+              <Label className="mb-2 block text-sm font-medium text-muted-foreground">
+                Role Key *
+              </Label>
+              <Input
+                value={formData.key}
+                onChange={e => setFormData({ ...formData, key: e.target.value })}
+                placeholder="org:role_name"
+                disabled={!!role}
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="mb-2 block text-sm font-medium text-muted-foreground">
+              Description
+            </Label>
+            <Textarea
+              value={formData.description}
+              onChange={e => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Describe the role's purpose and responsibilities"
+              rows={3}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div>
+              <Label className="mb-2 block text-sm font-medium text-muted-foreground">Type</Label>
+              <Select
+                value={formData.type}
+                onValueChange={(value: NonNullable<Role['type']>) =>
+                  setFormData({ ...formData, type: value })
+                }
+                options={[
+                  { value: 'CUSTOM', label: 'Custom' },
+                  { value: 'ORGANIZATION', label: 'Organization' },
+                  { value: 'SYSTEM', label: 'System', disabled: true },
+                ]}
+              />
+            </div>
+
+            <div>
+              <Label className="mb-2 block text-sm font-medium text-muted-foreground">Level</Label>
+              <Select
+                value={formData.level}
+                onValueChange={(value: NonNullable<Role['level']>) =>
+                  setFormData({ ...formData, level: value })
+                }
+                options={[
+                  { value: 'SUPER_ADMIN', label: 'Super Admin' },
+                  { value: 'ADMIN', label: 'Admin' },
+                  { value: 'MANAGER', label: 'Manager' },
+                  { value: 'EMPLOYEE', label: 'Employee' },
+                  { value: 'VIEWER', label: 'Viewer' },
+                  { value: 'GUEST', label: 'Guest' },
+                ]}
+              />
+            </div>
+
+            <div>
+              <Label className="mb-2 block text-sm font-medium text-muted-foreground">
+                Priority (1-100)
+              </Label>
+              <Input
+                type="number"
+                min="1"
+                max="100"
+                value={formData.priority}
+                onChange={e =>
+                  setFormData({ ...formData, priority: parseInt(e.target.value, 10) || 50 })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <Label className="mb-2 block text-sm font-medium text-muted-foreground">
+                Max Members (Optional)
+              </Label>
+              <Input
+                type="number"
+                min="0"
+                value={formData.maxMembers || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    maxMembers: e.target.value ? parseInt(e.target.value, 10) : undefined,
+                  })
+                }
+                placeholder="Unlimited"
+              />
+            </div>
+
+            <div className="flex items-center space-x-2 pt-6">
+              <Switch
+                checked={formData.isActive}
+                onCheckedChange={checked => setFormData({ ...formData, isActive: checked })}
+              />
+              <Label className="text-sm font-medium">Active Role</Label>
+            </div>
+          </div>
         </div>
 
-        {/* Permission Filters */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Input
-            placeholder="Search permissions..."
-            value={permissionSearch}
-            onChange={e => setPermissionSearch(e.target.value)}
-          />
-          <Select
-            value={permissionFilter.module}
-            onValueChange={value => setPermissionFilter({ ...permissionFilter, module: value })}
-            options={[
-              { value: 'user', label: 'User' },
-              { value: 'admin', label: 'Admin' },
-              { value: 'billing', label: 'Billing' },
-              { value: 'content', label: 'Content' },
-              { value: 'analytics', label: 'Analytics' },
-              { value: 'system', label: 'System' },
-              { value: 'organization', label: 'Organization' },
-              { value: 'hr', label: 'HR' },
-              { value: 'finance', label: 'Finance' },
-              { value: 'client', label: 'Client' },
-              { value: 'employee', label: 'Employee' },
-            ]}
-          />
-          <Select
-            value={permissionFilter.category}
-            onValueChange={value => setPermissionFilter({ ...permissionFilter, category: value })}
-            options={[
-              { value: 'USER_MANAGEMENT', label: 'User Management' },
-              { value: 'CONTENT_MANAGEMENT', label: 'Content Management' },
-              { value: 'SYSTEM_ADMINISTRATION', label: 'System Administration' },
-              { value: 'BILLING_FINANCE', label: 'Billing & Finance' },
-              { value: 'HR_MANAGEMENT', label: 'HR Management' },
-              { value: 'CLIENT_MANAGEMENT', label: 'Client Management' },
-            ]}
-          />
-        </div>
+        <Separator />
 
-        {/* Permission Groups */}
-        <div className="max-h-96 space-y-4 overflow-y-auto">
-          {Object.entries(groupedPermissions).map(([category, categoryPermissions]) => (
-            <Card key={category} className="p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <h5 className="font-medium">{category.replace(/_/g, ' ')}</h5>
-                  <Badge variant="secondary" className="text-xs">
-                    {categoryPermissions.length}
-                  </Badge>
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleSelectAllPermissions(category)}
-                >
-                  {categoryPermissions.every(p => selectedPermissions.includes(p.id))
-                    ? 'Deselect All'
-                    : 'Select All'}
-                </Button>
-              </div>
+        {/* Permissions */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="flex items-center space-x-2 text-base font-medium">
+              <FiKey className="size-4" />
+              <span>Permissions ({selectedPermissions.length})</span>
+            </h4>
+          </div>
 
-              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                {categoryPermissions.map(permission => (
-                  <div
-                    key={permission.id}
-                    className="flex items-center space-x-3 rounded-lg p-2 hover:bg-muted/50"
+          {/* Permission Filters */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <Input
+              placeholder="Search permissions..."
+              value={permissionSearch}
+              onChange={e => setPermissionSearch(e.target.value)}
+            />
+            <Select
+              value={permissionFilter.module}
+              onValueChange={value => setPermissionFilter({ ...permissionFilter, module: value })}
+              options={[
+                { value: 'user', label: 'User' },
+                { value: 'admin', label: 'Admin' },
+                { value: 'billing', label: 'Billing' },
+                { value: 'content', label: 'Content' },
+                { value: 'analytics', label: 'Analytics' },
+                { value: 'system', label: 'System' },
+                { value: 'organization', label: 'Organization' },
+                { value: 'hr', label: 'HR' },
+                { value: 'finance', label: 'Finance' },
+                { value: 'client', label: 'Client' },
+                { value: 'employee', label: 'Employee' },
+              ]}
+            />
+            <Select
+              value={permissionFilter.category}
+              onValueChange={value => setPermissionFilter({ ...permissionFilter, category: value })}
+              options={[
+                { value: 'USER_MANAGEMENT', label: 'User Management' },
+                { value: 'CONTENT_MANAGEMENT', label: 'Content Management' },
+                { value: 'SYSTEM_ADMINISTRATION', label: 'System Administration' },
+                { value: 'BILLING_FINANCE', label: 'Billing & Finance' },
+                { value: 'HR_MANAGEMENT', label: 'HR Management' },
+                { value: 'CLIENT_MANAGEMENT', label: 'Client Management' },
+              ]}
+            />
+          </div>
+
+          {/* Permission Groups */}
+          <div className="max-h-96 space-y-4 overflow-y-auto">
+            {Object.entries(groupedPermissions).map(([category, categoryPermissions]) => (
+              <Card key={category} className="p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <h5 className="font-medium">{category.replace(/_/g, ' ')}</h5>
+                    <Badge variant="secondary" className="text-xs">
+                      {categoryPermissions.length}
+                    </Badge>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSelectAllPermissions(category)}
                   >
-                    <Checkbox
-                      checked={selectedPermissions.includes(permission.id)}
-                      onCheckedChange={() => handlePermissionToggle(permission.id)}
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-medium">{permission.name}</div>
-                      <div className="truncate font-mono text-xs text-muted-foreground">
-                        {permission.key}
+                    {categoryPermissions.every(p => selectedPermissions.includes(p.id))
+                      ? 'Deselect All'
+                      : 'Select All'}
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                  {categoryPermissions.map(permission => (
+                    <div
+                      key={permission.id}
+                      className="flex items-center space-x-3 rounded-lg p-2 hover:bg-muted/50"
+                    >
+                      <Checkbox
+                        checked={selectedPermissions.includes(permission.id)}
+                        onCheckedChange={() => handlePermissionToggle(permission.id)}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-medium">{permission.name}</div>
+                        <div className="truncate font-mono text-xs text-muted-foreground">
+                          {permission.key}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Badge variant="outline" className="text-xs">
+                          {permission.module}
+                        </Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          {permission.action}
+                        </Badge>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <Badge variant="outline" className="text-xs">
-                        {permission.module}
-                      </Badge>
-                      <Badge variant="secondary" className="text-xs">
-                        {permission.action}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          ))}
+                  ))}
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
-      </div>
-
+      </Box>
       {/* Form Actions */}
-      <div className="flex items-center justify-end space-x-2 border-t pt-6">
+      <div className="mt-2 flex items-center justify-end space-x-2 border-t pt-6">
         <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
           <FiX className="mr-2 size-4" />
           Cancel

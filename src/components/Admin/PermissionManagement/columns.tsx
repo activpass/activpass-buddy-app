@@ -61,7 +61,7 @@ export const getPermissionTableColumns = (params: GetPermissionTableColumnsParam
       header: 'Status',
       accessorKey: 'isActive',
       cell: ({ row }) => (
-        <Badge variant={row.original.isActive ? 'primary' : 'secondary'}>
+        <Badge variant={row.original.isActive ? 'success' : 'secondary'}>
           {row.original.isActive ? (
             <>
               <FiCheck className="mr-1 size-3" />

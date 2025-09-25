@@ -5,18 +5,20 @@ import {
   type IPermissionUpdateInput,
 } from '../repository/permission.repository.types';
 
-export interface IPermissionServiceResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  pagination?: {
-    total: number;
-    totalPages: number;
-    currentPage: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  };
-}
+export type IPermissionServiceResponse<T = unknown> =
+  | {
+      data: T;
+      pagination?: {
+        total: number;
+        totalPages: number;
+        currentPage: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+      };
+    }
+  | {
+      error: string;
+    };
 
 export interface IPermissionService {
   /**

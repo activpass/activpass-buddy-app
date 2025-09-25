@@ -38,8 +38,8 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
     resource: '',
     action: '',
     category: '',
-    isActive: '',
-    isSystemDefined: '',
+    isActive: 'all',
+    isSystemDefined: 'all',
   });
 
   const formRef = useRef<PermissionFormRefProps>(null);
@@ -53,9 +53,12 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
     page: currentPage,
     limit: pageSize,
     search: filters.search || undefined,
-    isActive: filters.isActive !== 'all' ? filters.isActive === 'true' : undefined,
+    isActive:
+      filters.isActive && filters.isActive !== 'all' ? filters.isActive === 'true' : undefined,
     isSystemDefined:
-      filters.isSystemDefined !== 'all' ? filters.isSystemDefined === 'true' : undefined,
+      filters.isActive && filters.isSystemDefined !== 'all'
+        ? filters.isSystemDefined === 'true'
+        : undefined,
   });
 
   const resetForm = () => {
@@ -63,7 +66,11 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
   };
 
   const createPermissionMutation = api.permissions.create.useMutation({
-    onSuccess: () => {
+    onSuccess: result => {
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
       toast.success('Permission created successfully');
       setIsCreateDialogOpen(false);
       resetForm();
@@ -75,7 +82,11 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
   });
 
   const updatePermissionMutation = api.permissions.update.useMutation({
-    onSuccess: () => {
+    onSuccess: result => {
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
       toast.success('Permission updated successfully');
       setIsEditDialogOpen(false);
       setSelectedPermission(null);
@@ -88,7 +99,11 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
   });
 
   const deletePermissionMutation = api.permissions.delete.useMutation({
-    onSuccess: () => {
+    onSuccess: result => {
+      if (!result.data && result.error) {
+        toast.error(result.error);
+        return;
+      }
       toast.success('Permission deleted successfully');
       setIsDeleteDialogOpen(false);
       setSelectedPermission(null);
@@ -205,8 +220,8 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
                 resource: '',
                 action: '',
                 category: '',
-                isActive: '',
-                isSystemDefined: '',
+                isActive: 'all',
+                isSystemDefined: 'all',
               })
             }
           >
@@ -240,6 +255,8 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
       <Dialog
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
+        contentClassName="max-w-2xl"
+        header={{ title: '' }}
         content={
           <PermissionForm
             ref={formRef}
@@ -256,6 +273,8 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
       <Dialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
+        contentClassName="max-w-2xl"
+        header={{ title: '' }}
         content={
           <PermissionForm
             ref={formRef}
@@ -270,9 +289,15 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
       />
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <Dialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        header={{
+          title: 'Delete Permission',
+          description: 'This action cannot be undone.',
+        }}
+      >
         <div className="space-y-4 p-6">
-          <h2 className="text-lg font-semibold">Delete Permission</h2>
           <p>Are you sure you want to delete permission "{selectedPermission?.name}"?</p>
 
           <div className="flex justify-end space-x-3">
@@ -291,37 +316,43 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
       </Dialog>
 
       {/* View Permission Dialog */}
-      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+      <Dialog
+        open={isViewDialogOpen}
+        onOpenChange={setIsViewDialogOpen}
+        header={{
+          title: 'Permission Details',
+          description: 'Detailed information about the permission',
+          className: 'text-lg font-semibold',
+        }}
+      >
         <div className="space-y-4 p-6">
-          <h2 className="text-lg font-semibold">Permission Details</h2>
-
           {selectedPermission && (
             <div className="space-y-3">
               <div>
-                <Label className="text-sm font-medium text-gray-700">Key</Label>
+                <Label>Key</Label>
                 <p className="text-sm text-gray-900">{selectedPermission.key}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-700">Name</Label>
+                <Label>Name</Label>
                 <p className="text-sm text-gray-900">{selectedPermission.name}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-700">Description</Label>
+                <Label>Description</Label>
                 <p className="text-sm text-gray-900">
                   {selectedPermission.description || 'No description'}
                 </p>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">Module</Label>
+                  <Label>Module</Label>
                   <p className="text-sm text-gray-900">{selectedPermission.module}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">Resource</Label>
+                  <Label>Resource</Label>
                   <p className="text-sm text-gray-900">{selectedPermission.resource}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">Action</Label>
+                  <Label>Action</Label>
                   <p className="text-sm text-gray-900">{selectedPermission.action}</p>
                 </div>
               </div>
@@ -329,7 +360,9 @@ export const PermissionManagement = (_params: PermissionManagementProps) => {
           )}
 
           <div className="flex justify-end">
-            <Button onClick={() => setIsViewDialogOpen(false)}>Close</Button>
+            <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>
+              Close
+            </Button>
           </div>
         </div>
       </Dialog>

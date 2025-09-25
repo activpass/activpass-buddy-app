@@ -24,16 +24,14 @@ export class PermissionService implements IPermissionService {
       // Business logic validation
       if (!data.key) {
         return {
-          success: false,
           error: 'Permission key is required or cannot be generated from module:resource:action',
         };
       }
 
       // Check for conflicting permissions
       const existingPermission = await permissionRepository.getByKey(data.key);
-      if (existingPermission.success) {
+      if (existingPermission.data) {
         return {
-          success: false,
           error: `Permission with key '${data.key}' already exists`,
         };
       }
@@ -41,7 +39,7 @@ export class PermissionService implements IPermissionService {
       // Create permission
       const result = await permissionRepository.create(data);
 
-      if (!result.success) {
+      if (!result.data) {
         return result;
       }
 
@@ -49,12 +47,10 @@ export class PermissionService implements IPermissionService {
       // Could include audit logging, notifications, etc.
 
       return {
-        success: true,
-        data: result.data,
+        data: result.data.toObject(),
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -64,7 +60,7 @@ export class PermissionService implements IPermissionService {
     try {
       const result = await permissionRepository.getById(id);
 
-      if (!result.success) {
+      if (!result.data) {
         return result;
       }
 
@@ -75,12 +71,10 @@ export class PermissionService implements IPermissionService {
       // permission.roleCount = await this.getRoleCountForPermission(id);
 
       return {
-        success: true,
         data: permission,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -92,7 +86,6 @@ export class PermissionService implements IPermissionService {
       return result;
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -101,19 +94,16 @@ export class PermissionService implements IPermissionService {
   async getAllPermissions(filter: IPermissionFilter) {
     try {
       const result = await permissionRepository.getAll(filter);
-
-      if (!result.success) {
+      if (!result.data) {
         return result;
       }
 
       return {
-        success: true,
         data: result.data,
         pagination: result.pagination,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -126,12 +116,11 @@ export class PermissionService implements IPermissionService {
         // Check for conflicting permissions
         const existingPermission = await permissionRepository.getByKey(data.key);
         if (
-          existingPermission.success &&
+          existingPermission.data &&
           existingPermission.data &&
           existingPermission.data.id !== id
         ) {
           return {
-            success: false,
             error: `Permission with key '${data.key}' already exists`,
           };
         }
@@ -140,7 +129,7 @@ export class PermissionService implements IPermissionService {
       // Update permission
       const result = await permissionRepository.update(id, data);
 
-      if (!result.success) {
+      if (!result.data) {
         return result;
       }
 
@@ -148,12 +137,10 @@ export class PermissionService implements IPermissionService {
       // Could include audit logging, cache invalidation, etc.
 
       return {
-        success: true,
         data: result.data,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -166,7 +153,7 @@ export class PermissionService implements IPermissionService {
       // const rolesUsingPermission = await roleRepository.getWithPermission(id);
       // if (rolesUsingPermission.success && rolesUsingPermission.data.length > 0) {
       //   return {
-      //     success: false,
+
       //     error: 'Cannot delete permission that is assigned to roles',
       //   };
       // }
@@ -174,7 +161,7 @@ export class PermissionService implements IPermissionService {
       // Delete permission
       const result = await permissionRepository.delete(id);
 
-      if (!result.success) {
+      if (!result.data) {
         return result;
       }
 
@@ -182,12 +169,10 @@ export class PermissionService implements IPermissionService {
       // Could include cache invalidation, audit logging, etc.
 
       return {
-        success: true,
         data: result.data,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -203,7 +188,7 @@ export class PermissionService implements IPermissionService {
         sortOrder: 'asc',
       });
 
-      if (!allPermissions.success) {
+      if (allPermissions.error) {
         return allPermissions;
       }
 
@@ -221,12 +206,10 @@ export class PermissionService implements IPermissionService {
       );
 
       return {
-        success: true,
         data: groupedPermissions,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -242,7 +225,7 @@ export class PermissionService implements IPermissionService {
         sortOrder: 'asc',
       });
 
-      if (!allPermissions.success) {
+      if (allPermissions.error) {
         return allPermissions;
       }
 
@@ -260,12 +243,10 @@ export class PermissionService implements IPermissionService {
       );
 
       return {
-        success: true,
         data: groupedPermissions,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -281,7 +262,7 @@ export class PermissionService implements IPermissionService {
         sortOrder: 'asc',
       });
 
-      if (!allPermissions.success) {
+      if (allPermissions.error) {
         return allPermissions;
       }
 
@@ -299,12 +280,10 @@ export class PermissionService implements IPermissionService {
       );
 
       return {
-        success: true,
         data: groupedPermissions,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -325,7 +304,6 @@ export class PermissionService implements IPermissionService {
       return result;
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -335,7 +313,7 @@ export class PermissionService implements IPermissionService {
     try {
       const result = await permissionRepository.createSystemPermissions();
 
-      if (!result.success) {
+      if (!result.data) {
         return result;
       }
 
@@ -343,12 +321,10 @@ export class PermissionService implements IPermissionService {
       // Could include creating default roles with these permissions
 
       return {
-        success: true,
         data: { message: 'System permissions initialized successfully' },
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -362,7 +338,6 @@ export class PermissionService implements IPermissionService {
 
       if (!isValidFormat) {
         return {
-          success: true,
           data: false,
         };
       }
@@ -371,12 +346,10 @@ export class PermissionService implements IPermissionService {
       // For example, checking if parent permissions exist
 
       return {
-        success: true,
         data: true,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -386,7 +359,7 @@ export class PermissionService implements IPermissionService {
     try {
       const result = await permissionRepository.getStats();
 
-      if (!result.success) {
+      if (!result.data) {
         return result;
       }
 
@@ -398,12 +371,10 @@ export class PermissionService implements IPermissionService {
       };
 
       return {
-        success: true,
         data: enrichedStats,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -426,24 +397,21 @@ export class PermissionService implements IPermissionService {
 
       if (duplicateKeys.length > 0) {
         return {
-          success: false,
           error: `Duplicate keys found in batch: ${duplicateKeys.join(', ')}`,
         };
       }
 
       const result = await permissionRepository.createMany(validatedPermissions);
 
-      if (!result.success) {
+      if (!result.data) {
         return result;
       }
 
       return {
-        success: true,
         data: result.data,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -458,7 +426,7 @@ export class PermissionService implements IPermissionService {
         sortOrder: 'asc',
       });
 
-      if (!allPermissions.success) {
+      if (allPermissions.error) {
         return allPermissions;
       }
 
@@ -511,13 +479,11 @@ export class PermissionService implements IPermissionService {
           break;
         default:
           return {
-            success: false,
             error: `Unsupported export format: ${format}`,
           };
       }
 
       return {
-        success: true,
         data: {
           format,
           content: exportData,
@@ -526,7 +492,6 @@ export class PermissionService implements IPermissionService {
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -538,9 +503,8 @@ export class PermissionService implements IPermissionService {
       // For now, returning a placeholder implementation
 
       const permission = await permissionRepository.getByKey(permissionKey);
-      if (!permission.success) {
+      if (permission.error) {
         return {
-          success: true,
           data: false, // Permission doesn't exist, so access denied
         };
       }
@@ -555,12 +519,10 @@ export class PermissionService implements IPermissionService {
       const hasRoles = userRoles && userRoles.length > 0;
 
       return {
-        success: true,
         data: hasRoles, // Grant access only if user has roles
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
@@ -591,7 +553,7 @@ export class PermissionService implements IPermissionService {
 
       const result = await permissionRepository.getAll(filter as IPermissionFilter);
 
-      if (!result.success) {
+      if (!result.data) {
         return result;
       }
 
@@ -604,12 +566,10 @@ export class PermissionService implements IPermissionService {
       }
 
       return {
-        success: true,
         data: suggestions,
       };
     } catch (error) {
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }

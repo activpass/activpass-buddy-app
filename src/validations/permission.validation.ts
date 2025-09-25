@@ -117,12 +117,12 @@ export const permissionBaseSchema = z.object({
   // Category for grouping permissions in UI
   category: PermissionCategoryEnum,
 
-  // Priority level (1-10, where 1 is highest priority)
+  // Priority level (1-100, where 1 is highest priority)
   priority: z
     .number()
     .int()
     .min(1, 'Priority must be at least 1')
-    .max(10, 'Priority must not exceed 10')
+    .max(100, 'Priority must not exceed 100')
     .default(5),
 
   // Conditions for attribute-based access control (ABAC)

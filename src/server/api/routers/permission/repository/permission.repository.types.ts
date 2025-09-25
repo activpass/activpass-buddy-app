@@ -1,17 +1,19 @@
 import { type IPermissionBase, type IPermissionFilter } from '@/validations/permission.validation';
 
-export interface IPermissionRepositoryResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  pagination?: {
-    total: number;
-    totalPages: number;
-    currentPage: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  };
-}
+export type IPermissionRepositoryResponse<T = unknown> =
+  | {
+      data: T;
+      pagination?: {
+        total: number;
+        totalPages: number;
+        currentPage: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+      };
+    }
+  | {
+      error: string;
+    };
 
 export interface IPermissionCreateInput
   extends Pick<IPermissionBase, 'module' | 'resource' | 'action' | 'category' | 'organization'> {

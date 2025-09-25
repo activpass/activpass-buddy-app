@@ -55,7 +55,8 @@ export const RoleManagement: FC<RoleManagementProps> = ({ organizationId }) => {
     search: filters.search || undefined,
     type: filters.type || undefined,
     level: filters.level || undefined,
-    isActive: filters.isActive !== 'all' ? filters.isActive === 'true' : undefined,
+    isActive:
+      filters.isActive && filters.isActive !== 'all' ? filters.isActive === 'true' : undefined,
     isSystemDefined: filters.isSystemDefined,
     organizationId,
   });
@@ -245,30 +246,35 @@ export const RoleManagement: FC<RoleManagementProps> = ({ organizationId }) => {
       </Card>
 
       {/* Create Role Dialog */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <div className="max-w-2xl">
+      <Dialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        contentClassName="max-w-2xl"
+        content={
           <RoleForm
             permissions={permissionsData?.data || []}
             onSubmit={data => createRoleMutation.mutate(data)}
             onCancel={() => setIsCreateDialogOpen(false)}
             isLoading={createRoleMutation.isPending}
           />
-        </div>
-      </Dialog>
+        }
+      />
 
       {/* Edit Role Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <div className="max-w-2xl">
-          {selectedRole && (
-            <RoleForm
-              role={selectedRole}
-              permissions={permissionsData?.data || []}
-              onSubmit={data => updateRoleMutation.mutate({ id: selectedRole.id, data })}
-              onCancel={() => setIsEditDialogOpen(false)}
-              isLoading={updateRoleMutation.isPending}
-            />
-          )}
-        </div>
+      <Dialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        contentClassName="max-w-2xl"
+      >
+        {selectedRole && (
+          <RoleForm
+            role={selectedRole}
+            permissions={permissionsData?.data || []}
+            onSubmit={data => updateRoleMutation.mutate({ id: selectedRole.id, data })}
+            onCancel={() => setIsEditDialogOpen(false)}
+            isLoading={updateRoleMutation.isPending}
+          />
+        )}
       </Dialog>
 
       {/* View Role Dialog */}
