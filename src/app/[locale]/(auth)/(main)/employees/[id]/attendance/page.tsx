@@ -30,8 +30,8 @@ const AttendancePage: FC<AttendancePageProps> = async ({ params }) => {
     <>
       <SetBreadcrumbItems
         items={[
-          { label: 'Client', href: '/client' },
-          { label: clientData.fullName, href: `/client/${params.id}` },
+          { label: 'Employees', href: '/employees' },
+          { label: clientData.fullName, href: `/employees/${params.id}` },
           {
             label: 'Attendance',
           },
@@ -40,7 +40,7 @@ const AttendancePage: FC<AttendancePageProps> = async ({ params }) => {
       <div className="space-y-6">
         <ProfileHeader
           title="Attendance Details"
-          description="Details of your client’s attendance can be viewed here"
+          description="Details of your employee’s attendance can be viewed here"
           showSendMessageButton
         />
         <div className="flex flex-col gap-5">
