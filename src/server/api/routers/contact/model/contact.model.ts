@@ -1,39 +1,13 @@
-import zMongooseSchema from '@zodyac/zod-mongoose';
-import mongoose, { type FilterQuery, type HydratedDocument, type Model } from 'mongoose';
-import { z } from 'zod';
+import mongoose, { type FilterQuery, type HydratedDocument, type Model, Schema } from 'mongoose';
 
-// Define Zod schemas for validation and type inference
-const ContactTypeEnum = z.enum(['general', 'support', 'billing', 'feature', 'bug', 'partnership']);
-const ContactStatusEnum = z.enum(['pending', 'in-progress', 'resolved']);
-
-// Base contact schema (for creation) - this will be used to generate the Mongoose schema
-export const contactBaseSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').trim(),
-  email: z.string().email('Please enter a valid email address').toLowerCase().trim(),
-  type: ContactTypeEnum,
-  subject: z.string().min(5, 'Subject must be at least 5 characters').trim(),
-  message: z.string().min(10, 'Message must be at least 10 characters').trim(),
-  status: ContactStatusEnum.default('pending'),
-  adminNotes: z.string().trim().optional(),
-  ipAddress: z.string().optional(),
-  userAgent: z.string().optional(),
-});
-
-// Full contact schema (including timestamps and id)
-export const contactSchema = contactBaseSchema.extend({
-  id: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-// Type inference from Zod schemas
-export type IContactBase = z.infer<typeof contactBaseSchema>;
-export type IContactSchema = z.infer<typeof contactSchema>;
-export type ContactType = z.infer<typeof ContactTypeEnum>;
-export type ContactStatus = z.infer<typeof ContactStatusEnum>;
+import {
+  contactBaseSchema,
+  type IContactBase,
+  type IContactSchema,
+} from '@/validations/contact.validation';
 
 // Mongoose document type
-export type IContactDocument = HydratedDocument<IContactBase & IContactSchema>;
+export type IContactDocument = HydratedDocument<IContactSchema>;
 
 // Here, You have to explicitly mention the type of methods.
 export interface IContactSchemaMethods {}
@@ -55,30 +29,66 @@ export interface IContactModel extends Model<IContactBase, {}, IContactSchemaMet
   }>;
 }
 
-// Create the Mongoose schema using @zodyac/zod-mongoose
-const ContactMongooseSchema = zMongooseSchema(contactBaseSchema, {
-  timestamps: true,
-  toJSON: {
-    virtuals: true,
-    transform(_doc, ret) {
-      const retModified = { ...ret };
-      retModified.id = retModified._id.toString();
-      delete retModified._id;
-      delete retModified.__v;
-      return retModified;
+// Create native Mongoose schema
+const ContactMongooseSchema = new Schema<IContactBase>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: [2, 'Name must be at least 2 characters'],
+    },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      validate: {
+        validator: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+        message: 'Please enter a valid email address',
+      },
+    },
+    type: {
+      type: String,
+      required: true,
+      enum: ['general', 'support', 'billing', 'feature', 'bug', 'partnership'],
+    },
+    subject: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: [5, 'Subject must be at least 5 characters'],
+    },
+    message: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: [10, 'Message must be at least 10 characters'],
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ['pending', 'in-progress', 'resolved'],
+      default: 'pending',
+    },
+    adminNotes: {
+      type: String,
+      trim: true,
+    },
+    ipAddress: {
+      type: String,
+    },
+    userAgent: {
+      type: String,
     },
   },
-  toObject: {
-    virtuals: true,
-    transform(_doc, ret) {
-      const retModified = { ...ret };
-      retModified.id = retModified._id.toString();
-      delete retModified._id;
-      delete retModified.__v;
-      return retModified;
-    },
-  },
-});
+  {
+    toJSON: { virtuals: true }, // So `res.json()` and other `JSON.stringify()` functions include virtuals
+    toObject: { virtuals: true }, // So `toObject()` output includes virtuals,
+    versionKey: false, // hide __v property
+    timestamps: true,
+  }
+);
 
 // Indexes
 ContactMongooseSchema.index({ email: 1 });
@@ -86,11 +96,6 @@ ContactMongooseSchema.index({ type: 1 });
 ContactMongooseSchema.index({ status: 1 });
 ContactMongooseSchema.index({ createdAt: -1 });
 ContactMongooseSchema.index({ name: 'text', subject: 'text', message: 'text' });
-
-// Methods
-ContactMongooseSchema.methods.toClientObject = function toClientObject(): IContactSchema {
-  return this.toObject();
-};
 
 // Statics
 ContactMongooseSchema.statics.findWithPagination = async function findWithPagination(

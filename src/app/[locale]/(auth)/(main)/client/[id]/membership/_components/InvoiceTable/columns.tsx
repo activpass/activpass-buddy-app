@@ -1,4 +1,4 @@
-import { dateIntl } from '@paalan/react-shared/lib';
+import { currencyIntl, dateIntl } from '@paalan/react-shared/lib';
 import {
   Button,
   type DataTableColumnDef,
@@ -12,7 +12,6 @@ import {
 } from '@paalan/react-ui';
 
 import { SUBSCRIPTION_PERIOD } from '@/constants/client/add-form.constant';
-import { currencyIntl } from '@/utils/currency-intl';
 
 import { PaymentStatus } from '../../../../_components/PaymentStatus';
 import type { IncomesType } from '../../types';

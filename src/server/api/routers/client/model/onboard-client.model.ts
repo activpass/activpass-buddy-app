@@ -64,11 +64,11 @@ const OnboardClientSchema = new mongoose.Schema(
 );
 
 OnboardClientSchema.static('get', async function get(id: string) {
-  const org = await this.findById(id).exec();
-  if (!org) {
+  const data = await this.findById(id).exec();
+  if (!data) {
     throw new Error(`No OnboardClient found with id '${id}'.`);
   }
-  return org;
+  return data;
 });
 
 OnboardClientSchema.static('list', async function list(options) {

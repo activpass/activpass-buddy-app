@@ -14,6 +14,7 @@ export type UpdateCheckInParams = {
 export type ListCheckInsParams = {
   orgId: string;
   clientId?: string;
+  employeeId?: string;
 };
 
 export type GenerateTokenCheckInParams = {

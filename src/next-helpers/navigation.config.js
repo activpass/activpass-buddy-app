@@ -11,7 +11,7 @@ const navigation = {
         label: 'auth.navbar.links.client',
       },
       employee: {
-        link: '/employee',
+        link: '/employees',
         label: 'auth.navbar.links.employee',
       },
       finance: {

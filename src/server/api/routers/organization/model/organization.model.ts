@@ -64,6 +64,9 @@ const OrganizationSchema = new mongoose.Schema(
     },
 
     address: { type: String },
+    phoneNumber: { type: String },
+    country: { type: String },
+    state: { type: String },
     city: { type: String },
     pincode: { type: String },
     logo: imageKitFileSchemaDefinition,

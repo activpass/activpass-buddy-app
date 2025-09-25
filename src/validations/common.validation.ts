@@ -1,4 +1,19 @@
+import { startOfDay } from 'date-fns';
 import { z } from 'zod';
+
+export const dateSchema = z
+  .date({
+    message: 'Date is required',
+  })
+  .or(
+    z.string({
+      message: 'Date is required',
+    })
+  );
+
+export const dobSchema = dateSchema.refine(value => new Date(value) < startOfDay(new Date()), {
+  message: 'Date of birth must be before today',
+});
 
 export const phoneNumberSchema = z
   .number({

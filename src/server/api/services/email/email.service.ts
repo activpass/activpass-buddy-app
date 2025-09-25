@@ -3,14 +3,20 @@ import { sendMail } from '@/lib/resend';
 import {
   type ClientWelcomeEmailProps,
   type EmailVerificationProps,
+  type EmployeeOnboardingProps,
+  type EmployeeOnboardingSuccessProps,
   generateClientWelcomeEmail,
   generateEmailVerificationEmail,
+  generateEmployeeOnboardingEmail,
+  generateEmployeeOnboardingSuccessEmail,
   generateNewMemberNotificationEmail,
   generateOnboardingCompletionEmail,
+  generateOwnerEmployeeOnboardingNotificationEmail,
   generatePasswordResetEmail,
   generatePasswordResetSuccessEmail,
   type NewMemberNotificationEmailProps,
   type OnboardingCompletionEmailProps,
+  type OwnerEmployeeOnboardingNotificationProps,
   type PasswordResetEmailProps,
   type PasswordResetSuccessEmailProps,
 } from './email-templates';
@@ -140,6 +146,59 @@ export const sendNewMemberNotificationEmail = async (props: NewMemberNotificatio
   const result = await sendMail({
     to: organizationOwnerEmail,
     subject: `New Member Alert: ${clientName} joined ${organizationName}`,
+    html,
+    text,
+  });
+
+  return result;
+};
+
+/**
+ * Sends an employee onboarding email with invitation link
+ */
+export const sendEmployeeOnboardingEmail = async (props: EmployeeOnboardingProps) => {
+  const { recipientEmail, organizationName } = props;
+  const { html, text } = generateEmployeeOnboardingEmail(props);
+
+  const result = await sendMail({
+    to: recipientEmail,
+    subject: `Welcome to ${organizationName} - Complete Your Employee Onboarding`,
+    html,
+    text,
+  });
+
+  return result;
+};
+
+/**
+ * Sends an employee onboarding success email to the employee
+ */
+export const sendEmployeeOnboardingSuccessEmail = async (props: EmployeeOnboardingSuccessProps) => {
+  const { employeeEmail, organizationName } = props;
+  const { html, text } = generateEmployeeOnboardingSuccessEmail(props);
+
+  const result = await sendMail({
+    to: employeeEmail,
+    subject: `Welcome to ${organizationName} - Onboarding Complete!`,
+    html,
+    text,
+  });
+
+  return result;
+};
+
+/**
+ * Sends a notification email to the organization owner about successful employee onboarding
+ */
+export const sendOwnerEmployeeOnboardingNotificationEmail = async (
+  props: OwnerEmployeeOnboardingNotificationProps
+) => {
+  const { ownerEmail, employeeName } = props;
+  const { html, text } = generateOwnerEmployeeOnboardingNotificationEmail(props);
+
+  const result = await sendMail({
+    to: ownerEmail,
+    subject: `New Employee Onboarded - ${employeeName}`,
     html,
     text,
   });

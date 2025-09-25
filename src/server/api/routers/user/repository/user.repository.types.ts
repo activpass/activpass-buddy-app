@@ -1,4 +1,4 @@
-import type { IUserSchema } from '../model/user.model';
+import type { IUserBaseSchema, IUserSchema } from '../model/user.model';
 import type { CreateUserInputSchema, UpdateUserInputSchema } from '../user.input';
 
 export type GetUserByIdOptions<T extends boolean> = {
@@ -17,7 +17,7 @@ export type VerifyCredentialsParams = {
 };
 
 export type CreateUserParams = {
-  data: CreateUserInputSchema & { role?: IUserSchema['role'] };
+  data: IUserBaseSchema & CreateUserInputSchema;
 };
 
 export type UpdateUserParams = {

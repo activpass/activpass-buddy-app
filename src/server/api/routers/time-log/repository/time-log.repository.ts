@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server';
+import type { FilterQuery } from 'mongoose';
 
 import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger/logger';
@@ -22,11 +23,12 @@ class TimeLogRepository {
 
   create = async ({ data, orgId }: CreateTimeLogParams) => {
     try {
-      const { clientId, ...restData } = data;
+      const { clientId, employeeId, ...restData } = data;
       const doc = new TimeLogModel({
         ...restData,
         organization: orgId,
         client: clientId || null,
+        employee: employeeId || null,
       });
       await doc.save();
       return doc;
@@ -54,26 +56,39 @@ class TimeLogRepository {
     }
   };
 
-  list = async ({ orgId, clientId }: ListTimeLogsParams) => {
+  list = async ({ orgId, clientId, employeeId }: ListTimeLogsParams) => {
     const filter: Record<string, string> = {
       organization: orgId,
     };
     if (clientId) {
       filter.client = clientId;
     }
+
+    if (employeeId) {
+      filter.employee = employeeId;
+    }
     return TimeLogModel.list(filter);
   };
 
   updateCheckIn = async ({ data, orgId }: UpdateCheckInTimeLogParams) => {
     try {
-      const timeLog = await TimeLogModel.findOne({
-        client: data.clientId,
+      const query: FilterQuery<ITimeLogSchema> = {
         organization: orgId,
         checkIn: {
           $gte: new Date(data.checkIn).setHours(0, 0, 0, 0),
           $lte: new Date(data.checkIn).setHours(23, 59, 59, 999),
         },
-      }).exec();
+      };
+
+      if (data.clientId) {
+        query.client = data.clientId;
+      }
+
+      if (data.employeeId) {
+        query.employee = data.employeeId;
+      }
+
+      const timeLog = await TimeLogModel.findOne(query).exec();
       if (timeLog) {
         throw new TRPCError({
           code: 'CONFLICT',
@@ -87,16 +102,24 @@ class TimeLogRepository {
     }
   };
 
-  updateCheckOut = async ({ data, clientId, orgId }: UpdateCheckOutTimeLogParams) => {
+  updateCheckOut = async ({ data, clientId, orgId, employeeId }: UpdateCheckOutTimeLogParams) => {
     try {
-      const timeLog = await TimeLogModel.findOne({
-        client: clientId,
+      const query: FilterQuery<ITimeLogSchema> = {
         organization: orgId,
         checkIn: {
           $gte: new Date().setHours(0, 0, 0, 0),
           $lte: new Date().setHours(23, 59, 59, 999),
         },
-      }).exec();
+      };
+
+      if (clientId) {
+        query.client = clientId;
+      }
+
+      if (employeeId) {
+        query.employee = employeeId;
+      }
+      const timeLog = await TimeLogModel.findOne(query).exec();
       if (!timeLog) {
         throw getTRPCError('You have not checked in, please check in first', 'BAD_REQUEST');
       }
@@ -110,6 +133,7 @@ class TimeLogRepository {
   getTimeLogWithDateRange = async ({
     orgId,
     clientId,
+    employeeId,
     startDate,
     endDate,
   }: GetTimeLogWithDateRangeParams) => {
@@ -119,6 +143,10 @@ class TimeLogRepository {
 
     if (clientId) {
       filter.client = clientId;
+    }
+
+    if (employeeId) {
+      filter.employee = employeeId;
     }
 
     const docs = await TimeLogModel.find(

@@ -37,12 +37,16 @@ export const generateRandomAlphanumericString = (length: number) => {
   return randomString.slice(0, length);
 };
 
+export const generateUniqueCode = (prefix: string = '', length = 6) => {
+  return `${prefix ? `${prefix}-` : ''}${generateRandomAlphanumericString(length)}`;
+};
+
 /**
  * Generates a client code.
  * @returns The generated client code.
  */
 export const generateClientCode = () => {
-  return `APC-${generateRandomAlphanumericString(6)}`;
+  return generateUniqueCode('APC');
 };
 
 /**
@@ -50,7 +54,7 @@ export const generateClientCode = () => {
  * @returns The generated employee code.
  */
 export const generateEmployeeCode = () => {
-  return `APE-${generateRandomAlphanumericString(6)}`;
+  return generateUniqueCode('APE');
 };
 
 /**

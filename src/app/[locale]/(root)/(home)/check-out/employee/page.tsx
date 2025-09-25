@@ -4,7 +4,7 @@ import type { FC } from 'react';
 
 import { api } from '@/trpc/server';
 
-import { EmployeeCheckOutForm } from './_components/EmployeeCheckInForm';
+import { CheckOutForm } from '../_components/CheckOutForm';
 
 type CheckOutEmployeePageProps = {
   searchParams: {
@@ -17,7 +17,7 @@ const CheckOutEmployeePage: FC<CheckOutEmployeePageProps> = async ({ searchParam
   const logoUrl = organization?.logo?.url;
 
   return (
-    <Card className="flex-1">
+    <Card className="flex flex-1 flex-col justify-center sm:m-8">
       <CardHeader className="text-center">
         {logoUrl && (
           <div className="mb-5 flex justify-center">
@@ -38,7 +38,7 @@ const CheckOutEmployeePage: FC<CheckOutEmployeePageProps> = async ({ searchParam
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <EmployeeCheckOutForm orgId={organization.id} />
+        <CheckOutForm orgId={organization.id} type="employee" />
       </CardContent>
     </Card>
   );

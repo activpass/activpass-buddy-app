@@ -1,6 +1,6 @@
 'use client';
 
-import { dateIntl } from '@paalan/react-shared/lib';
+import { currencyIntl, dateIntl } from '@paalan/react-shared/lib';
 import { Center, Loading, toast } from '@paalan/react-ui';
 import html2canvas from 'html2canvas-pro';
 import JsPDF from 'jspdf';
@@ -11,7 +11,6 @@ import { ImPrinter } from 'react-icons/im';
 
 // import { useReactToPrint } from 'react-to-print';
 import { api } from '@/trpc/client';
-import { currencyIntl } from '@/utils/currency-intl';
 
 import type { InvoiceData } from './types';
 
@@ -106,9 +105,9 @@ export const InvoiceTemplate: FC<InvoiceTemplateProps> = ({ incomeId }) => {
     issueDate: dateIntl.format(incomeItem.date),
     dueDate: dateIntl.format(incomeItem.dueDate),
     gymName: organization?.name || 'Unknown Gym',
-    gymAddress: '123 Fitness Street, Healthyville, HV 12345',
-    gymEmail: 'billing@fitlifegym.com',
-    gymPhone: '(555) 123-4567',
+    gymAddress: organization?.address || 'N/A',
+    gymEmail: organization?.email || 'N/A',
+    gymPhone: organization?.phoneNumber || '',
     clientName: client?.fullName || 'Unknown Client',
     clientAddress: client?.address || 'N/A',
     clientEmail: client?.email || 'N/A',

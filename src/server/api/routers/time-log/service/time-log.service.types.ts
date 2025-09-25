@@ -1,8 +1,8 @@
 import type {
-  ClientCheckInInputSchema,
-  ClientCheckInVerifyInputSchema,
-  ClientCheckOutInputSchema,
-  ClientCheckOutVerifyInputSchema,
+  CheckInInputSchema,
+  CheckInVerifyInputSchema,
+  CheckOutInputSchema,
+  CheckOutVerifyInputSchema,
   CreateTimeLogInputSchema,
   GetTimeLogByClientIdWithDateRangeInputSchema,
   UpdateTimeLogInputSchema,
@@ -24,25 +24,26 @@ export type UpdateTimeLogArgs = {
 export type ListTimeLogsArgs = {
   orgId: string;
   clientId?: string;
+  employeeId?: string;
 };
 
-export type GetByClientIdWithDateRangeArgs = {
+export type GetTimeLogsByDateRangeArgs = {
   orgId: string;
   input: GetTimeLogByClientIdWithDateRangeInputSchema;
 };
 
-export type ClientCheckInArgs = {
-  input: ClientCheckInInputSchema;
+export type CheckInArgs = {
+  input: CheckInInputSchema;
 };
 
-export type ClientCheckInVerifyArgs = {
-  input: ClientCheckInVerifyInputSchema;
+export type CheckInVerifyArgs = {
+  input: CheckInVerifyInputSchema;
 };
 
-export type ClientCheckOutArgs = {
-  input: ClientCheckOutInputSchema;
+export type CheckOutArgs = {
+  input: CheckOutInputSchema;
 };
 
-export type ClientCheckOutVerifyArgs = {
-  input: ClientCheckOutVerifyInputSchema;
+export type CheckOutVerifyArgs = {
+  input: CheckOutVerifyInputSchema;
 };

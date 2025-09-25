@@ -21,6 +21,7 @@ import { getObjectKeys } from '@/utils/helpers';
 export interface IClientVirtuals {
   id: string;
   fullName: string;
+  orgId: string | undefined;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -124,6 +125,11 @@ const ClientSchema = new mongoose.Schema(
 
 ClientSchema.virtual('fullName').get(function fullName() {
   return `${this.firstName || ''} ${this.lastName || ''}`.trim();
+});
+
+ClientSchema.virtual('orgId').get(function getOrgId() {
+  if (!this.organization) return undefined;
+  return this.organization.toHexString();
 });
 
 ClientSchema.static('get', async function get(id: string) {

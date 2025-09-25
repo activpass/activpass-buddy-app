@@ -21,8 +21,8 @@ declare module 'next-auth' {
     orgId: string;
     verified: boolean;
     lastLogin: Date | null;
-    provider: UserProviderEnum;
-    role: UserRoleEnum;
+    provider: string;
+    role: string;
     isOnboardingComplete: boolean;
   }
 
@@ -54,8 +54,8 @@ declare module '@auth/core/adapters' {
     avatarUrl: string;
     verified: boolean;
     lastLogin: Date | null;
-    provider: UserProviderEnum;
-    role: UserRoleEnum;
+    provider: string;
+    role: string;
     isOnboardingComplete: boolean;
   }
 }

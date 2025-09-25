@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
-import { checkInFormSchema } from '@/validations/check-in/form.validation';
+import { checkInFormSchema, timelogTypeEnum } from '@/validations/check-in/form.validation';
 
 export const createTimeLogInputSchema = z.object({
-  clientId: z.string(),
+  clientId: z.string().optional(),
+  employeeId: z.string().optional(),
   checkIn: z.date(),
   checkOut: z.date().nullish(),
 });
@@ -17,11 +18,13 @@ export type UpdateTimeLogInputSchema = z.infer<typeof updateTimeLogInputSchema>;
 
 export const listTimeLogInputSchema = z.object({
   clientId: z.string().optional(),
+  employeeId: z.string().optional(),
 });
 export type ListTimeLogInputSchema = z.infer<typeof listTimeLogInputSchema>;
 
 export const getTimeLogByClientIdWithDateRangeInputSchema = z.object({
-  clientId: z.string(),
+  clientId: z.string().optional(),
+  employeeId: z.string().optional(),
   startDate: z.date(),
   endDate: z.date(),
 });
@@ -29,22 +32,23 @@ export type GetTimeLogByClientIdWithDateRangeInputSchema = z.infer<
   typeof getTimeLogByClientIdWithDateRangeInputSchema
 >;
 
-export const clientCheckInInputSchema = checkInFormSchema.extend({
+export const checkInInputSchema = checkInFormSchema.extend({
   orgId: z.string().min(1, {
     message: 'Organization ID is required',
   }),
+  type: timelogTypeEnum,
 });
-export type ClientCheckInInputSchema = z.infer<typeof clientCheckInInputSchema>;
+export type CheckInInputSchema = z.infer<typeof checkInInputSchema>;
 
-export const clientCheckInVerifyInputSchema = clientCheckInInputSchema.extend({
+export const checkInVerifyInputSchema = checkInInputSchema.extend({
   pin: z.number().min(1, {
     message: 'Pin is required',
   }),
 });
-export type ClientCheckInVerifyInputSchema = z.infer<typeof clientCheckInVerifyInputSchema>;
+export type CheckInVerifyInputSchema = z.infer<typeof checkInVerifyInputSchema>;
 
-export const clientCheckOutInputSchema = clientCheckInInputSchema;
-export type ClientCheckOutInputSchema = z.infer<typeof clientCheckOutInputSchema>;
+export const checkOutInputSchema = checkInInputSchema;
+export type CheckOutInputSchema = z.infer<typeof checkOutInputSchema>;
 
-export const clientCheckOutVerifyInputSchema = clientCheckInVerifyInputSchema;
-export type ClientCheckOutVerifyInputSchema = z.infer<typeof clientCheckOutVerifyInputSchema>;
+export const checkOutVerifyInputSchema = checkInVerifyInputSchema;
+export type CheckOutVerifyInputSchema = z.infer<typeof checkOutVerifyInputSchema>;

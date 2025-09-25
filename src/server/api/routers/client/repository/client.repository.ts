@@ -154,6 +154,7 @@ class ClientRepository {
         {
           $match: {
             organization: new mongoose.Types.ObjectId(orgId),
+            client: { $exists: true, $ne: null },
             checkIn: {
               $gte: new Date(new Date().setHours(0, 0, 0, 0)),
               $lt: new Date(new Date().setHours(23, 59, 59, 999)),

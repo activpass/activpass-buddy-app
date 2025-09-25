@@ -6,9 +6,13 @@ import { checkInRouter } from './routers/check-in/check-in.router';
 import { clientRouter } from './routers/client/client.router';
 import { clientDashboardRouter } from './routers/client-dashboard/client-dashboard.router';
 import { contactRouter } from './routers/contact/contact.router';
+import { employeesRouter } from './routers/employees/employee.router';
 import { incomeRouter } from './routers/income/income.router';
 import { membershipPlanRouter } from './routers/membership-plan/membership-plan.router';
+import { onboardEmployeeRouter } from './routers/onboard-employee/onboard-employee.router';
 import { organizationRouter } from './routers/organization/organization.router';
+import { permissionRouter } from './routers/permission/permission.router';
+import { roleRouter } from './routers/role/role.router';
 import { timeLogRouter } from './routers/time-log/time-log.router';
 
 /**
@@ -22,9 +26,13 @@ export const appRouter = createTRPCRouter({
   clients: clientRouter,
   clientDashboard: clientDashboardRouter,
   contacts: contactRouter,
+  employees: employeesRouter,
   incomes: incomeRouter,
   membershipPlans: membershipPlanRouter,
+  onboardEmployee: onboardEmployeeRouter,
   organizations: organizationRouter,
+  permissions: permissionRouter,
+  roles: roleRouter,
   checkIn: checkInRouter,
   timeLogs: timeLogRouter,
 });

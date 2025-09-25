@@ -36,12 +36,16 @@ class CheckInRepository {
     }
   };
 
-  list = async ({ orgId, clientId }: ListCheckInsParams) => {
+  list = async ({ orgId, clientId, employeeId }: ListCheckInsParams) => {
     const filter: Record<string, string> = {
       organization: orgId,
     };
     if (clientId) {
       filter.client = clientId;
+    }
+
+    if (employeeId) {
+      filter.employee = employeeId;
     }
     return CheckInModel.list(filter);
   };
@@ -84,7 +88,18 @@ class CheckInRepository {
     if (!doc) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'CheckIn not found',
+        message: 'Client CheckIn not found',
+      });
+    }
+    return doc;
+  };
+
+  getByEmployeeId = async (employeeId: string) => {
+    const doc = await CheckInModel.findOne({ employee: employeeId });
+    if (!doc) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Employee CheckIn not found',
       });
     }
     return doc;

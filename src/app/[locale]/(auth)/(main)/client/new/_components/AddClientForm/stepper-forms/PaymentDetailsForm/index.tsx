@@ -118,7 +118,7 @@ export const PaymentDetailsForm: FC = () => {
 
         startTransition(() => {
           router.push(
-            `/onboarding-client/success?organizationName=${organization.name}&organizationType=${organization.type}`
+            `/onboard/client/success?organizationName=${organization.name}&organizationType=${organization.type}`
           );
         });
       } else {

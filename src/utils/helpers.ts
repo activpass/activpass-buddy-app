@@ -70,3 +70,124 @@ export const getDueDate = (
   }
   return dueDate;
 };
+
+// Helper function to convert numbers less than 1000
+const convertHundreds = (numValue: number): string => {
+  // Number to words mapping
+  const ones = [
+    '',
+    'One',
+    'Two',
+    'Three',
+    'Four',
+    'Five',
+    'Six',
+    'Seven',
+    'Eight',
+    'Nine',
+    'Ten',
+    'Eleven',
+    'Twelve',
+    'Thirteen',
+    'Fourteen',
+    'Fifteen',
+    'Sixteen',
+    'Seventeen',
+    'Eighteen',
+    'Nineteen',
+  ];
+
+  const tens = [
+    '',
+    '',
+    'Twenty',
+    'Thirty',
+    'Forty',
+    'Fifty',
+    'Sixty',
+    'Seventy',
+    'Eighty',
+    'Ninety',
+  ];
+
+  let result = '';
+  let n = numValue;
+
+  if (n >= 100) {
+    result += `${ones[Math.floor(n / 100)]} Hundred`;
+    n %= 100;
+    if (n > 0) result += ' And ';
+  }
+
+  if (n >= 20) {
+    result += tens[Math.floor(n / 10)];
+    n %= 10;
+    if (n > 0) result += `-${ones[n]}`;
+  } else if (n > 0) {
+    result += ones[n];
+  }
+
+  return result;
+};
+
+/**
+ * Converts a number into words following the Indian numbering system.
+ * Supports numbers up to 99,99,99,999 (nine crores, ninety-nine lakhs, ninety-nine thousand, nine hundred and ninety-nine).
+ *
+ * @param {number | string} amount - The amount to convert to words. Can be a number or string with commas.
+ * @returns {string} The amount in words.
+ *
+ * @example
+ * convertAmountToWords(1299222) // "twelve lakh ninety-nine thousand two hundred and twenty-two"
+ * convertAmountToWords("12,99,222") // "twelve lakh ninety-nine thousand two hundred and twenty-two"
+ * convertAmountToWords(0) // "zero"
+ * convertAmountToWords(1) // "one"
+ */
+export const convertAmountToWords = (amount: number | string): string => {
+  // Convert string input to number by removing commas
+  let num = typeof amount === 'string' ? parseInt(amount.replace(/,/g, ''), 10) : amount || 0;
+
+  // Handle edge cases
+  if (Number.isNaN(num)) {
+    throw new Error('Invalid input: not a valid number');
+  }
+
+  if (num === 0) return 'Zero';
+  if (num < 0) return `Minus ${convertAmountToWords(-num)}`;
+  if (num > 999999999) {
+    throw new Error('Number too large: maximum supported is 99,99,99,999');
+  }
+
+  let result = '';
+
+  // Handle crores (10,000,000)
+  if (num >= 10000000) {
+    const crores = Math.floor(num / 10000000);
+    result += `${convertHundreds(crores)} Crore`;
+    num %= 10000000;
+    if (num > 0) result += ' ';
+  }
+
+  // Handle lakhs (100,000)
+  if (num >= 100000) {
+    const lakhs = Math.floor(num / 100000);
+    result += `${convertHundreds(lakhs)} Lakh`;
+    num %= 100000;
+    if (num > 0) result += ' ';
+  }
+
+  // Handle thousands (1,000)
+  if (num >= 1000) {
+    const thousands = Math.floor(num / 1000);
+    result += `${convertHundreds(thousands)} Thousand`;
+    num %= 1000;
+    if (num > 0) result += ' ';
+  }
+
+  // Handle remaining hundreds, tens, and ones
+  if (num > 0) {
+    result += convertHundreds(num);
+  }
+
+  return result.trim();
+};

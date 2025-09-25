@@ -14,16 +14,18 @@ export type UpdateTimeLogParams = {
 export type ListTimeLogsParams = {
   orgId: string;
   clientId?: string;
+  employeeId?: string;
 };
 
 export type UpdateCheckInTimeLogParams = {
   orgId: string;
-  data: Pick<CreateTimeLogInputSchema, 'clientId' | 'checkIn'>;
+  data: Pick<CreateTimeLogInputSchema, 'clientId' | 'checkIn' | 'employeeId'>;
 };
 
 export type UpdateCheckOutTimeLogParams = {
   orgId: string;
-  clientId: string;
+  clientId?: string;
+  employeeId?: string;
   data: Pick<CreateTimeLogInputSchema, 'checkOut'>;
 };
 
@@ -32,4 +34,5 @@ export type GetTimeLogWithDateRangeParams = {
   startDate: Date;
   endDate: Date;
   clientId?: string;
+  employeeId?: string;
 };

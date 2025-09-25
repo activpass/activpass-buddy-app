@@ -46,7 +46,7 @@ export const SignUpForm: FC = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const signUpMutation = api.auth.signUp.useMutation({
+  const signUpMutation = api.auth.register.useMutation({
     onSuccess: user => {
       toast.success(
         'Account created successfully! Please check your email to verify your account.'

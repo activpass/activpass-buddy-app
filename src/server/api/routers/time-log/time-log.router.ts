@@ -4,10 +4,10 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/
 
 import { timeLogService } from './service/time-log.service';
 import {
-  clientCheckInInputSchema,
-  clientCheckInVerifyInputSchema,
-  clientCheckOutInputSchema,
-  clientCheckOutVerifyInputSchema,
+  checkInInputSchema,
+  checkInVerifyInputSchema,
+  checkOutInputSchema,
+  checkOutVerifyInputSchema,
   createTimeLogInputSchema,
   getTimeLogByClientIdWithDateRangeInputSchema,
   listTimeLogInputSchema,
@@ -25,27 +25,23 @@ export const timeLogRouter = createTRPCRouter({
     return timeLogService.update({ input });
   }),
   list: protectedProcedure.input(listTimeLogInputSchema).query(async ({ input, ctx }) => {
-    return timeLogService.list({ orgId: ctx.session.user.orgId, clientId: input.clientId });
+    return timeLogService.list({ ...input, orgId: ctx.session.user.orgId });
   }),
-  getByClientIdWithDateRange: protectedProcedure
+  getTimeLogsByDateRange: protectedProcedure
     .input(getTimeLogByClientIdWithDateRangeInputSchema)
     .query(async ({ input, ctx }) => {
-      return timeLogService.getByClientIdWithDateRange({ orgId: ctx.session.user.orgId, input });
+      return timeLogService.getTimeLogsByDateRange({ orgId: ctx.session.user.orgId, input });
     }),
-  clientCheckIn: publicProcedure.input(clientCheckInInputSchema).mutation(async ({ input }) => {
-    return timeLogService.clientCheckIn({ input });
+  checkIn: publicProcedure.input(checkInInputSchema).mutation(async ({ input }) => {
+    return timeLogService.checkIn({ input });
   }),
-  clientCheckInVerify: publicProcedure
-    .input(clientCheckInVerifyInputSchema)
-    .mutation(async ({ input }) => {
-      return timeLogService.clientCheckInVerify({ input });
-    }),
-  clientCheckOut: publicProcedure.input(clientCheckOutInputSchema).mutation(async ({ input }) => {
-    return timeLogService.clientCheckOut({ input });
+  checkInVerify: publicProcedure.input(checkInVerifyInputSchema).mutation(async ({ input }) => {
+    return timeLogService.checkInVerify({ input });
   }),
-  clientCheckOutVerify: publicProcedure
-    .input(clientCheckOutVerifyInputSchema)
-    .mutation(async ({ input }) => {
-      return timeLogService.clientCheckOutVerify({ input });
-    }),
+  checkOut: publicProcedure.input(checkOutInputSchema).mutation(async ({ input }) => {
+    return timeLogService.checkOut({ input });
+  }),
+  checkOutVerify: publicProcedure.input(checkOutVerifyInputSchema).mutation(async ({ input }) => {
+    return timeLogService.checkOutVerify({ input });
+  }),
 });

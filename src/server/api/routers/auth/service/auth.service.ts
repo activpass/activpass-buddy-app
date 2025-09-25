@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import type { Session } from 'next-auth';
 
+import { env } from '@/env';
 import { TimeInSeconds } from '@/server/api/enums/time-in-seconds.enum';
 import {
   generateMongooseObjectId,
@@ -12,6 +13,7 @@ import { createSecureCookie, deleteCookie } from '@/server/api/utils/cookie-mana
 import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { redis } from '@/server/database/redis';
 import { Logger } from '@/server/logger';
+import { DEFAULT_SYSTEM_ROLE_KEY } from '@/validations/role.validation';
 
 import {
   sendEmailVerificationEmail,
@@ -20,13 +22,10 @@ import {
   sendPasswordResetSuccessEmail,
 } from '../../../services/email';
 import { OrganizationModel } from '../../organization/model/organization.model';
+import { roleService } from '../../role/service/role.service';
 import { userRepository } from '../../user/repository/user.repository';
-import {
-  SESSION_TOKEN_COOKIE_KEY,
-  SESSION_TOKENS_PREFIX,
-  USER_ID_COOKIE_KEY,
-  UserRoleEnum,
-} from '../constants';
+import type { CreateUserParams } from '../../user/repository/user.repository.types';
+import { SESSION_TOKEN_COOKIE_KEY, SESSION_TOKENS_PREFIX, USER_ID_COOKIE_KEY } from '../constants';
 import {
   type AccountVerifyArgs,
   type AddUserSessionArgs,
@@ -218,20 +217,30 @@ class AuthService {
     }
   };
 
-  signUp = async (args: SignUpArgs) => {
+  register = async (args: SignUpArgs) => {
     const { input } = args;
+
+    // Get the super admin role for the owner
+    const superAdminRoleResult = await roleService.getRoleByKey(
+      DEFAULT_SYSTEM_ROLE_KEY.SUPER_ADMIN
+    );
+
+    if (!superAdminRoleResult.data) {
+      throw getTRPCError('Failed to assign role to the new user', 'BAD_REQUEST');
+    }
 
     // Generate verification token
     const verifyToken = generateRandomToken();
 
-    const data = {
+    const newData: CreateUserParams['data'] = {
       ...input,
-      role: UserRoleEnum.OWNER,
       isOnboardingComplete: false,
       verified: false, // Set to false for new users
       verifyToken,
+      isDeleted: false,
+      role: superAdminRoleResult.data._id,
     };
-    const newUser = await userRepository.create({ data });
+    const newUser = await userRepository.create({ data: newData });
 
     if (!newUser) {
       throw getTRPCError('Failed to create user');
@@ -269,6 +278,13 @@ class AuthService {
         });
         // Don't fail signup if email fails
       });
+
+    if (process.env.NODE_ENV === 'development') {
+      return {
+        email: userClient.email,
+        url: `${env.NEXTAUTH_URL}/verify-email?token=${verifyToken}&email=${encodeURIComponent(userClient.email)}`,
+      };
+    }
 
     return {
       email: userClient.email,
@@ -336,7 +352,7 @@ class AuthService {
       userInfo: await userRepository.getUserCacheById(userId, {
         includeSensitiveInfo: true,
       }),
-      sessionToken: session.accessToken || '',
+      sessionToken: '',
     };
   };
 
@@ -526,7 +542,10 @@ class AuthService {
 
       // Check if email or phone number is already in use by another user
       if (user.email !== profileSetup.email) {
-        const emailExists = await UserModel.findOne({ email: profileSetup.email });
+        const emailExists = await UserModel.findOne({
+          email: profileSetup.email,
+          employeeCode: { $ne: null },
+        });
         if (emailExists) {
           throw new TRPCError({
             code: 'CONFLICT',
@@ -570,6 +589,8 @@ class AuthService {
       organizationDoc.users.push(user.id);
       // Save organization and user
       await organizationDoc.save();
+      this.logger.info('Organization created', { organizationId: organizationDoc.id });
+      this.logger.info('User updating org', { userId: user.id });
 
       // Link user with organization and save user
       user.organization = generateMongooseObjectId(organizationDoc.id);

@@ -1,11 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Text } from '@paalan/react-ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@paalan/react-ui';
 import Image from 'next/image';
 import type { FC } from 'react';
 
-import Link from '@/components/Link';
 import { api } from '@/trpc/server';
 
-import { ClientCheckOutForm } from './_components/ClientCheckOutForm';
+import { CheckOutForm } from '../_components/CheckOutForm';
 
 type CheckOutClientPageProps = {
   searchParams: {
@@ -18,7 +17,7 @@ const CheckOutClientPage: FC<CheckOutClientPageProps> = async ({ searchParams })
   const logoUrl = organization?.logo?.url;
 
   return (
-    <Card className="flex-1">
+    <Card className="flex flex-1 flex-col justify-center sm:m-8">
       <CardHeader className="mb-4 text-center">
         {logoUrl && (
           <div className="mb-5 flex justify-center">
@@ -40,13 +39,7 @@ const CheckOutClientPage: FC<CheckOutClientPageProps> = async ({ searchParams })
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ClientCheckOutForm orgId={organization.id} />
-        <Text className="mt-4 text-center text-sm">
-          Want to client check in?{' '}
-          <Link href={`/check-in/client?orgId=${orgId}`} className="text-link underline">
-            Client Check in
-          </Link>
-        </Text>
+        <CheckOutForm orgId={organization.id} type="client" />
       </CardContent>
     </Card>
   );

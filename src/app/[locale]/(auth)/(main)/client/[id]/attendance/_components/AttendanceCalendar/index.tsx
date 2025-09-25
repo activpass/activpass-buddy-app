@@ -8,9 +8,9 @@ import { api } from '@/trpc/client';
 
 import { CustomCalendarDay } from './CustomCalendarDay';
 import { StatusBadge } from './StatusBadge';
-import type { GetByClientIdWithDateRange } from './types';
+import type { GetTimeLogsByDateRange } from './types';
 
-const WithDayComponent = (timeLogRecord: GetByClientIdWithDateRange | undefined) => {
+const WithDayComponent = (timeLogRecord: GetTimeLogsByDateRange | undefined) => {
   const Component = ({ date, displayMonth }: { date: Date; displayMonth: Date }) => {
     return (
       <CustomCalendarDay
@@ -30,7 +30,7 @@ export const AttendanceCalendar: FC<AttendanceCalendarProps> = ({ clientId }) =>
   const currentDate = new Date();
   const [startOfMonthDate, setStartOfMonthDate] = useState(startOfMonth(new Date()));
 
-  const { isLoading, data } = api.timeLogs.getByClientIdWithDateRange.useQuery(
+  const { isLoading, data } = api.timeLogs.getTimeLogsByDateRange.useQuery(
     {
       clientId,
       startDate: startOfMonth(startOfMonthDate),

@@ -60,7 +60,7 @@ export type SignInArgs = {
 };
 
 export type SignUpArgs = {
-  input: RouterInputs['auth']['signUp'];
+  input: RouterInputs['auth']['register'];
   headers: Headers;
 };
 

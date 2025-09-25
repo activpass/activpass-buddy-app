@@ -1,6 +1,9 @@
+/* eslint-disable no-param-reassign */
 import type mongoose from 'mongoose';
 
 import { env } from '@/env';
+import { roleRepository } from '@/server/api/routers/role/repository/role.repository';
+import { logger } from '@/server/logger';
 
 import { MongoDBConnection } from './db.connection';
 
@@ -19,7 +22,19 @@ export const mongodbConnect = async () => {
   }
   if (!cached.promise) {
     cached.promise = new Promise<typeof mongoose>((resolve, reject) => {
-      dbConnection.connect(resolve, reject);
+      dbConnection.connect(connection => {
+        // Initialize default roles for the organization
+        roleRepository
+          .createSystemRoles()
+          .then(result => {
+            logger.info('Roles initialization result', { success: result.success });
+            resolve(connection);
+          })
+          .catch(error => {
+            logger.error('Failed to initialize default roles', error);
+            reject(error);
+          });
+      }, reject);
     });
   }
   try {

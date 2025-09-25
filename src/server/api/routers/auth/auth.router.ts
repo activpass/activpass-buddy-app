@@ -23,8 +23,8 @@ export const authRouter = createTRPCRouter({
     return result;
   }),
 
-  signUp: publicProcedure.input(signUpInputSchema).mutation(async ({ input, ctx }) => {
-    const result = await authService.signUp({ input, headers: ctx.headers });
+  register: publicProcedure.input(signUpInputSchema).mutation(async ({ input, ctx }) => {
+    const result = await authService.register({ input, headers: ctx.headers });
     return result;
   }),
 

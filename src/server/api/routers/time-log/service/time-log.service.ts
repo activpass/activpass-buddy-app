@@ -4,18 +4,21 @@ import { differenceInMinutes } from 'date-fns';
 
 import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger';
+import { type TimeLogTypeEnum, timelogTypeEnum } from '@/validations/check-in/form.validation';
 
 import { checkInRepository } from '../../check-in/repository/check-in.repository';
 import { clientRepository } from '../../client/repository/client.repository';
+import { employeeRepository } from '../../employees/repository/employee.repository';
 import { timeLogRepository } from '../repository/time-log.repository';
+import { checkInInputSchema } from '../time-log.input';
 import type {
-  ClientCheckInArgs,
-  ClientCheckInVerifyArgs,
-  ClientCheckOutArgs,
-  ClientCheckOutVerifyArgs,
+  CheckInArgs,
+  CheckInVerifyArgs,
+  CheckOutArgs,
+  CheckOutVerifyArgs,
   CreateTimeLogArgs,
-  GetByClientIdWithDateRangeArgs,
   GetTimeLogByIdArgs,
+  GetTimeLogsByDateRangeArgs,
   ListTimeLogsArgs,
   UpdateTimeLogArgs,
 } from './time-log.service.types';
@@ -60,9 +63,9 @@ class TimeLogService {
     }
   };
 
-  list = async ({ orgId, clientId }: ListTimeLogsArgs) => {
+  list = async (args: ListTimeLogsArgs) => {
     try {
-      const timeLogs = await timeLogRepository.list({ orgId, clientId });
+      const timeLogs = await timeLogRepository.list(args);
       return timeLogs.map(timeLog => {
         return timeLog.toObject({
           flattenObjectIds: true,
@@ -74,7 +77,7 @@ class TimeLogService {
     }
   };
 
-  getByClientIdWithDateRange = async ({ orgId, input }: GetByClientIdWithDateRangeArgs) => {
+  getTimeLogsByDateRange = async ({ orgId, input }: GetTimeLogsByDateRangeArgs) => {
     try {
       const timeLogs = await timeLogRepository.getTimeLogWithDateRange({ orgId, ...input });
       return timeLogs.reduce((acc: Record<string, { duration: number }>, timeLog) => {
@@ -94,26 +97,38 @@ class TimeLogService {
     }
   };
 
-  clientCheckIn = async ({ input }: ClientCheckInArgs) => {
-    const { phoneNumber, orgId } = input;
-    const clientDoc = await clientRepository.findByPhoneNumber(orgId, phoneNumber);
+  private getByPhoneNumberBasedOnType = async (
+    orgId: string,
+    phoneNumber: number,
+    type: TimeLogTypeEnum
+  ) => {
+    if (type === checkInInputSchema.shape.type.enum.employee) {
+      return (await employeeRepository.findByPhoneNumber(orgId, phoneNumber)).toObject();
+    }
+    return (await clientRepository.findByPhoneNumber(orgId, phoneNumber)).toObject();
+  };
+
+  checkIn = async ({ input }: CheckInArgs) => {
+    const { phoneNumber, orgId, type } = input;
+    const doc = await this.getByPhoneNumberBasedOnType(orgId, phoneNumber, type);
 
     return {
-      name: clientDoc.fullName,
-      phoneNumber: clientDoc.phoneNumber,
-      email: clientDoc.email,
-      dob: clientDoc.dob,
-      orgId: clientDoc.organization.toHexString(),
+      name: doc.fullName,
+      phoneNumber: +(doc.phoneNumber || 0),
+      email: doc.email,
+      dob: doc.dob,
+      orgId: doc.orgId,
     };
   };
 
-  clientCheckInVerify = async ({ input }: ClientCheckInVerifyArgs) => {
-    const { phoneNumber, orgId, pin } = input;
-    const clientDoc = await clientRepository.findByPhoneNumber(orgId, phoneNumber);
+  checkInVerify = async ({ input }: CheckInVerifyArgs) => {
+    const { phoneNumber, orgId, type, pin } = input;
+    const doc = await this.getByPhoneNumberBasedOnType(orgId, phoneNumber, type);
 
-    const checkInDoc = await checkInRepository.getByOrgId({
-      orgId,
-    });
+    const clientId = type === timelogTypeEnum.enum.client ? doc.id : undefined;
+    const employeeId = type === timelogTypeEnum.enum.employee ? doc.id : undefined;
+
+    const checkInDoc = await checkInRepository.getByOrgId({ orgId });
 
     if (checkInDoc.pin !== pin) {
       throw new TRPCError({
@@ -127,28 +142,42 @@ class TimeLogService {
     await timeLogRepository.updateCheckIn({
       orgId,
       data: {
-        clientId: clientDoc.id,
+        clientId,
+        employeeId,
         checkIn: dateNow,
       },
     });
 
-    await clientRepository.update(clientDoc.id, {
-      checkInDate: dateNow,
-      checkOutDate: undefined,
-    });
+    if (clientId) {
+      await clientRepository.update(clientId, {
+        checkInDate: dateNow,
+        checkOutDate: undefined,
+      });
+    } else if (employeeId) {
+      await employeeRepository.update(
+        employeeId,
+        {
+          checkInDate: dateNow,
+          checkOutDate: undefined,
+        },
+        orgId
+      );
+    }
 
     return {
       success: true,
     };
   };
 
-  clientCheckOut = async ({ input }: ClientCheckOutArgs) => {
-    return this.clientCheckIn({ input });
+  checkOut = async ({ input }: CheckOutArgs) => {
+    return this.checkIn({ input });
   };
 
-  clientCheckOutVerify = async ({ input }: ClientCheckOutVerifyArgs) => {
-    const { phoneNumber, orgId, pin } = input;
-    const clientDoc = await clientRepository.findByPhoneNumber(orgId, phoneNumber);
+  checkOutVerify = async ({ input }: CheckOutVerifyArgs) => {
+    const { phoneNumber, orgId, pin, type } = input;
+    const doc = await this.getByPhoneNumberBasedOnType(orgId, phoneNumber, type);
+    const clientId = type === timelogTypeEnum.enum.client ? doc.id : undefined;
+    const employeeId = type === timelogTypeEnum.enum.employee ? doc.id : undefined;
 
     const checkInDoc = await checkInRepository.getByOrgId({
       orgId,
@@ -164,15 +193,26 @@ class TimeLogService {
     const dateNow = new Date();
     await timeLogRepository.updateCheckOut({
       orgId,
-      clientId: clientDoc.id,
+      clientId,
+      employeeId,
       data: {
         checkOut: dateNow,
       },
     });
 
-    await clientRepository.update(clientDoc.id, {
-      checkOutDate: dateNow,
-    });
+    if (clientId) {
+      await clientRepository.update(clientId, {
+        checkOutDate: dateNow,
+      });
+    } else if (employeeId) {
+      await employeeRepository.update(
+        employeeId,
+        {
+          checkOutDate: dateNow,
+        },
+        orgId
+      );
+    }
 
     return {
       success: true,

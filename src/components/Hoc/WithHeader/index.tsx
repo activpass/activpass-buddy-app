@@ -62,7 +62,7 @@ export const WithHeader: FC = () => {
       label: 'Clients',
     },
     {
-      href: '/employee',
+      href: '/employees',
       label: 'Employees',
     },
     {

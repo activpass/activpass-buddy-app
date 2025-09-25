@@ -11,7 +11,7 @@ export const AddClientClipboardButton: FC = () => {
 
   const generateOnboardingLinkMutation = api.clients.generateOnboardingLink.useMutation({
     onSuccess: data => {
-      copy(`${window.location.origin}/onboarding-client?token=${data.token}`);
+      copy(`${window.location.origin}/onboard/client?token=${data.token}`);
       toast.success('Generated Link Copied to clipboard');
     },
     onError: error => {

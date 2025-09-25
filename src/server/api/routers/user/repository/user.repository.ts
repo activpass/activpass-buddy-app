@@ -14,7 +14,6 @@ import {
 } from '@/server/api/routers/user/repository/user.repository.types';
 import { Logger } from '@/server/logger/logger';
 
-import { getRootAdminUser, isRootAdminUser } from '../../auth/helper/auth.helper';
 import { cacheUserInfo, clearCachedUserInfo, getCachedUserInfo } from '../helper/user.helper';
 import { type IUserData, type IUserSchema, UserModel } from '../model/user.model';
 
@@ -30,9 +29,6 @@ class UserRepository {
     id: IUserData['id'],
     options?: GetUserByIdOptions<T>
   ): Promise<(T extends true ? ServerSession['user'] : IUserData) | null> => {
-    const rootUser = getRootAdminUser();
-    if (rootUser.id === id) return rootUser; // Return root user if id is root user
-
     const { includeSensitiveInfo = false, bypassCache = false } = options ?? {};
     if (!bypassCache) {
       const cachedUserInfo = await getCachedUserInfo(id);
@@ -84,13 +80,6 @@ class UserRepository {
 
   isUserExists = async (email: string) => {
     try {
-      if (isRootAdminUser(email)) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Already admin has this email!',
-        });
-      }
-
       let user: IUserSchema | null = null;
 
       try {
