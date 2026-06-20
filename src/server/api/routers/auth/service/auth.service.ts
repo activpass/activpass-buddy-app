@@ -14,6 +14,7 @@ import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { redis } from '@/server/database/redis';
 import { Logger } from '@/server/logger';
 import { DEFAULT_SYSTEM_ROLE_KEY } from '@/validations/role.validation';
+import { UserTypeEnum } from '@/validations/user/add-form.validation';
 
 import {
   sendEmailVerificationEmail,
@@ -239,6 +240,7 @@ class AuthService {
       verifyToken,
       isDeleted: false,
       role: superAdminRoleResult.data._id,
+      type: UserTypeEnum.OWNER,
     };
     const newUser = await userRepository.create({ data: newData });
 
@@ -544,7 +546,7 @@ class AuthService {
       if (user.email !== profileSetup.email) {
         const emailExists = await UserModel.findOne({
           email: profileSetup.email,
-          employeeCode: { $ne: null },
+          type: { $eq: UserTypeEnum.OWNER },
         });
         if (emailExists) {
           throw new TRPCError({
@@ -576,8 +578,8 @@ class AuthService {
 
       // Create organization
       const organization = {
-        name: facilitySetup.facilityName,
-        type: facilitySetup.businessType,
+        name: facilitySetup.name,
+        type: facilitySetup.type,
         address: facilitySetup.address,
         city: facilitySetup.city,
         pincode: facilitySetup.pincode,
@@ -601,8 +603,8 @@ class AuthService {
         const onboardingEmailResult = await sendOnboardingCompletionEmail({
           username: user.fullName || `${user.firstName} ${user.lastName}`.trim() || 'User',
           email: user.email,
-          facilityName: facilitySetup.facilityName,
-          businessType: facilitySetup.businessType,
+          facilityName: facilitySetup.name,
+          businessType: facilitySetup.type,
         });
 
         this.logger.info(`Onboarding completion email sent to ${user.email}`, {

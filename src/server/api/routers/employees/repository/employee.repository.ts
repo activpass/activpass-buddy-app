@@ -7,6 +7,7 @@ import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger';
 import { userProviderSchema } from '@/validations/auth.validation';
 import { DEFAULT_SYSTEM_ROLE_KEY } from '@/validations/role.validation';
+import { UserTypeEnum } from '@/validations/user/add-form.validation';
 
 import { roleRepository } from '../../role/repository/role.repository';
 import { TimeLogModel } from '../../time-log/model/time-log.model';
@@ -113,9 +114,10 @@ class EmployeeRepository {
         role: role._id,
         provider: userProviderSchema.enum.email,
         verified: true,
+        uniqueCode: employeeCode,
+        type: UserTypeEnum.EMPLOYEE,
 
         // Employee-specific fields
-        employeeCode,
         gender: input.gender,
         dob: input.dob,
         address: input.address,
@@ -250,8 +252,8 @@ class EmployeeRepository {
 
       const query: FilterQuery<IUserData> = {
         organization: orgId,
+        type: UserTypeEnum.EMPLOYEE,
         isDeleted: { $ne: true },
-        employeeCode: { $exists: true }, // Ensure only employees are fetched
       };
 
       // Add search functionality
@@ -260,7 +262,7 @@ class EmployeeRepository {
           { firstName: { $regex: search, $options: 'i' } },
           { lastName: { $regex: search, $options: 'i' } },
           { email: { $regex: search, $options: 'i' } },
-          { employeeCode: { $regex: search, $options: 'i' } },
+          { uniqueCode: { $regex: search, $options: 'i' } },
           { designation: { $regex: search, $options: 'i' } },
           { 'jobDetails.department': { $regex: search, $options: 'i' } },
         ];
@@ -269,7 +271,7 @@ class EmployeeRepository {
       const [employees, total] = await Promise.all([
         UserModel.find(query)
           .select(
-            'firstName lastName email phoneNumber role employeeCode designation gender dob address emergencyContact bank jobDetails workSchedule payroll leaves createdAt checkInDate isDeleted'
+            'firstName lastName email phoneNumber role uniqueCode designation gender dob address emergencyContact bank jobDetails workSchedule payroll leaves createdAt checkInDate isDeleted'
           )
           .populate<{ role: IPopulatedRole }>('role', 'id name key description level type')
           .limit(limit)
@@ -288,7 +290,7 @@ class EmployeeRepository {
           fullName: `${employee.firstName || ''} ${employee.lastName || ''}`.trim(),
           email: employee.email,
           phoneNumber: employee.phoneNumber,
-          employeeCode: employee.employeeCode,
+          employeeCode: employee.uniqueCode,
           designation: employee.designation,
           gender: employee.gender,
           dob: employee.dob,
@@ -348,7 +350,7 @@ class EmployeeRepository {
       const commonQuery: FilterQuery<IUserData> = {
         organization: generateMongooseObjectId(orgId),
         isDeleted: { $ne: true },
-        employeeCode: { $ne: null }, // Ensure only employees are counted
+        type: UserTypeEnum.EMPLOYEE, // Ensure only employees are counted
       };
       // Total employees in the organization (excluding deleted)
       const totalEmployeeCount = await UserModel.countDocuments(commonQuery).exec();
@@ -547,7 +549,7 @@ class EmployeeRepository {
   ): Promise<IUserDocument | null> => {
     try {
       return await UserModel.findOne({
-        employeeCode,
+        uniqueCode: employeeCode,
         organization: orgId,
         isDeleted: { $ne: true },
       })
@@ -566,7 +568,7 @@ class EmployeeRepository {
         'jobDetails.department': department,
         isDeleted: { $ne: true },
       })
-        .select('firstName lastName email employeeCode designation jobDetails role')
+        .select('firstName lastName email uniqueCode designation jobDetails role')
         .populate([
           {
             path: 'jobDetails.reportTo',
@@ -645,7 +647,7 @@ class EmployeeRepository {
   ): Promise<IUserDocument | null> => {
     try {
       const query: FilterQuery<IUserDocument> = {
-        employeeCode,
+        uniqueCode: employeeCode,
         isDeleted: { $ne: true },
       };
 

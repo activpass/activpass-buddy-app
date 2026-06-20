@@ -1,6 +1,6 @@
 import { Avatar, IconButton } from '@paalan/react-ui';
 import { type ChangeEvent, type KeyboardEvent, useEffect, useRef } from 'react';
-import { FaCamera, FaTrash } from 'react-icons/fa';
+import { FaCamera, FaRegUser, FaTrash } from 'react-icons/fa';
 
 import defaultAvatar from '@/public/avatars/no-profile-picture.png';
 
@@ -50,10 +50,17 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
           onClick={onClick}
           onKeyDown={handleKeyDown}
         >
-          <Avatar src={avatarUrl || defaultAvatar.src} className="size-full rounded-full" />
+          <Avatar
+            src={avatarUrl || defaultAvatar.src}
+            fallback={<FaRegUser className="size-24 text-muted" />}
+            className="size-full rounded-full"
+          />
 
           <div className="absolute inset-0 flex items-center justify-center rounded-full bg-gray-800/75 opacity-0 transition-opacity hover:opacity-100">
-            <IconButton aria-label="Change Avatar" icon={<FaCamera className="text-white" />} />
+            <IconButton
+              aria-label="Change Avatar"
+              icon={<FaCamera className="size-5 text-white" />}
+            />
           </div>
         </div>
 

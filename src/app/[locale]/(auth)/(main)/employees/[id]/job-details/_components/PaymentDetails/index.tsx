@@ -1,7 +1,7 @@
 import { DataTable, VStack } from '@paalan/react-ui';
 import type { FC } from 'react';
 
-import { ProfileHeader } from '../../../_components/ProfileHeader';
+import { ProfileHeader } from '@/components/Common/ProfileHeader';
 
 export const PaymentDetails: FC = () => {
   return (

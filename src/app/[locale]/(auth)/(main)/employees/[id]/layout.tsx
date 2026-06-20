@@ -2,10 +2,10 @@ import { Heading, Separator, Text } from '@paalan/react-ui';
 import type { Metadata } from 'next';
 import type { FC, PropsWithChildren } from 'react';
 
+import { SidebarNav } from '@/components/Common/SidebarNav';
 import { api } from '@/trpc/server';
 
 import { EmployeeProfileInfo } from './_components/EmployeeProfileInfo';
-import { SidebarNav } from './_components/SidebarNav';
 
 export const metadata: Metadata = {
   title: 'Employee Profile',

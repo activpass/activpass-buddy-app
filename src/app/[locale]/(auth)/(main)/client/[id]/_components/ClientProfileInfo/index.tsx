@@ -9,7 +9,7 @@ import { AvatarUpload } from '@/components/Common/AvatarUpload';
 import { uploadToImagekit } from '@/lib/imagekit';
 import { api } from '@/trpc/client';
 import type { RouterOutputs } from '@/trpc/shared';
-import { avatarSchema } from '@/validations/client/add-form.validation';
+import { avatarSchema } from '@/validations/avatar.validation';
 
 type ClientProfileInfoProps = {
   clientData: RouterOutputs['clients']['get'];

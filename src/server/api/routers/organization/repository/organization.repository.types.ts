@@ -22,3 +22,5 @@ export type AddUserToOrganizationParams = {
   userId: string;
   isUpdateCreatedById?: boolean;
 };
+
+export type CreateOrUpdateParams = CreateOrganizationParams & { id?: string };

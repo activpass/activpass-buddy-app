@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { AvatarUpload } from '@/components/Common/AvatarUpload';
 import { uploadToImagekit } from '@/lib/imagekit';
 import { api } from '@/trpc/client';
-import { avatarSchema } from '@/validations/client/add-form.validation';
+import { avatarSchema } from '@/validations/avatar.validation';
 
 import type { EmployeeData } from '../../../types';
 
@@ -180,7 +180,7 @@ export const EmployeeProfileInfo: React.FC<EmployeeProfileInfoProps> = ({ data }
       <div className="flex flex-col items-center">
         <h3 className="mb-1 text-xl font-bold">{data?.fullName}</h3>
         <div className="flex items-center justify-center text-xs text-gray-700 dark:text-gray-400">
-          <h3 className="mr-2">{data?.employeeCode}</h3>
+          <h3 className="mr-2">{data?.uniqueCode}</h3>
           <span className="">|</span>
           <p className="ml-2">
             {dateIntl.format(data?.createdAt, {

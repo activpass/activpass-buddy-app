@@ -191,3 +191,23 @@ export const convertAmountToWords = (amount: number | string): string => {
 
   return result.trim();
 };
+
+/**
+ * Converts a URL into a File object.
+ * @param url The URL of the resource to fetch.
+ * @param filename The desired filename for the new File object.
+ * @returns A Promise that resolves with the new File object.
+ */
+export const urlToFile = async (url: string, filename: string) => {
+  // 1. Fetch the resource and get a Response object
+  const response = await fetch(url);
+
+  // 2. Extract the raw binary data as a Blob
+  const blob = await response.blob();
+
+  // 3. Get the MIME type from the Blob
+  const mimeType = blob.type;
+
+  // 4. Create a new File object from the Blob
+  return new File([blob], filename, { type: mimeType });
+};

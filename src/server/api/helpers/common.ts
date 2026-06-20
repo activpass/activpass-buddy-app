@@ -58,6 +58,14 @@ export const generateEmployeeCode = () => {
 };
 
 /**
+ *
+ * @returns The generated owner code.
+ */
+export const generateOwnerCode = () => {
+  return generateUniqueCode('APO');
+};
+
+/**
  * Generates a hexadecimal string representation of a Mongoose ObjectId.
  *
  * @param objId - Optional string representing the ObjectId.

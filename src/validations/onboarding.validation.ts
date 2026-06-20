@@ -1,7 +1,10 @@
+import { convertObjectKeysIntoZodEnum } from '@paalan/react-shared/lib';
 import { z } from 'zod';
 
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/constants/common';
+import { BUSINESS_TYPE_OPTIONS } from '@/constants/organization/form.constants';
 
+import { avatarSchema } from './avatar.validation';
 import { phoneNumberSchema } from './common.validation';
 
 export const onboardingProfileSetupSchema = z.object({
@@ -30,48 +33,12 @@ export const onboardingProfileSetupSchema = z.object({
 
 export type OnboardingProfileSetupSchema = z.infer<typeof onboardingProfileSetupSchema>;
 
-// Business type options
-export const BUSINESS_TYPE_OPTIONS = {
-  GYM: 'Gym',
-  YOGA_PILATES: 'Yoga & Pilates',
-  FITNESS_CENTER: 'Fitness Center',
-  MARTIAL_ARTS: 'Martial Arts',
-  DANCE_STUDIO: 'Dance Studio',
-  PERSONAL_TRAINING: 'Personal Training',
-  CROSSFIT: 'CrossFit',
-  SPORTS_CLUB: 'Sports Club',
-} as const;
-
-export const getBusinessTypeOptions = () => {
-  return Object.entries(BUSINESS_TYPE_OPTIONS).map(([value, label]) => ({
-    value,
-    label,
-  }));
-};
-
 export const onboardingFacilitySetupSchema = z.object({
-  facilityName: z.string().min(1, {
-    message: 'Facility name is required',
+  name: z.string().min(1, {
+    message: 'Company name is required',
   }),
-  businessType: z
-    .string()
-    .min(1, {
-      message: 'Business type is required',
-    })
-    .refine(value => Object.keys(BUSINESS_TYPE_OPTIONS).includes(value), {
-      message: 'Please select a valid business type',
-    }),
-  logo: z
-    .instanceof(File)
-    .refine(file => file.size <= MAX_FILE_SIZE, {
-      message: 'File size should be less than 2MB.',
-    })
-    .refine(
-      file => ACCEPTED_IMAGE_TYPES.includes(file.type),
-      'Only .jpg, .jpeg, .png and .webp files are allowed'
-    )
-    .nullable()
-    .optional(),
+  type: convertObjectKeysIntoZodEnum(BUSINESS_TYPE_OPTIONS),
+  logo: avatarSchema,
   address: z.string().min(1, {
     message: 'Address is required',
   }),

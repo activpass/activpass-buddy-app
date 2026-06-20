@@ -2,10 +2,10 @@ import { Skeleton } from '@paalan/react-ui';
 import type { Metadata } from 'next';
 import { type FC, Suspense } from 'react';
 
+import { ProfileHeader } from '@/components/Common/ProfileHeader';
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 import { api } from '@/trpc/server';
 
-import { ProfileHeader } from '../_components/ProfileHeader';
 import { AttendanceCalendar } from './_components/AttendanceCalendar';
 import { AttendanceTable } from './_components/AttendanceTable';
 
@@ -41,7 +41,6 @@ const AttendancePage: FC<AttendancePageProps> = async ({ params }) => {
         <ProfileHeader
           title="Attendance Details"
           description="Details of your employee’s attendance can be viewed here"
-          showSendMessageButton
         />
         <div className="flex flex-col gap-5">
           <AttendanceCalendar employeeId={employeeId} />

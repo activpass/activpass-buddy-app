@@ -5,8 +5,10 @@ import mongoose, {
   type Model,
 } from 'mongoose';
 
+import { BUSINESS_TYPE_OPTIONS } from '@/constants/organization/form.constants';
 import { PaymentMethod, Software } from '@/server/api/constants/common.constant';
 import { imageKitFileSchemaDefinition } from '@/server/api/schemas/common';
+import { getObjectKeys } from '@/utils/helpers';
 
 const HolidayConfig = {
   name: { type: String, required: true },
@@ -49,7 +51,7 @@ const schemaOptions = {
 const OrganizationSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    type: { type: String, required: true },
+    type: { type: String, required: true, enum: getObjectKeys(BUSINESS_TYPE_OPTIONS) },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     subscription: {

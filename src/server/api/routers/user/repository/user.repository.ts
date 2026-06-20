@@ -12,10 +12,17 @@ import {
   type ResetPasswordParams,
   type UpdateUserParams,
 } from '@/server/api/routers/user/repository/user.repository.types';
+import { getTRPCError } from '@/server/api/utils/trpc-error';
 import { Logger } from '@/server/logger/logger';
 
+import { organizationRepository } from '../../organization/repository/organization.repository';
 import { cacheUserInfo, clearCachedUserInfo, getCachedUserInfo } from '../helper/user.helper';
-import { type IUserData, type IUserSchema, UserModel } from '../model/user.model';
+import {
+  type IUserBaseSchema,
+  type IUserData,
+  type IUserSchema,
+  UserModel,
+} from '../model/user.model';
 
 class UserRepository {
   private readonly logger = new Logger(UserRepository.name);
@@ -132,7 +139,27 @@ class UserRepository {
 
   update = async ({ userId, data }: UpdateUserParams) => {
     try {
-      const updatedUser = await UserModel.findByIdAndUpdate(userId, data, { new: true }).exec();
+      const { organization, ...restData } = data; // Exclude 'organization' from being directly updated
+
+      if (organization) {
+        const { id: orgId, ...restOrg } = organization;
+
+        if (!orgId) {
+          throw getTRPCError(
+            'Organization ID is required to update organization details',
+            'BAD_REQUEST'
+          );
+        }
+
+        // Update organization details using organizationRepository
+        await clearCachedUserInfo(userId);
+        await organizationRepository.update({
+          id: orgId,
+          data: restOrg,
+        });
+      }
+
+      const updatedUser = await UserModel.findByIdAndUpdate(userId, restData, { new: true }).exec();
       if (!updatedUser) {
         throw new TRPCError({
           code: 'NOT_FOUND',
@@ -192,6 +219,44 @@ class UserRepository {
 
   changePassword = async ({ userId, oldPassword, newPassword }: ChangePasswordParams) => {
     return UserModel.changePassword(userId, oldPassword, newPassword);
+  };
+
+  updateAvatar = async (id: string, avatar: IUserBaseSchema['avatar']) => {
+    try {
+      const updatedDoc = await UserModel.findByIdAndUpdate(
+        id,
+        {
+          avatar,
+        },
+        { new: true }
+      ).exec();
+      if (!updatedDoc) {
+        throw getTRPCError('User not found', 'NOT_FOUND');
+      }
+      return updatedDoc;
+    } catch (error) {
+      this.logger.error('Failed to update user avatar', error);
+      throw error;
+    }
+  };
+
+  deleteAvatar = async (id: string) => {
+    try {
+      const updatedDoc = await UserModel.findByIdAndUpdate(
+        id,
+        {
+          avatar: null,
+        },
+        { new: false }
+      ).exec();
+      if (!updatedDoc) {
+        throw getTRPCError('User not found', 'NOT_FOUND');
+      }
+      return updatedDoc;
+    } catch (error) {
+      this.logger.error('Failed to delete user avatar', error);
+      throw error;
+    }
   };
 }
 

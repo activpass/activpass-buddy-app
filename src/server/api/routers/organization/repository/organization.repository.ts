@@ -6,6 +6,7 @@ import { type IOrganizationSchema, OrganizationModel } from '../model/organizati
 import {
   type AddUserToOrganizationParams,
   type CreateOrganizationParams,
+  type CreateOrUpdateParams,
   type ListOrganizationsParams,
   type UpdateOrganizationParams,
 } from './organization.repository.types';
@@ -78,6 +79,29 @@ class OrganizationRepository {
     return OrganizationModel.list({
       createdBy: userId,
     });
+  };
+
+  compareValues = (obj1: CreateOrUpdateParams['data'], obj2: CreateOrUpdateParams['data']) => {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  };
+
+  createOrUpdate = async ({ id, data }: CreateOrUpdateParams) => {
+    try {
+      if (id) {
+        const doc = await this.getById(id);
+        if (doc && this.compareValues(doc.toObject(), data)) {
+          return doc;
+        }
+
+        const updatedOrganization = await this.update({ id, data });
+        return updatedOrganization;
+      }
+      const org = await this.create({ data });
+      return org;
+    } catch (error) {
+      this.logger.error('Failed to create or update organization', error);
+      throw error;
+    }
   };
 }
 

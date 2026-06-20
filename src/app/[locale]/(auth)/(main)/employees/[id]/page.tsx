@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import type { FC } from 'react';
 
+import { ProfileHeader } from '@/components/Common/ProfileHeader';
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 import { api } from '@/trpc/server';
 
 import { ProfileForm } from './_components/ProfileForm';
-import { ProfileHeader } from './_components/ProfileHeader';
 
 export const metadata: Metadata = {
   title: 'Employee Profile',
@@ -28,7 +28,6 @@ const EmployeeProfilePage: FC<EmployeeProfilePageProps> = async ({ params }) => 
         <ProfileHeader
           title="Profile Details"
           description="Details of your employee’s profile can be viewed here"
-          showSendMessageButton
         />
         <ProfileForm data={data} />
       </div>

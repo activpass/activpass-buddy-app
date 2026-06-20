@@ -173,9 +173,16 @@ const UserSchema = new mongoose.Schema(
       type: String,
       select: false,
     },
-
+    uniqueCode: {
+      type: String,
+      unique: true,
+      sparse: true,
+    }, // Unique code, can be null but must be unique if present
+    type: {
+      type: String,
+      enum: ['owner', 'employee'],
+    },
     // Employee-specific fields
-    employeeCode: { type: String, unique: true, sparse: true }, // Employee code, can be null but must be unique if present
     gender: {
       type: String,
       enum: Object.values(GenderEnum.enum),
@@ -271,7 +278,7 @@ UserSchema.index(
   { email: 1, organization: 1 },
   { unique: true, partialFilterExpression: { email: { $type: 'string' } } }
 );
-UserSchema.index({ employeeCode: 1 }, { unique: true, sparse: true });
+UserSchema.index({ uniqueCode: 1 }, { unique: true, sparse: true });
 
 UserSchema.virtual('fullName').get(function fullName() {
   return `${this.firstName || ''} ${this.lastName || ''}`.trim();
@@ -279,7 +286,8 @@ UserSchema.virtual('fullName').get(function fullName() {
 
 UserSchema.virtual('orgId').get(function getOrgId() {
   if (!this.organization) return null;
-  return this.organization.toHexString();
+  if (typeof this.organization.id === 'string') return this.organization.id;
+  return this.organization.toString('hex');
 });
 
 UserSchema.virtual('password').set(async function set(password: string) {

@@ -10,10 +10,12 @@ export const createOrganizationInputSchema = z.object({
   subscription: z.string().optional(),
   email: z.string().optional(),
   website: z.string().optional(),
-  coordinates: z.object({
-    lat: z.string().optional(),
-    lng: z.string().optional(),
-  }),
+  coordinates: z
+    .object({
+      lat: z.string().optional(),
+      lng: z.string().optional(),
+    })
+    .optional(),
   address: z.string().optional(),
   billingInfo: z
     .object({
@@ -45,6 +47,6 @@ export type CreateOrganizationInputSchema = z.infer<typeof createOrganizationInp
 
 export const updateOrganizationInputSchema = z.object({
   id: z.string(),
-  data: createOrganizationInputSchema.optional(),
+  data: createOrganizationInputSchema.partial(),
 });
 export type UpdateOrganizationInputSchema = z.infer<typeof updateOrganizationInputSchema>;

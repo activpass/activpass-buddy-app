@@ -12,20 +12,10 @@ import {
   CLIENT_PAYMENT_STATUS,
   CLIENT_RELATIONSHIP,
 } from '@/constants/client/add-form.constant';
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/constants/common';
 
+import { avatarSchema } from '../avatar.validation';
 import { phoneNumberSchema } from '../common.validation';
 import { createMembershipPlanSchema } from './membership.validation';
-
-export const avatarSchema = z
-  .instanceof(File)
-  .refine(file => file.size <= MAX_FILE_SIZE, { message: 'File size should be less than 2MB.' })
-  .refine(
-    file => ACCEPTED_IMAGE_TYPES.includes(file.type),
-    'Only these types are allowed .jpg, .jpeg, .png and .webp'
-  )
-  .nullable();
-export type AvatarSchema = z.infer<typeof avatarSchema>;
 
 export const clientPersonalInformationSchema = z.object({
   avatar: avatarSchema,

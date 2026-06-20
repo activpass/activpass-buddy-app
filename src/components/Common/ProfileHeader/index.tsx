@@ -5,8 +5,13 @@ import { FaWhatsapp } from 'react-icons/fa';
 type ProfileHeaderProps = {
   title: string;
   description?: string;
+  showActionButton?: boolean;
 };
-export const ProfileHeader: FC<ProfileHeaderProps> = ({ title, description }) => {
+export const ProfileHeader: FC<ProfileHeaderProps> = ({
+  title,
+  description,
+  showActionButton = true,
+}) => {
   return (
     <Flex justifyContent="between" alignItems="center">
       <Box>
@@ -15,9 +20,11 @@ export const ProfileHeader: FC<ProfileHeaderProps> = ({ title, description }) =>
           {description}
         </Text>
       </Box>
-      <Button color="green" leftIcon={<FaWhatsapp className="size-5" />} disabled>
-        Send Message
-      </Button>
+      {showActionButton && (
+        <Button color="green" leftIcon={<FaWhatsapp className="size-5" />} disabled>
+          Send Message
+        </Button>
+      )}
     </Flex>
   );
 };

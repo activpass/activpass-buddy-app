@@ -42,8 +42,8 @@ export const OnboardingStepper = ({
   const facilityForm = useForm<OnboardingFacilitySetupSchema>({
     resolver: zodResolver(onboardingFacilitySetupSchema),
     defaultValues: {
-      facilityName: '',
-      businessType: undefined,
+      name: '',
+      type: undefined,
       logo: null,
       address: '',
       city: '',

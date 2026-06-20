@@ -3,9 +3,8 @@ import { Button, Card, CardContent, Form, Heading, Text, VStack } from '@paalan/
 import { type FC } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 
+import { ImageInput } from '@/components/Common/ImageInput';
 import { type OnboardingProfileSetupSchema } from '@/validations/onboarding.validation';
-
-import { ImageInput } from './ImageInput';
 
 type OnboardingProfileSetupFormProps = {
   onSubmit: (data: OnboardingProfileSetupSchema) => void;

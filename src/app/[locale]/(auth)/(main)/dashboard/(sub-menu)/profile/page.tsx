@@ -1,6 +1,9 @@
-import { Heading } from '@paalan/react-ui';
-
+import { ProfileHeader } from '@/components/Common/ProfileHeader';
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
+
+import ProfileClientPage from './page.client';
+
+// import ProfileClientPage from './page.client';
 
 export const metadata = {
   title: 'Profile',
@@ -21,7 +24,14 @@ const ProfilePage = () => {
           },
         ]}
       />
-      <Heading>Profile Page</Heading>
+      <div className="space-y-6">
+        <ProfileHeader
+          title="Profile Details"
+          description="Details of your profile can be viewed here"
+          showActionButton={false}
+        />
+        <ProfileClientPage />
+      </div>
     </>
   );
 };

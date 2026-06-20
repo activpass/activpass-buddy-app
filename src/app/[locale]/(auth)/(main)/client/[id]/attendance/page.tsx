@@ -2,10 +2,10 @@ import { Skeleton } from '@paalan/react-ui';
 import type { Metadata } from 'next';
 import { type FC, Suspense } from 'react';
 
+import { ProfileHeader } from '@/components/Common/ProfileHeader';
 import { SetBreadcrumbItems } from '@/providers/BreadcrumbProvider';
 import { api } from '@/trpc/server';
 
-import { ProfileHeader } from '../_components/ProfileHeader';
 import { AttendanceCalendar } from './_components/AttendanceCalendar';
 import { AttendanceTable } from './_components/AttendanceTable';
 

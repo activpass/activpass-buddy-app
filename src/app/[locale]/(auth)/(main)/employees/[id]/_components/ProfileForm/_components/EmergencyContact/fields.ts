@@ -13,11 +13,10 @@ export const formFields: FormFieldItem<EmployeeFormSchema>[] = [
     required: true,
   },
   {
-    type: 'input',
+    type: 'number',
     name: 'emergencyContact.phoneNumber',
     label: 'Emergency Contact',
-    placeholder: 'Enter phone number eg. 0987654321',
-    inputType: 'number',
+    placeholder: 'Enter phone number eg. 9876543219',
     required: true,
   },
   {

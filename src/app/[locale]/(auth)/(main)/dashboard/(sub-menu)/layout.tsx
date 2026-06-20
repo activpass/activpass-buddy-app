@@ -5,49 +5,45 @@ import type { FC, PropsWithChildren } from 'react';
 import { SidebarNav } from '@/components/Common/SidebarNav';
 import { api } from '@/trpc/server';
 
-import { ClientProfileInfo } from './_components/ClientProfileInfo';
+import { ProfileInfo } from './_components/ProfileInfo';
 
 export const metadata: Metadata = {
-  title: 'Client Profile',
-  description: 'Manage your profile, membership, and attendance.',
+  title: 'User Profile',
+  description: 'Manage your user profile details',
 };
 
-type ProfileLayoutProps = PropsWithChildren<{
-  params: {
-    id: string;
-  };
-}>;
+type ProfileLayoutProps = PropsWithChildren;
 
-const ProfileLayout: FC<ProfileLayoutProps> = async ({ children, params }) => {
-  const clientData = await api.clients.get(params.id);
+const ProfileLayout: FC<ProfileLayoutProps> = async ({ children }) => {
+  const data = await api.users.getUserCacheById();
 
   const sidebarNavItems = [
     {
       title: 'Profile',
-      href: `/client/${params.id}`,
+      href: `/dashboard/profile`,
     },
     {
-      title: 'Plans',
-      href: `/client/${params.id}/membership`,
+      title: 'Billings',
+      href: `/dashboard/billings`,
     },
     {
-      title: 'Attendance',
-      href: `/client/${params.id}/attendance`,
+      title: 'Settings',
+      href: `/dashboard/settings`,
     },
   ];
 
   return (
     <div className="space-y-6 pb-16">
       <div className="space-y-0.5">
-        <Heading as="h2">Client Profile</Heading>
+        <Heading as="h2">Profile</Heading>
         <Text className="text-muted-foreground">
-          Manage your client profile, plans, and attendance.
+          View and change your profile and company details here.{' '}
         </Text>
       </div>
       <Separator className="my-6" />
       <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
         <aside className="-mx-4 flex flex-col gap-6 lg:w-72">
-          <ClientProfileInfo clientData={clientData} />
+          <ProfileInfo data={data} />
           <SidebarNav items={sidebarNavItems} />
         </aside>
         <div className="flex-1">{children}</div>

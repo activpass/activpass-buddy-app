@@ -3,12 +3,10 @@ import { Button, Card, CardContent, Form, Heading, Text, VStack } from '@paalan/
 import { type FC } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 
-import {
-  getBusinessTypeOptions,
-  type OnboardingFacilitySetupSchema,
-} from '@/validations/onboarding.validation';
-
-import { ImageInput } from './ImageInput';
+import { ImageInput } from '@/components/Common/ImageInput';
+import { BUSINESS_TYPE_OPTIONS } from '@/constants/organization/form.constants';
+import { getOptionsFromDisplayConstant } from '@/utils/helpers';
+import { type OnboardingFacilitySetupSchema } from '@/validations/onboarding.validation';
 
 type OnboardingFacilitySetupFormProps = {
   onSubmit: (data: OnboardingFacilitySetupSchema) => void;
@@ -20,19 +18,19 @@ type OnboardingFacilitySetupFormProps = {
 const getFormFields = (): FormFieldItem<OnboardingFacilitySetupSchema>[] => [
   {
     type: 'input',
-    name: 'facilityName',
-    label: 'Facility Name',
-    placeholder: 'Enter your facility name',
+    name: 'name',
+    label: 'Company Name',
+    placeholder: 'Enter your Company name',
     required: true,
     inputProps: { autoFocus: true },
   },
   {
     type: 'select',
-    name: 'businessType',
-    label: 'Business Type',
-    placeholder: 'Select business type',
+    name: 'type',
+    label: 'Company Type',
+    placeholder: 'Select Company type',
     required: true,
-    options: getBusinessTypeOptions(),
+    options: getOptionsFromDisplayConstant(BUSINESS_TYPE_OPTIONS),
   },
   {
     type: 'custom',
